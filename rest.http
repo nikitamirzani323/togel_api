@@ -51,6 +51,6 @@ Content-Type: application/json
     "member_company" : "MMD",
     "member_username" : "developer",
     "pasaran_code" : "SG",
-    "pasaran_periode" : "2",
+    "pasaran_periode" : "4",
     "tipe_game" : "4-3-2"
 }
