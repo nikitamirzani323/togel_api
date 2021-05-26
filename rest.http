@@ -1,0 +1,56 @@
+### GET
+POST http://localhost:9000/api/servicetoken
+Content-Type: application/json
+
+{
+    "token" : "qC5Ym%2BBvXzabGp34jJlKvnC6wCrr3pLCwBzsLoSzl4k%3D"
+}
+
+### INIT
+POST http://localhost:9000/api/serviceinit
+Content-Type: application/json
+
+{
+    "member_company" : "MMD"
+}
+
+### CHECK PASARAN
+POST http://localhost:9000/api/servicecheckpasaran
+Content-Type: application/json
+
+{
+    "member_company" : "MMD",
+    "pasaran_code" : "CAM"
+}
+
+### RESULT
+POST http://localhost:9000/api/serviceresult
+Content-Type: application/json
+
+{
+    "member_company" : "MMD",
+    "pasaran_code" : "CAMA"
+}
+
+
+### SERVICE CONFIGTOGEL
+POST http://localhost:9000/service/serviceconfigtogel
+Content-Type: application/json
+
+{
+    "member_company" : "MMD",
+    "pasaran_code" : "SG",
+    "permainan" : "shio"
+}
+
+### SERVICE LIMITTOGEL
+POST http://localhost:9000/service/servicelimittogel
+Content-Type: application/json
+
+{
+    "member_company" : "MMD",
+    "member_username" : "developer",
+    "pasaran_code" : "SG",
+    "pasaran_periode" : "2",
+    "tipe_game" : "4-3-2"
+}
