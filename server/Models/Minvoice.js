@@ -6,7 +6,9 @@ const tbl_invoice = con.define('client_view_invoice', {
     idtrxkeluaran:sequilize.INTEGER,
     idcompany:sequilize.STRING,
     datetimedetail:sequilize.DATE,
-    typegame:sequilize.STRING
+    typegame:sequilize.STRING,
+    bet:sequilize.DOUBLE,
+    nomortogel:sequilize.STRING
 },{
   freezeTableName:true,
   timestamps:false

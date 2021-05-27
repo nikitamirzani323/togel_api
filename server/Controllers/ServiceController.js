@@ -289,7 +289,9 @@ module.exports = {
                     status: 200,
                     record: result
                 });
-            }throw createError.NotFound()
+            }else{
+                throw createError.NotFound()
+            }
         } catch (error) {
             next(error)
         }
@@ -302,7 +304,7 @@ module.exports = {
             if(!pasaran_code) throw createError.BadRequest() 
             if(!pasaran_periode) throw createError.BadRequest() 
             if(!tipe_game) throw createError.BadRequest() 
-       
+
             let result = await model.Minvoice.findAll({
                 attributes: ['typegame'],
                 where: {
@@ -312,13 +314,297 @@ module.exports = {
                     idpasarantogel: pasaran_code
                 }
             })
-            
+            const newrecord = []
+            let total_4d = 0;
+            let total_3d = 0;
+            let total_2d = 0;
+            let total_2dd = 0;
+            let total_2dt = 0;
+            for await (const rec of result){
+                let typegame = rec.dataValues.typegame
+                
+                if(tipe_game == '4-3-2'){
+                    if(typegame == '4D'){
+                        total_4d = total_4d + 1
+                    }
+                    if(typegame == '3D'){
+                        total_3d = total_3d + 1
+                    }
+                    if(typegame == '2D'){
+                        total_2d = total_2d + 1
+                    }
+                    if(typegame == '2DD'){
+                        total_2dd = total_2dd + 1
+                    }
+                    if(typegame == '2DT'){
+                        total_2dt = total_2dt + 1
+                    }
+                }
+            }
+           
             if(result.length > 0){
                 res.send({
                     status: 200,
-                    record: result
+                    total_4d: total_4d,
+                    total_3d: total_3d,
+                    total_2d: total_2d,
+                    total_2dd: total_2dd,
+                    total_2dt: total_2dt
                 });
-            }throw createError.NotFound()
+            }else{
+                throw createError.NotFound()
+            }
+        } catch (error) {
+            next(error)
+        }
+    },
+    servicesavetransaksi: async (req,res,next) =>{
+        try {
+            const {member_username, member_company, idtrxkeluaran, idcomppasaran, devicemember, formipaddress, totalbayarbet, list4d} = req.body
+            if(!member_username) throw createError.BadRequest() 
+            if(!member_company) throw createError.BadRequest() 
+            if(!idtrxkeluaran) throw createError.BadRequest() 
+            if(!idcomppasaran) throw createError.BadRequest() 
+            if(!devicemember) throw createError.BadRequest() 
+            if(!formipaddress) throw createError.BadRequest() 
+            if(!totalbayarbet) throw createError.BadRequest() 
+            if(!list4d) throw createError.BadRequest() 
+
+            let date = new Date()
+            let thisDay = date.getDay()
+            let myDays = ['Minggu', 'Senin', 'Selasa', 'Rabu', 'Kamis', 'Jumat', 'Sabtu']
+            const dateTime_now = moment().format('YYYY-MM-DD HH:mm:ss')
+            const day_now = myDays[thisDay]
+
+            let status = ""
+            let permainan = ""
+            let totalbayar = 0
+            let totalbet_all = 0
+            let bet = 0
+            let diskon = 0
+            let kei = 0
+            let bayar = 0
+            let limit_global_togel = 0
+            let status = ""
+            let msg = ""
+            let statuspasaran = 'ONLINE'
+            let flag_next = false
+            let flag_loop = false
+            let flag_save = false
+            let dompet = 5000000
+            let pasaranjamtutup = ''
+            let pasaranjamopen = ''
+            let limit_sum = 0
+            let limit_togel_4d = 0
+            let limit_togel_3d = 0
+            let limit_togel_2d = 0
+            let limit_togel_2dd = 0
+            let limit_togel_2dt = 0
+            let limit_togel_colokbebas = 0
+            let limit_togel_colokmacau = 0
+            let limit_togel_coloknaga = 0
+            let limit_togel_colokjitu = 0
+            let limit_togel_5050umum = 0
+            let limit_togel_5050special = 0
+            let limit_togel_5050kombinasi = 0
+            let limit_togel_kombinasi = 0
+            let limit_togel_dasar = 0
+            let limit_togel_shio = 0
+            if(parseInt(dompet) < parseInt(totalbayarbet)){
+                status = "2";
+                msg = "Balance Anda Tidak Cukup";
+                flag_loop = TRUE;
+            }
+
+            let result = await model.Mpasaran.findAll({
+                attributes: [
+                        'jamtutup','jamopen',
+                        'limit_togel_4d','limit_togel_3d','limit_togel_2d','limit_togel_2dd','limit_togel_2dt',
+                        'limit_togel_colokbebas','limit_togel_colokmacau','limit_togel_coloknaga','limit_togel_colokjitu',
+                        'limit_togel_5050umum','limit_togel_5050special','limit_togel_5050kombinasi',
+                        'limit_togel_kombinasi','limit_togel_dasar','limit_togel_shio'
+                    ],
+                where: {
+                    [Op.and]: [
+                        {
+                            idcompany:member_company,
+                            idcomppasaran:idcomppasaran
+                        }
+                    ]
+                },
+            })
+            let pasaranOffline = await model.Mpasaranoffline.findAll({
+                attributes: ['haripasaran'],
+                where: {
+                    [Op.and]: [
+                        {
+                            idcompany:member_company,
+                            idcomppasaran:idcomppasaran,
+                            haripasaran:day_now.toLowerCase()
+                        }
+                    ]
+                },
+            })
+            for await (const rec of result){
+                pasaranjamtutup = moment().format('YYYY-MM-DD')+' '+rec.dataValues.jamtutup
+                pasaranjamopen = moment().format('YYYY-MM-DD')+' '+rec.dataValues.jamopen
+                limit_togel_4d = rec.dataValues.limit_togel_4d
+                limit_togel_3d = rec.dataValues.limit_togel_3d
+                limit_togel_2d = rec.dataValues.limit_togel_2d
+                limit_togel_2dd = rec.dataValues.limit_togel_2dd
+                limit_togel_2dt = rec.dataValues.limit_togel_2dt
+                limit_togel_colokbebas = rec.dataValues.limit_togel_colokbebas
+                limit_togel_colokmacau = rec.dataValues.limit_togel_colokmacau
+                limit_togel_coloknaga = rec.dataValues.limit_togel_coloknaga
+                limit_togel_colokjitu = rec.dataValues.limit_togel_colokjitu
+                limit_togel_5050umum = rec.dataValues.limit_togel_5050umum
+                limit_togel_5050special = rec.dataValues.limit_togel_5050special
+                limit_togel_5050kombinasi = rec.dataValues.limit_togel_5050kombinasi
+                limit_togel_kombinasi = rec.dataValues.limit_togel_kombinasi
+                limit_togel_dasar = rec.dataValues.limit_togel_dasar
+                limit_togel_shio = rec.dataValues.limit_togel_shio
+            }
+            if(pasaranOffline.length > 0){
+                if(parseInt(moment(dateTime_now).format('x')) >= parseInt(moment(pasaranjamtutup).format('x')) && parseInt(moment(dateTime_now).format('x')) <= parseInt(moment(pasaranjamopen).format('x'))){
+                    status = '2'
+                    msg = 'Pasaran Sudah Tutup'
+                    flag_loop = true
+                }
+            }
+            if(flag_loop == false){
+                if(list4d.length > 0){
+                    for(let i=0;i<list4d.length;i++){
+                        switch(list4d[i]['permainan']){
+                            case "4D":
+                                permainan = "4D/3D/2D"
+                                limit_global_togel = limit_togel_4d
+                                break;
+                            case "3D":
+                                permainan = "4D/3D/2D"
+                                limit_global_togel = limit_togel_3d
+                                break;
+                            case "2D":
+                                permainan = "4D/3D/2D"
+                                limit_global_togel = limit_togel_2d
+                                break;
+                            case "2DD":
+                                permainan = "4D/3D/2D"
+                                limit_global_togel = limit_togel_2dd
+                                break;
+                            case "2DT":
+                                permainan = "4D/3D/2D"
+                                limit_global_togel = limit_togel_2dt
+                                break;
+                            case "COLOK_BEBAS":
+                                permainan = "COLOK BEBAS"
+                                limit_global_togel = limit_togel_colokbebas
+                                break;
+                            case "COLOK_MACAU":
+                                permainan = "COLOK MACAU"
+                                limit_global_togel = limit_togel_colokmacau
+                                break;
+                            case "COLOK_NAGA":
+                                permainan = "COLOK NAGA"
+                                limit_global_togel = limit_togel_coloknaga
+                                break;
+                            case "COLOK_JITU":
+                                permainan = "COLOK JITU"
+                                limit_global_togel = limit_togel_colokjitu
+                                break;
+                            case "50_50_UMUM":
+                                permainan = "50 - 50 UMUM"
+                                limit_global_togel = limit_togel_5050umum
+                                break;
+                            case "50_50_SPECIAL":
+                                permainan = "50 - 50 SPECIAL"
+                                limit_global_togel = limit_togel_5050special
+                                break;
+                            case "50_50_KOMBINASI":
+                                permainan = "50 - 50 KOMBINASI"
+                                limit_global_togel = limit_togel_5050kombinasi
+                                break;
+                            case "MACAU_KOMBINASI":
+                                permainan = "MACAU / KOMBINASI"
+                                limit_global_togel = limit_togel_5050kombinasi
+                                break;
+                            case "DASAR":
+                                permainan = "DASAR"
+                                limit_global_togel = limit_togel_5050kombinasi
+                                break;
+                            case "SHIO":
+                                permainan = "SHIO"
+                                limit_global_togel = limit_togel_5050kombinasi
+                                break;
+                        }
+                        if(member_username != "" && member_company != ""){
+                            bet = list4d[i]['bet']
+                            diskon = list4d[i]['diskonpercen']
+                            kei = list4d[i]['kei_percen']
+                            bayar = bet - (bet*diskon) - (bet*kei);
+                            totalbayar = totalbayar + bayar;
+                            
+                            let invoice = await model.Minvoice.findAll({
+                                attributes: [
+                                    [sequelize.fn('sum', sequelize.col('bet')), 'total']
+                                ],
+                                where: {
+                                    [Op.and]: [
+                                        {
+                                            idtrxkeluaran:idtrxkeluaran,
+                                            typegame:list4d[i]['permainan'],
+                                            nomortogel:list4d[i]['nomor']
+                                        }
+                                    ]
+                                },
+                            })
+                            for await (const rec of invoice){
+                                limit_sum = rec.dataValues.total
+                            }
+                            totalbet_all = limit_sum + bet
+
+                            if(parseInt(limit_global_togel) < parseInt(totalbet_all)){
+                                flag_save = true
+                                status = "1"
+                                msg += list4d[i]['nomor']
+                            }
+
+                            if(flag_save == false){
+
+                                let keluarandetail = await model.Mkeluarandetail.create({
+                                    'idtrxkeluarandetail': idrecord,
+                                    'idtrxkeluaran': idtrxkeluaran,
+                                    'datetimedetail': SERVERTIME(),
+                                    'ipaddress': formipaddress,
+                                    'idcompany': member_company,
+                                    'username': member_username,
+                                    'typegame': list4d[i]['permainan'],
+                                    'nomortogel': list4d[i]['nomor'],
+                                    'bet': list4d[i]['bet'],
+                                    'diskon': list4d[i]['diskonpercen'],
+                                    'win': list4d[i]['win'],
+                                    'kei': list4d[i]['kei_percen'],
+                                    'browsertogel': "",
+                                    'devicetogel': devicemember,
+                                    'statuskeluarandetail': 'RUNNING',
+                                    'createkeluarandetail': member_username,
+                                    'createdatekeluarandetail': SERVERTIME(),
+                                })
+                                msg = 'Success'
+                                flag_next = true
+                            }
+                        }
+                    }
+                }
+            }
+
+            if(flag_next == true){
+                res.send({
+                    status: 200,
+                    message: msg
+                });
+            }else{
+                throw createError.NotFound()
+            }
         } catch (error) {
             next(error)
         }
