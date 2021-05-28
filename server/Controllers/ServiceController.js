@@ -2,7 +2,7 @@ const model = require('../Models/index')
 const createError = require('http-errors')
 const moment = require('moment')
 const db = require('../Helpers/init_mysql_orm')
-const { Op } = require('sequelize')
+const { Op, Sequelize } = require('sequelize')
 
 module.exports = {
     serviceconfigtogel: async (req,res,next) =>{
@@ -369,7 +369,7 @@ module.exports = {
             if(!formipaddress) throw createError.BadRequest() 
             if(!totalbayarbet) throw createError.BadRequest() 
             if(!list4d) throw createError.BadRequest() 
-
+            
             let date = new Date()
             let thisDay = date.getDay()
             let myDays = ['Minggu', 'Senin', 'Selasa', 'Rabu', 'Kamis', 'Jumat', 'Sabtu']
@@ -386,7 +386,6 @@ module.exports = {
             let bayar = 0
             let limit_global_togel = 0
             let msg = ""
-            let statuspasaran = 'ONLINE'
             let flag_next = false
             let flag_loop = false
             let flag_save = false
@@ -463,6 +462,7 @@ module.exports = {
                 limit_togel_dasar = rec.dataValues.limit_togel_dasar
                 limit_togel_shio = rec.dataValues.limit_togel_shio
             }
+            
             if(pasaranOffline.length > 0){
                 if(parseInt(moment(dateTime_now).format('x')) >= parseInt(moment(pasaranjamtutup).format('x')) && parseInt(moment(dateTime_now).format('x')) <= parseInt(moment(pasaranjamopen).format('x'))){
                     status = '2'
@@ -524,27 +524,28 @@ module.exports = {
                                 break;
                             case "MACAU_KOMBINASI":
                                 permainan = "MACAU / KOMBINASI"
-                                limit_global_togel = limit_togel_5050kombinasi
+                                limit_global_togel = limit_togel_kombinasi
                                 break;
                             case "DASAR":
                                 permainan = "DASAR"
-                                limit_global_togel = limit_togel_5050kombinasi
+                                limit_global_togel = limit_togel_dasar
                                 break;
                             case "SHIO":
                                 permainan = "SHIO"
-                                limit_global_togel = limit_togel_5050kombinasi
+                                limit_global_togel = limit_togel_shio
                                 break;
                         }
+                        
                         if(member_username != "" && member_company != ""){
                             bet = list4d[i]['bet']
                             diskon = list4d[i]['diskonpercen']
                             kei = list4d[i]['kei_percen']
-                            bayar = bet - (bet*diskon) - (bet*kei);
-                            totalbayar = totalbayar + bayar;
+                            bayar = parseInt(bet) - (parseInt(bet)*parseFloat(diskon)) - (parseInt(bet)*parseFloat(kei))
+                            totalbayar = parseInt(totalbayar) + parseInt(bayar)
                             
                             let invoice = await model.Minvoice.findAll({
                                 attributes: [
-                                    [sequelize.fn('sum', sequelize.col('bet')), 'total']
+                                    [Sequelize.fn('sum', Sequelize.col('bet')), 'total']
                                 ],
                                 where: {
                                     [Op.and]: [
@@ -557,10 +558,9 @@ module.exports = {
                                 },
                             })
                             for await (const rec of invoice){
-                                limit_sum = rec.dataValues.total
+                                limit_sum = rec.dataValues.total == null ? 0 : rec.dataValues.total
                             }
-                            totalbet_all = limit_sum + bet
-
+                            totalbet_all = parseInt(limit_sum) + parseInt(bet)
                             if(parseInt(limit_global_togel) < parseInt(totalbet_all)){
                                 flag_save = true
                                 status = "1"
@@ -568,25 +568,57 @@ module.exports = {
                             }
 
                             if(flag_save == false){
-
+                                let counter
+                                let year = moment().format('YYYY')
+                                let codeyear = moment().format('YY')
+                                let field_column_counter = member_company+'_tbl_trx_keluarantogel_detail'+year
+                                let idrecord_counter = 0
+                                counter = await model.Mcounter.findAll({
+                                    attributes: ['counter'],
+                                    where: {
+                                        [Op.and]: [
+                                            {
+                                                nmcounter:field_column_counter
+                                            }
+                                        ]
+                                    },
+                                })
+                                if(counter.length > 0){
+                                    for await (const rec of counter){
+                                        idrecord_counter = parseInt(rec.dataValues.counter) + 1
+                                    }
+                                    counter = await model.Mcounter.update({
+                                        counter: idrecord_counter
+                                    },{
+                                        where: {
+                                            nmcounter: field_column_counter
+                                        }
+                                    })
+                                }else{
+                                    counter = await model.Mcounter.create({
+                                        'nmcounter': field_column_counter,
+                                        'counter': 1
+                                    })
+                                }
+                                let idrecord = codeyear+''+idrecord_counter;
                                 let keluarandetail = await model.Mkeluarandetail.create({
                                     'idtrxkeluarandetail': idrecord,
                                     'idtrxkeluaran': idtrxkeluaran,
-                                    'datetimedetail': SERVERTIME(),
+                                    'datetimedetail': moment().format('YYYY-MM-DD HH:mm:ss'),
                                     'ipaddress': formipaddress,
                                     'idcompany': member_company,
                                     'username': member_username,
                                     'typegame': list4d[i]['permainan'],
                                     'nomortogel': list4d[i]['nomor'],
-                                    'bet': list4d[i]['bet'],
-                                    'diskon': list4d[i]['diskonpercen'],
-                                    'win': list4d[i]['win'],
+                                    'bet': parseInt(list4d[i]['bet']),
+                                    'diskon': Math.ceil(parseFloat(list4d[i]['diskonpercen'])),
+                                    'win': parseInt(list4d[i]['win']),
                                     'kei': list4d[i]['kei_percen'],
                                     'browsertogel': "",
                                     'devicetogel': devicemember,
                                     'statuskeluarandetail': 'RUNNING',
                                     'createkeluarandetail': member_username,
-                                    'createdatekeluarandetail': SERVERTIME(),
+                                    'createdatekeluarandetail': moment().format('YYYY-MM-DD HH:mm:ss')
                                 })
                                 msg = 'Success'
                                 flag_next = true

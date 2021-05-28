@@ -1,5 +1,5 @@
 const sequilize = require('sequelize')
-const db = new sequilize('db_togel2','root','', {
+const db = new sequilize('db_togel','root','', {
     dialect: 'mysql',
     host: 'localhost'
 })

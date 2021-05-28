@@ -1,4 +1,5 @@
 const Madmin = require('./Madmin')
+const Mcounter = require('./Mcounter')
 const Mpasaran = require('./Mpasaran')
 const Mpasaranoffline = require('./Mpasaranoffline')
 const Mkeluaran = require('./Mkeluaran')
@@ -8,6 +9,7 @@ const Minvoice = require('./Minvoice')
 const model = {}
 
 model.Madmin = Madmin
+model.Mcounter = Mcounter
 model.Mpasaran = Mpasaran
 model.Mpasaranoffline = Mpasaranoffline
 model.Mkeluaran = Mkeluaran
