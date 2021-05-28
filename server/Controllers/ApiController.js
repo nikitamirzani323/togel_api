@@ -12,7 +12,7 @@ module.exports = {
                 status: 200,
                 token:token,
                 member_username:'developer',
-                member_company:'developer',
+                member_company:'MMD',
                 member_credit:5000000,
             });
         } catch (error) {
@@ -115,7 +115,9 @@ module.exports = {
                     status: 200,
                     record: newrecord
                 });
-            }throw createError.NotFound()
+            }else{
+                throw createError.NotFound()
+            }
         } catch (error) {
             next(error)
         }
@@ -204,7 +206,9 @@ module.exports = {
                     pasaran_idcomp: idcomppasaran,
                     pasaran_status: statuspasaran,
                 });
-            }throw createError.NotFound()
+            }else{
+                throw createError.NotFound()
+            }
         } catch (error) {
             next(error)
         }
@@ -245,7 +249,9 @@ module.exports = {
                     status: 200,
                     record: newrecord
                 });
-            }throw createError.NotFound()
+            }else{
+                throw createError.NotFound()
+            }
         } catch (error) {
             next(error)
         }

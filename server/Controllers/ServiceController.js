@@ -615,10 +615,16 @@ module.exports = {
                                     'win': parseInt(list4d[i]['win']),
                                     'kei': list4d[i]['kei_percen'],
                                     'browsertogel': "",
+                                    'posisitogel': "",
+                                    'upline': "",
+                                    'upline_ref': 0,
+                                    'type_ref': "",
                                     'devicetogel': devicemember,
                                     'statuskeluarandetail': 'RUNNING',
                                     'createkeluarandetail': member_username,
-                                    'createdatekeluarandetail': moment().format('YYYY-MM-DD HH:mm:ss')
+                                    'createdatekeluarandetail': moment().format('YYYY-MM-DD HH:mm:ss.SSS'),
+                                    'updatekeluarandetail': '',
+                                    'updatedatekeluarandetail': moment().format('YYYY-MM-DD HH:mm:ss.SSS')
                                 })
                                 msg = 'Success'
                                 flag_next = true

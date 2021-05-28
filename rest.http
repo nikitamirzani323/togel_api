@@ -29,7 +29,7 @@ Content-Type: application/json
 
 {
     "member_company" : "MMD",
-    "pasaran_code" : "CAMA"
+    "pasaran_code" : "CAM"
 }
 
 
@@ -79,5 +79,33 @@ Content-Type: application/json
         {"id": "2552", "nomor": "99", "permainan": "2DD", "bet": "8500", "diskon": "145", "diskonpercen": "0.29", "bayar": "355", "kei":"0" ,"kei_percen":"0"},
         {"id": "2552", "nomor": "99", "permainan": "2DD", "bet": "9500", "diskon": "145", "diskonpercen": "0.29", "bayar": "355", "kei":"0" ,"kei_percen":"0"},
         {"id": "2552", "nomor": "99", "permainan": "2DD", "bet": "600", "diskon": "145", "diskonpercen": "0.29", "bayar": "355", "kei":"0" ,"kei_percen":"0"}
+    ]
+}
+
+
+### SERVICE LIVE TRANSAKSI
+POST http://128.199.171.22/service/servicesavetransaksi
+Content-Type: application/json
+
+{
+    "member_username" : "developer",
+    "member_company" : "MMD",
+    "idtrxkeluaran" : "212198",
+    "idcomppasaran" : "191",
+    "devicemember" : "MOBILE",
+    "formipaddress" : "192.0.0.1",
+    "totalbayarbet" : 150000,
+    "list4d" : [
+        {"id": "2552", "nomor": "99", "permainan": "2DD", "bet": "500", "diskon": "145", "diskonpercen": "0.29", "bayar": "355", "kei":"0" ,"kei_percen":"0", "win":"20"},
+        {"id": "2552", "nomor": "99", "permainan": "2DD", "bet": "1500", "diskon": "145", "diskonpercen": "0.29", "bayar": "355", "kei":"0" ,"kei_percen":"0", "win":"20"},
+        {"id": "2552", "nomor": "99", "permainan": "2DD", "bet": "2500", "diskon": "145", "diskonpercen": "0.29", "bayar": "355", "kei":"0" ,"kei_percen":"0", "win":"20"},
+        {"id": "2552", "nomor": "99", "permainan": "2DD", "bet": "3500", "diskon": "145", "diskonpercen": "0.29", "bayar": "355", "kei":"0" ,"kei_percen":"0", "win":"20"},
+        {"id": "2552", "nomor": "99", "permainan": "2DD", "bet": "4500", "diskon": "145", "diskonpercen": "0.29", "bayar": "355", "kei":"0" ,"kei_percen":"0", "win":"20"},
+        {"id": "2552", "nomor": "99", "permainan": "2DD", "bet": "5500", "diskon": "145", "diskonpercen": "0.29", "bayar": "355", "kei":"0" ,"kei_percen":"0", "win":"20"},
+        {"id": "2552", "nomor": "99", "permainan": "2DD", "bet": "6500", "diskon": "145", "diskonpercen": "0.29", "bayar": "355", "kei":"0" ,"kei_percen":"0", "win":"20"},
+        {"id": "2552", "nomor": "99", "permainan": "2DD", "bet": "7500", "diskon": "145", "diskonpercen": "0.29", "bayar": "355", "kei":"0" ,"kei_percen":"0", "win":"20"},
+        {"id": "2552", "nomor": "99", "permainan": "2DD", "bet": "8500", "diskon": "145", "diskonpercen": "0.29", "bayar": "355", "kei":"0" ,"kei_percen":"0", "win":"20"},
+        {"id": "2552", "nomor": "99", "permainan": "2DD", "bet": "9500", "diskon": "145", "diskonpercen": "0.29", "bayar": "355", "kei":"0" ,"kei_percen":"0", "win":"20"},
+        {"id": "2552", "nomor": "99", "permainan": "2DD", "bet": "600", "diskon": "145", "diskonpercen": "0.29", "bayar": "355", "kei":"0" ,"kei_percen":"0", "win":"20"}
     ]
 }

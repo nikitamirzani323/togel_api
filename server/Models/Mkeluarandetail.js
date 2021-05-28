@@ -15,11 +15,16 @@ const tbl_keluarandetail_togel = con.define('tbl_trx_keluarantogel_detail', {
     diskon:sequilize.DOUBLE,
     win:sequilize.DOUBLE,
     kei:sequilize.DOUBLE,
+    upline:sequilize.STRING,
+    upline_ref:sequilize.DOUBLE,
+    type_ref:sequilize.STRING,
     browsertogel:sequilize.STRING,
     devicetogel:sequilize.STRING,
     statuskeluarandetail:sequilize.STRING,
     createkeluarandetail:sequilize.STRING,
-    createdatekeluarandetail:sequilize.DATE
+    createdatekeluarandetail:sequilize.DATE,
+    updatekeluarandetail:sequilize.STRING,
+    updatedatekeluarandetail:sequilize.DATE
 },{
   freezeTableName:true,
   timestamps:false
