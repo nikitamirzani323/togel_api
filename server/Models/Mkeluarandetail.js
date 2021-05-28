@@ -25,4 +25,4 @@ const tbl_keluarandetail_togel = con.define('tbl_trx_keluarantogel_detail', {
   timestamps:false
 })
 tbl_keluarandetail_togel.removeAttribute('id')
-module.exports = tbl_keluaran_togel
+module.exports = tbl_keluarandetail_togel

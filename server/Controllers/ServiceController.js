@@ -385,7 +385,6 @@ module.exports = {
             let kei = 0
             let bayar = 0
             let limit_global_togel = 0
-            let status = ""
             let msg = ""
             let statuspasaran = 'ONLINE'
             let flag_next = false
