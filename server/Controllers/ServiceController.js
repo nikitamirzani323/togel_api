@@ -376,7 +376,7 @@ module.exports = {
             const dateTime_now = moment().format('YYYY-MM-DD HH:mm:ss')
             const day_now = myDays[thisDay]
 
-            let status = ""
+            let status = "Failed"
             let permainan = ""
             let totalbayar = 0
             let totalbet_all = 0
@@ -611,7 +611,7 @@ module.exports = {
                                     'typegame': list4d[i]['permainan'],
                                     'nomortogel': list4d[i]['nomor'],
                                     'bet': parseInt(list4d[i]['bet']),
-                                    'diskon': Math.ceil(parseFloat(list4d[i]['diskonpercen'])),
+                                    'diskon': parseFloat(list4d[i]['diskonpercen']),
                                     'win': parseInt(list4d[i]['win']),
                                     'kei': list4d[i]['kei_percen'],
                                     'browsertogel': "",
@@ -640,7 +640,10 @@ module.exports = {
                     message: msg
                 });
             }else{
-                throw createError.NotFound()
+                res.send({
+                    status: 200,
+                    message: msg
+                });
             }
         } catch (error) {
             next(error)
