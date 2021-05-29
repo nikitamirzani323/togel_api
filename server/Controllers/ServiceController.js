@@ -314,7 +314,6 @@ module.exports = {
                     idpasarantogel: pasaran_code
                 }
             })
-            const newrecord = []
             let total_4d = 0;
             let total_3d = 0;
             let total_2d = 0;
