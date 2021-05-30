@@ -351,7 +351,14 @@ module.exports = {
                     total_2dt: total_2dt
                 });
             }else{
-                throw createError.NotFound()
+                res.send({
+                    status: 200,
+                    total_4d: total_4d,
+                    total_3d: total_3d,
+                    total_2d: total_2d,
+                    total_2dd: total_2dd,
+                    total_2dt: total_2dt
+                });
             }
         } catch (error) {
             next(error)
@@ -359,13 +366,14 @@ module.exports = {
     },
     servicesavetransaksi: async (req,res,next) =>{
         try {
-            const {member_username, member_company, idtrxkeluaran, idcomppasaran, devicemember, formipaddress, totalbayarbet, list4d} = req.body
+            const {member_username, member_company, idtrxkeluaran, idcomppasaran, devicemember, formipaddress, timezone, totalbayarbet, list4d} = req.body
             if(!member_username) throw createError.BadRequest() 
             if(!member_company) throw createError.BadRequest() 
             if(!idtrxkeluaran) throw createError.BadRequest() 
             if(!idcomppasaran) throw createError.BadRequest() 
             if(!devicemember) throw createError.BadRequest() 
-            if(!formipaddress) throw createError.BadRequest() 
+            if(!formipaddress) throw createError.BadRequest()
+			if(!timezone) throw createError.BadRequest() 
             if(!totalbayarbet) throw createError.BadRequest() 
             if(!list4d) throw createError.BadRequest() 
             
@@ -613,7 +621,7 @@ module.exports = {
                                     'diskon': parseFloat(list4d[i]['diskonpercen']),
                                     'win': parseInt(list4d[i]['win']),
                                     'kei': list4d[i]['kei_percen'],
-                                    'browsertogel': "",
+                                    'browsertogel': timezone,
                                     'posisitogel': "",
                                     'upline': "",
                                     'upline_ref': 0,
