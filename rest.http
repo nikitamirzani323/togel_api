@@ -55,6 +55,19 @@ Content-Type: application/json
     "tipe_game" : "4-3-2"
 }
 
+### SERVICE INVOICE
+POST http://128.199.171.22/service/serviceinvoicetogel
+Content-Type: application/json
+
+{
+    "member_company" : "MMD",
+    "member_username" : "developer",
+    "pasaran_code" : "SY",
+    "pasaran_periode" : "20",
+    "tipe_game" : "all"
+}
+
+
 ### SERVICE SAVE TRANSAKSI
 POST http://localhost:9000/service/servicesavetransaksi
 Content-Type: application/json

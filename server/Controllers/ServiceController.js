@@ -364,6 +364,112 @@ module.exports = {
             next(error)
         }
     },
+    serviceinvoicetogel: async (req,res,next) =>{
+        try {
+            const {member_username, member_company, pasaran_code, pasaran_periode, tipe_game} = req.body
+            if(!member_username) throw createError.BadRequest() 
+            if(!member_company) throw createError.BadRequest() 
+            if(!pasaran_code) throw createError.BadRequest() 
+            if(!pasaran_periode) throw createError.BadRequest() 
+            if(!tipe_game) throw createError.BadRequest()
+
+            let resultpermainan = await model.Minvoice.findAll({
+                attributes: ['typegame'],
+                where: {
+                    idcompany: member_company,
+                    username: member_username,
+                    keluaranperiode: pasaran_periode,
+                    idpasarantogel: pasaran_code
+                },
+                group:['typegame']
+            })
+            let resultinvoice = await model.Minvoice.findAll({
+                attributes: ['datetimedetail','username','typegame','nomortogel','idpasarantogel','bet','diskon','win','kei','statuskeluarandetail','keluaranperiode'],
+                where: {
+                    idcompany: member_company,
+                    username: member_username,
+                    keluaranperiode: pasaran_periode,
+                    idpasarantogel: pasaran_code
+                },
+                order:[['datetimedetail','DESC']]
+            })
+            let total_4d = 0
+            let total_3d = 0
+            let total_2d = 0
+            let total_2dd = 0
+            let total_2dt = 0
+            let idpasarantogel = ""
+            let keluaranperiode = ""
+            let tanggal = ""
+            let permainan = ""
+            let nomor = ""
+            let bet = 0
+            let diskon = 0
+            let diskonbet = 0
+            let kei = 0
+            let keibet = 0
+            let win = 0
+            let bayar = 0
+            let menang = 0
+            let no = 0
+            let totalbayar = 0
+            let listinvoice = []
+            let listpermainan = []
+            for await (const rec of resultpermainan){
+                let data2 = {}
+                data2.permainan = rec.dataValues.typegame
+                listpermainan.push(data2)
+            }
+            for await (const rec of resultinvoice){
+                no = no + 1
+                idpasarantogel = rec.dataValues.idpasarantogel
+                keluaranperiode = rec.dataValues.keluaranperiode
+                tanggal = rec.dataValues.datetimedetail
+                permainan = rec.dataValues.typegame
+                nomor = rec.dataValues.nomortogel
+                bet = rec.dataValues.bet
+                diskon = parseFloat(rec.dataValues.diskon) * 100
+                diskonbet = parseInt(bet) * parseFloat(rec.dataValues.diskon)
+                kei = parseFloat(rec.dataValues.kei) * 100
+                keibet = parseInt(bet)*parseFloat(rec.dataValues.kei)
+                win = rec.dataValues.win
+                menang = parseInt(bet) * parseInt(win)
+                bayar = parseInt(bet) - parseInt(diskonbet) - parseInt(keibet)
+                totalbayar = parseInt(totalbayar) + parseInt(bayar)
+                let data2 = {}
+                data2.tanggal = moment(tanggal).format('DD MMM YYYY')
+                data2.permainan = permainan.replace("_"," ")
+                data2.periode = idpasarantogel+"-"+keluaranperiode
+                data2.nomor = nomor
+                data2.bet = bet
+                data2.diskon = Math.ceil(diskon)
+                data2.kei = kei
+                data2.bayar = bayar
+                data2.win = win
+                data2.menang = menang
+                listinvoice.push(data2)
+            }
+            if(listinvoice.length > 0){
+                res.send({
+                    status: 200,
+                    record: listinvoice,
+                    listselectpermainan: listpermainan,
+                    totalbayar: totalbayar,
+                    totalbet: no
+                });
+            }else{
+                res.send({
+                    status: 200,
+                    record: listinvoice,
+                    listselectpermainan: listpermainan,
+                    totalbayar: totalbayar,
+                    totalbet: no
+                });
+            }
+        } catch (error) {
+            next(error)
+        }
+    },
     servicesavetransaksi: async (req,res,next) =>{
         try {
             const {member_username, member_company, idtrxkeluaran, idcomppasaran, devicemember, formipaddress, timezone, totalbayarbet, list4d} = req.body
