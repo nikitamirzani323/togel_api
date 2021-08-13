@@ -41,7 +41,8 @@ module.exports = {
                             ['limitline_3d','limitline_3d'],
                             ['limitline_2d','limitline_2d'],
                             ['limitline_2dd','limitline_2dd'],
-                            ['limitline_2dt','limitline_2dt']
+                            ['limitline_2dt','limitline_2dt'],
+                            ['bbfs','bbfs']
                         ],
                         where: {
                             idcompany: member_company,
@@ -49,14 +50,35 @@ module.exports = {
                         }
                     })
                     break;
-                case 'colokbebas':
+                case 'colok':
                     result = await model.Mcompanypasaran.findAll({
                         attributes: [
                             ['2_minbet','min_bet_colokbebas'],
                             ['2_maxbet','max_bet_colokbebas'],
                             ['2_disc','disc_bet_colokbebas'],
                             ['2_win','win_bet_colokbebas'],
-                            ['2_limitotal','limittotal_bet_colokbebas']
+                            ['2_limitotal','limittotal_bet_colokbebas'],
+							['3_minbet','min_bet_colokmacau'],
+                            ['3_maxbet','max_bet_colokmacau'],
+                            ['3_disc','disc_bet_colokmacau'],
+                            ['3_win2digit','win_bet_colokmacau'],
+                            ['3_win3digit','win3_bet_colokmacau'],
+                            ['3_win4digit','win4_bet_colokmacau'],
+                            ['3_limittotal','limittotal_bet_colokmacau'],
+							['4_minbet','min_bet_coloknaga'],
+                            ['4_maxbet','max_bet_coloknaga'],
+                            ['4_disc','disc_bet_coloknaga'],
+                            ['4_win3digit','win_bet_coloknaga'],
+                            ['4_win4digit','win4_bet_coloknaga'],
+                            ['4_limittotal','limittotal_bet_coloknaga'],
+							['5_minbet','min_bet_colokjitu'],
+                            ['5_maxbet','max_bet_colokjitu'],
+                            ['5_desic','disc_bet_colokjitu'],
+                            ['5_winas','winas_bet_colokjitu'],
+                            ['5_winkop','winkop_bet_colokjitu'],
+                            ['5_winkepala','winkepala_bet_colokjitu'],
+                            ['5_winekor','winekor_bet_colokjitu'],
+                            ['5_limitotal','limittotal_bet_colokjitu']
                         ],
                         where: {
                             idcompany: member_company,
@@ -314,6 +336,7 @@ module.exports = {
                     idpasarantogel: pasaran_code
                 }
             })
+            const newrecord = []
             let total_4d = 0;
             let total_3d = 0;
             let total_2d = 0;
@@ -470,7 +493,7 @@ module.exports = {
             next(error)
         }
     },
-    servicesavetransaksi: async (req,res,next) =>{
+	servicesavetransaksi: async (req,res,next) =>{
         try {
             const {member_username, member_company, idtrxkeluaran, idcomppasaran, devicemember, formipaddress, timezone, totalbayarbet, list4d} = req.body
             if(!member_username) throw createError.BadRequest() 
@@ -478,18 +501,20 @@ module.exports = {
             if(!idtrxkeluaran) throw createError.BadRequest() 
             if(!idcomppasaran) throw createError.BadRequest() 
             if(!devicemember) throw createError.BadRequest() 
-            if(!formipaddress) throw createError.BadRequest()
-			if(!timezone) throw createError.BadRequest() 
+            if(!formipaddress) throw createError.BadRequest() 
+            if(!timezone) throw createError.BadRequest() 
             if(!totalbayarbet) throw createError.BadRequest() 
             if(!list4d) throw createError.BadRequest() 
             
+			let datatogel = JSON.parse(list4d)
+			
             let date = new Date()
             let thisDay = date.getDay()
             let myDays = ['Minggu', 'Senin', 'Selasa', 'Rabu', 'Kamis', 'Jumat', 'Sabtu']
             const dateTime_now = moment().format('YYYY-MM-DD HH:mm:ss')
             const day_now = myDays[thisDay]
 
-            let status = "Failed"
+            let status = ""
             let permainan = ""
             let totalbayar = 0
             let totalbet_all = 0
@@ -584,9 +609,9 @@ module.exports = {
                 }
             }
             if(flag_loop == false){
-                if(list4d.length > 0){
-                    for(let i=0;i<list4d.length;i++){
-                        switch(list4d[i]['permainan']){
+                if(datatogel.length > 0){
+                    for(let i=0;i<datatogel.length;i++){
+                        switch(datatogel[i]['permainan']){
                             case "4D":
                                 permainan = "4D/3D/2D"
                                 limit_global_togel = limit_togel_4d
@@ -650,9 +675,9 @@ module.exports = {
                         }
                         
                         if(member_username != "" && member_company != ""){
-                            bet = list4d[i]['bet']
-                            diskon = list4d[i]['diskonpercen']
-                            kei = list4d[i]['kei_percen']
+                            bet = datatogel[i]['bet']
+                            diskon = datatogel[i]['diskonpercen']
+                            kei = datatogel[i]['kei_percen']
                             bayar = parseInt(bet) - (parseInt(bet)*parseFloat(diskon)) - (parseInt(bet)*parseFloat(kei))
                             totalbayar = parseInt(totalbayar) + parseInt(bayar)
                             
@@ -664,8 +689,8 @@ module.exports = {
                                     [Op.and]: [
                                         {
                                             idtrxkeluaran:idtrxkeluaran,
-                                            typegame:list4d[i]['permainan'],
-                                            nomortogel:list4d[i]['nomor']
+                                            typegame:datatogel[i]['permainan'],
+                                            nomortogel:datatogel[i]['nomor']
                                         }
                                     ]
                                 },
@@ -677,7 +702,7 @@ module.exports = {
                             if(parseInt(limit_global_togel) < parseInt(totalbet_all)){
                                 flag_save = true
                                 status = "1"
-                                msg += list4d[i]['nomor']
+                                msg += datatogel[i]['nomor']
                             }
 
                             if(flag_save == false){
@@ -721,12 +746,12 @@ module.exports = {
                                     'ipaddress': formipaddress,
                                     'idcompany': member_company,
                                     'username': member_username,
-                                    'typegame': list4d[i]['permainan'],
-                                    'nomortogel': list4d[i]['nomor'],
-                                    'bet': parseInt(list4d[i]['bet']),
-                                    'diskon': parseFloat(list4d[i]['diskonpercen']),
-                                    'win': parseInt(list4d[i]['win']),
-                                    'kei': list4d[i]['kei_percen'],
+                                    'typegame': datatogel[i]['permainan'],
+                                    'nomortogel': datatogel[i]['nomor'],
+                                    'bet': parseInt(datatogel[i]['bet']),
+                                    'diskon': parseFloat(datatogel[i]['diskonpercen']),
+                                    'win': parseInt(datatogel[i]['win']),
+                                    'kei': datatogel[i]['kei_percen'],
                                     'browsertogel': timezone,
                                     'posisitogel': "",
                                     'upline': "",
@@ -754,7 +779,7 @@ module.exports = {
                 });
             }else{
                 res.send({
-                    status: 200,
+                    status: 404,
                     message: msg
                 });
             }
