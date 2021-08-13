@@ -105,7 +105,7 @@ module.exports = {
                 data2.pasaran_marketclose = pasaranjamtutup
                 data2.pasaran_marketschedule = pasaranjamjadwal
                 data2.pasaran_marketopen = pasaranjamopen,
-                data2.pasaran_marketclose_format = jamtutup_format,
+                data2.pasaran_marketclose_format = datekeluaran+" "+pasaranjamtutup,
                 data2.pasaran_marketopen_format = jamopen_format,
                 data2.pasaran_status = statuspasaran
                 newrecord.push(data2)

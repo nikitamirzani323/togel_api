@@ -4,7 +4,7 @@ const con = mysql.createConnection({
     port: 3306,
     user: 'root',
     password: '',
-    database: 'db_togel2'
+    database: 'db_togel'
   })
 
 con.connect(function (err){
