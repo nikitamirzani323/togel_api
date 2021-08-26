@@ -33,5 +33,8 @@ func Init() *fiber.App {
 	app.Post("/api/serviceresult", controller.FetchAll_result)
 	app.Post("/api/servicecheckpasaran", controller.Fetch_CheckPasaran)
 	app.Post("/api/serviceinit", controller.FetchAll_pasaran)
+
+	app.Post("/api/deleteredispasaran", controller.AdminDell_pasaran)
+	app.Post("/api/deleteredisresult", controller.AdminDell_result)
 	return app
 }

@@ -102,6 +102,25 @@ func FetchAll_pasaran(c *fiber.Ctx) error {
 		return c.SendString(resultredis)
 	}
 }
+func AdminDell_pasaran(c *fiber.Ctx) error {
+	client := new(ClientInit)
+
+	if err := c.BodyParser(client); err != nil {
+		return err
+	}
+	conf := config.GetConfigRedis()
+	rdb := redis.NewClient(&redis.Options{
+		Addr:     conf.DB_HOST,
+		Password: conf.DB_PASSWORD,
+		DB:       conf.DB_NAME,
+	})
+
+	rdb.Del(ctx, "listpasaran_"+client.Client_Company)
+	return c.JSON(fiber.Map{
+		"status":  fiber.StatusOK,
+		"message": "Delete Success",
+	})
+}
 func FetchAll_result(c *fiber.Ctx) error {
 	client := new(ClientResult)
 
@@ -142,6 +161,25 @@ func FetchAll_result(c *fiber.Ctx) error {
 		rdb.Close()
 		return c.SendString(resultredis)
 	}
+}
+func AdminDell_result(c *fiber.Ctx) error {
+	client := new(ClientResult)
+
+	if err := c.BodyParser(client); err != nil {
+		return err
+	}
+	conf := config.GetConfigRedis()
+	rdb := redis.NewClient(&redis.Options{
+		Addr:     conf.DB_HOST,
+		Password: conf.DB_PASSWORD,
+		DB:       conf.DB_NAME,
+	})
+
+	rdb.Del(ctx, "listresult_"+client.Client_Company+"_"+client.Pasaran_Code)
+	return c.JSON(fiber.Map{
+		"status":  fiber.StatusOK,
+		"message": "Delete Success",
+	})
 }
 func Fetch_CheckPasaran(c *fiber.Ctx) error {
 	client := new(ClientResult)
