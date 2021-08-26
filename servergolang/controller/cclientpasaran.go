@@ -78,12 +78,12 @@ func FetchAll_pasaran(c *fiber.Ctx) error {
 				"record":  nil,
 			})
 		}
-		json, _ := json.Marshal(result)
 		log.Println("mysql")
-		err = rdb.Set(ctx, "listpasaran_"+client.Client_Company, json, 0).Err()
-		if err != nil {
-			panic(err)
-		}
+		// json, _ := json.Marshal(result)
+		// err = rdb.Set(ctx, "listpasaran_"+client.Client_Company, json, 0).Err()
+		// if err != nil {
+		// 	panic(err)
+		// }
 		return c.JSON(result)
 	} else {
 		data := []byte(resultredis)
@@ -101,6 +101,23 @@ func FetchAll_pasaran(c *fiber.Ctx) error {
 		rdb.Close()
 		return c.SendString(resultredis)
 	}
+	result, err := model.FetchAll_MclientPasaran(client.Client_Company)
+
+	if err != nil {
+		c.Status(fiber.StatusBadRequest)
+		return c.JSON(fiber.Map{
+			"status":  fiber.StatusBadRequest,
+			"message": err.Error(),
+			"record":  nil,
+		})
+	}
+	json, _ := json.Marshal(result)
+	log.Println("mysql")
+	err = rdb.Set(ctx, "listpasaran_"+client.Client_Company, json, 0).Err()
+	if err != nil {
+		panic(err)
+	}
+	return c.JSON(result)
 }
 func AdminDell_pasaran(c *fiber.Ctx) error {
 	client := new(ClientInit)
