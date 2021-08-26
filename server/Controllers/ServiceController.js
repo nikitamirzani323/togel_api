@@ -86,58 +86,7 @@ module.exports = {
                         }
                     })
                     break;
-                case 'colokmacau':
-                    result = await model.Mcompanypasaran.findAll({
-                        attributes: [
-                            ['3_minbet','min_bet_colokmacau'],
-                            ['3_maxbet','max_bet_colokmacau'],
-                            ['3_disc','disc_bet_colokmacau'],
-                            ['3_win2digit','win_bet_colokmacau'],
-                            ['3_win3digit','win3_bet_colokmacau'],
-                            ['3_win4digit','win4_bet_colokmacau'],
-                            ['3_limittotal','limittotal_bet_colokmacau']
-                        ],
-                        where: {
-                            idcompany: member_company,
-                            idpasarantogel: pasaran_code
-                        }
-                    })
-                    break;
-                case 'coloknaga':
-                    result = await model.Mcompanypasaran.findAll({
-                        attributes: [
-                            ['4_minbet','min_bet_coloknaga'],
-                            ['4_maxbet','max_bet_coloknaga'],
-                            ['4_disc','disc_bet_coloknaga'],
-                            ['4_win3digit','win_bet_coloknaga'],
-                            ['4_win4digit','win4_bet_coloknaga'],
-                            ['4_limittotal','limittotal_bet_coloknaga']
-                        ],
-                        where: {
-                            idcompany: member_company,
-                            idpasarantogel: pasaran_code
-                        }
-                    })
-                    break;
-                case 'colokjitu':
-                    result = await model.Mcompanypasaran.findAll({
-                        attributes: [
-                            ['5_minbet','min_bet_colokjitu'],
-                            ['5_maxbet','max_bet_colokjitu'],
-                            ['5_desic','disc_bet_colokjitu'],
-                            ['5_winas','winas_bet_colokjitu'],
-                            ['5_winkop','winkop_bet_colokjitu'],
-                            ['5_winkepala','winkepala_bet_colokjitu'],
-                            ['5_winekor','winekor_bet_colokjitu'],
-                            ['5_limitotal','limittotal_bet_colokjitu']
-                        ],
-                        where: {
-                            idcompany: member_company,
-                            idpasarantogel: pasaran_code
-                        }
-                    })
-                    break;
-                case '5050umum':
+                case '5050':
                     result = await model.Mcompanypasaran.findAll({
                         attributes: [
                             ['6_minbet','min_bet_5050umum'],
@@ -154,7 +103,75 @@ module.exports = {
                             ['6_discganjil','discganjil_bet_5050umum'],
                             ['6_disctengah','disctengah_bet_5050umum'],
                             ['6_disctepi','disctepi_bet_5050umum'],
-                            ['6_limittotal','limittotal_bet_5050umum']
+                            ['6_limittotal','limittotal_bet_5050umum'],
+							['7_minbet','min_bet_5050special'],
+                            ['7_maxbet','max_bet_5050special'],
+                            ['7_keiasganjil','keiasganjil_bet_5050special'],
+                            ['7_keiasgenap','keiasgenap_bet_5050special'],
+                            ['7_keiasbesar','keiasbesar_bet_5050special'],
+                            ['7_keiaskecil','keiaskecil_bet_5050special'],
+                            ['7_keikopganjil','keikopganjil_bet_5050special'],
+                            ['7_keikopgenap','keikopgenap_bet_5050special'],
+                            ['7_keikopbesar','keikopbesar_bet_5050special'],
+                            ['7_keikopkecil','keikopkecil_bet_5050special'],
+                            ['7_keikepalaganjil','keikepalaganjil_bet_5050special'],
+                            ['7_keikepalagenap','keikepalagenap_bet_5050special'],
+                            ['7_keikepalabesar','keikepalabesar_bet_5050special'],
+                            ['7_keikepalakecil','keikepalakecil_bet_5050special'],
+                            ['7_keiekorganjil','keiekorganjil_bet_5050special'],
+                            ['7_keiekorgenap','keiekorgenap_bet_5050special'],
+                            ['7_keiekorbesar','keiekorbesar_bet_5050special'],
+                            ['7_keiekorkecil','keiekorkecil_bet_5050special'],
+                            ['7_discasganjil','discasganjil_bet_5050special'],
+                            ['7_discasgenap','discasgenap_bet_5050special'],
+                            ['7_discasbesar','discasbesar_bet_5050special'],
+                            ['7_discaskecil','discaskecil_bet_5050special'],
+                            ['7_disckopganjil','disckopganjil_bet_5050special'],
+                            ['7_disckopgenap','disckopgenap_bet_5050special'],
+                            ['7_disckopbesar','disckopbesar_bet_5050special'],
+                            ['7_disckopkecil','disckopkecil_bet_5050special'],
+                            ['7_disckepalaganjil','disckepalaganjil_bet_5050special'],
+                            ['7_disckepalagenap','disckepalagenap_bet_5050special'],
+                            ['7_disckepalabesar','disckepalabesar_bet_5050special'],
+                            ['7_disckepalakecil','disckepalakecil_bet_5050special'],
+                            ['7_discekorganjil','discekorganjil_bet_5050special'],
+                            ['7_discekorgenap','discekorgenap_bet_5050special'],
+                            ['7_discekorbesar','discekorbesar_bet_5050special'],
+                            ['7_discekorkecil','discekorkecil_bet_5050special'],
+                            ['7_limittotal','limittotal_bet_5050special'],
+							['8_minbet','min_bet_5050kombinasi'],
+                            ['8_maxbet','max_bet_5050kombinasi'],
+                            ['8_belakangkeimono','kei_belakangmono_bet_5050kombinasi'],
+                            ['8_belakangkeistereo','kei_belakangstereo_bet_5050kombinasi'],
+                            ['8_belakangkeikembang','kei_belakangkembang_bet_5050kombinasi'],
+                            ['8_belakangkeikempis','kei_belakangkempis_bet_5050kombinasi'],
+                            ['8_belakangkeikembar','kei_belakangkembar_bet_5050kombinasi'],
+                            ['8_tengahkeimono','kei_tengahmono_bet_5050kombinasi'],
+                            ['8_tengahkeistereo','kei_tengahstereo_bet_5050kombinasi'],
+                            ['8_tengahkeikembang','kei_tengahkembang_bet_5050kombinasi'],
+                            ['8_tengahkeikempis','kei_tengahkempis_bet_5050kombinasi'],
+                            ['8_tengahkeikembar','kei_tengahkembar_bet_5050kombinasi'],
+                            ['8_depankeimono','kei_depanmono_bet_5050kombinasi'],
+                            ['8_depankeistereo','kei_depanstereo_bet_5050kombinasi'],
+                            ['8_depankeikembang','kei_depankembang_bet_5050kombinasi'],
+                            ['8_depankeikempis','kei_depankempis_bet_5050kombinasi'],
+                            ['8_depankeikembar','kei_depankembar_bet_5050kombinasi'],
+                            ['8_belakangdiscmono','disc_belakangmono_bet_5050kombinasi'],
+                            ['8_belakangdiscstereo','disc_belakangstereo_bet_5050kombinasi'],
+                            ['8_belakangdisckembang','disc_belakangkembang_bet_5050kombinasi'],
+                            ['8_belakangdisckempis','disc_belakangkempis_bet_5050kombinasi'],
+                            ['8_belakangdisckembar','disc_belakangkembar_bet_5050kombinasi'],
+                            ['8_tengahdiscmono','disc_tengahmono_bet_5050kombinasi'],
+                            ['8_tengahdiscstereo','disc_tengahstereo_bet_5050kombinasi'],
+                            ['8_tengahdisckembang','disc_tengahkembang_bet_5050kombinasi'],
+                            ['8_tengahdisckempis','disc_tengahkempis_bet_5050kombinasi'],
+                            ['8_tengahdisckembar','disc_tengahkembar_bet_5050kombinasi'],
+                            ['8_depandiscmono','disc_depanmono_bet_5050kombinasi'],
+                            ['8_depandiscstereo','disc_depanstereo_bet_5050kombinasi'],
+                            ['8_depandisckembang','disc_depankembang_bet_5050kombinasi'],
+                            ['8_depandisckempis','disc_depankempis_bet_5050kombinasi'],
+                            ['8_depandisckembar','disc_depankembar_bet_5050kombinasi'],
+                            ['8_limittotal','limittotal_bet_5050kombinasi']
                         ],
                         where: {
                             idcompany: member_company,
