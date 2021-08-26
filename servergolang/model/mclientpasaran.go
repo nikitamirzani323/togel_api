@@ -166,6 +166,8 @@ func FetchAll_MclientPasaranResult(client_company, pasaran_code string) (Respons
 		JOIN tbl_mst_company_game_pasaran as B ON B.idcomppasaran = A.idcomppasaran
 		WHERE B.idcompany = ? 
 		AND B.idpasarantogel = ?
+		AND A.keluarantogel != '' 
+		ORDER BY A.datekeluaran DESC LIMIT 250
 	`
 	rowresult, err := con.Query(sqlresult, client_company, pasaran_code)
 	defer rowresult.Close()
