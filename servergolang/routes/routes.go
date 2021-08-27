@@ -35,6 +35,10 @@ func Init() *fiber.App {
 	app.Post("/api/serviceinit", controller.FetchAll_pasaran)
 	app.Post("/api/serviceconfigtogel432", controller.Fetch_InitPasaran432)
 	app.Post("/api/serviceconfigtogelcolok", controller.Fetch_InitPasaranColok)
+	app.Post("/api/serviceconfigtogel5050", controller.Fetch_InitPasaran5050)
+	app.Post("/api/serviceconfigtogelMacauKombinasi", controller.Fetch_InitPasaranMacauKombinasi)
+	app.Post("/api/serviceconfigtogelDasar", controller.Fetch_InitPasaranDasar)
+	app.Post("/api/serviceconfigtogelShio", controller.Fetch_InitPasaranShio)
 
 	app.Post("/api/deleteredispasaran", controller.AdminDell_pasaran)
 	app.Post("/api/deleteredisresult", controller.AdminDell_result)

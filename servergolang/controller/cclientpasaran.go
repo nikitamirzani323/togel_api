@@ -237,3 +237,76 @@ func Fetch_InitPasaranColok(c *fiber.Ctx) error {
 	return c.JSON(result)
 
 }
+func Fetch_InitPasaran5050(c *fiber.Ctx) error {
+	client := new(ClientResult)
+	if err := c.BodyParser(client); err != nil {
+		return err
+	}
+
+	result, err := model.FetchAll_MinitPasaran5050(client.Client_Company, client.Pasaran_Code)
+
+	if err != nil {
+		c.Status(fiber.StatusBadRequest)
+		return c.JSON(fiber.Map{
+			"status":  fiber.StatusBadRequest,
+			"message": err.Error(),
+			"record":  nil,
+		})
+	}
+	return c.JSON(result)
+
+}
+func Fetch_InitPasaranMacauKombinasi(c *fiber.Ctx) error {
+	client := new(ClientResult)
+	if err := c.BodyParser(client); err != nil {
+		return err
+	}
+
+	result, err := model.FetchAll_MinitPasaranMacauKombinasi(client.Client_Company, client.Pasaran_Code)
+
+	if err != nil {
+		c.Status(fiber.StatusBadRequest)
+		return c.JSON(fiber.Map{
+			"status":  fiber.StatusBadRequest,
+			"message": err.Error(),
+			"record":  nil,
+		})
+	}
+	return c.JSON(result)
+}
+func Fetch_InitPasaranDasar(c *fiber.Ctx) error {
+	client := new(ClientResult)
+	if err := c.BodyParser(client); err != nil {
+		return err
+	}
+
+	result, err := model.FetchAll_MinitPasaranDasar(client.Client_Company, client.Pasaran_Code)
+
+	if err != nil {
+		c.Status(fiber.StatusBadRequest)
+		return c.JSON(fiber.Map{
+			"status":  fiber.StatusBadRequest,
+			"message": err.Error(),
+			"record":  nil,
+		})
+	}
+	return c.JSON(result)
+}
+func Fetch_InitPasaranShio(c *fiber.Ctx) error {
+	client := new(ClientResult)
+	if err := c.BodyParser(client); err != nil {
+		return err
+	}
+
+	result, err := model.FetchAll_MinitPasaranShio(client.Client_Company, client.Pasaran_Code)
+
+	if err != nil {
+		c.Status(fiber.StatusBadRequest)
+		return c.JSON(fiber.Map{
+			"status":  fiber.StatusBadRequest,
+			"message": err.Error(),
+			"record":  nil,
+		})
+	}
+	return c.JSON(result)
+}
