@@ -464,6 +464,7 @@ func CheckPasaran(client_company, pasaran_code string) (Response, error) {
 		errpasaranonline := con.QueryRow(sqlpasaranonline, idcomppasaran, client_company, daynowhari).Scan(&haripasaran)
 
 		if errpasaranonline != sql.ErrNoRows {
+			taiskrg := tglnow.Format("YYYY-MM-DD HH:mm:ss")
 			jamtutup := tglnow.Format("YYYY-MM-DD") + " " + jamtutup
 			jamopen := tglnow.Format("YYYY-MM-DD") + " " + jamopen
 			tutup, _ := goment.New(jamtutup)
@@ -472,13 +473,21 @@ func CheckPasaran(client_company, pasaran_code string) (Response, error) {
 			tutupconvert := tutup.Format("x")
 			openconvert := open.Format("x")
 
-			intNow, _ := strconv.Atoi(nowconvert)
-			intTutup, _ := strconv.Atoi(tutupconvert)
-			intOpen, _ := strconv.Atoi(openconvert)
+			// intNow, _ := strconv.Atoi(nowconvert)
+			// intTutup, _ := strconv.Atoi(tutupconvert)
+			// intOpen, _ := strconv.Atoi(openconvert)
 
-			if intNow > intTutup && intNow < intOpen {
+			// if intNow > intTutup && intNow < intOpen {
+			// 	statuspasaran = "OFFLINE"
+			// }
+
+			if taiskrg >= jamtutup && taiskrg <= jamopen {
 				statuspasaran = "OFFLINE"
+			} else {
+				statuspasaran = "ONLINE"
 			}
+			// log.Println(idpasarantogel + " - " + tglnow.Format("YYYY-MM-DD HH:mm:ss") + " - " + jamtutup + " - " + jamopen + " - " + statuspasaran)
+			log.Println(nowconvert + " - " + tutupconvert + " - " + openconvert + " - " + statuspasaran)
 		}
 
 		obj.PasaranIdtansaction = idtrxkeluaran
