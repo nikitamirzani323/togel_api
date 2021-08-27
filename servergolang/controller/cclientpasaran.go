@@ -199,3 +199,41 @@ func Fetch_CheckPasaran(c *fiber.Ctx) error {
 	}
 	return c.JSON(result)
 }
+func Fetch_InitPasaran432(c *fiber.Ctx) error {
+	client := new(ClientResult)
+	if err := c.BodyParser(client); err != nil {
+		return err
+	}
+
+	result, err := model.FetchAll_MinitPasaran432(client.Client_Company, client.Pasaran_Code)
+
+	if err != nil {
+		c.Status(fiber.StatusBadRequest)
+		return c.JSON(fiber.Map{
+			"status":  fiber.StatusBadRequest,
+			"message": err.Error(),
+			"record":  nil,
+		})
+	}
+	return c.JSON(result)
+
+}
+func Fetch_InitPasaranColok(c *fiber.Ctx) error {
+	client := new(ClientResult)
+	if err := c.BodyParser(client); err != nil {
+		return err
+	}
+
+	result, err := model.FetchAll_MinitPasaranColok(client.Client_Company, client.Pasaran_Code)
+
+	if err != nil {
+		c.Status(fiber.StatusBadRequest)
+		return c.JSON(fiber.Map{
+			"status":  fiber.StatusBadRequest,
+			"message": err.Error(),
+			"record":  nil,
+		})
+	}
+	return c.JSON(result)
+
+}
