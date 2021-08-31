@@ -27,6 +27,13 @@ type ClientConfPasaran struct {
 	Pasaran_Code   string `json:"pasaran_code"`
 	Permainan      string `json:"permainan"`
 }
+type ClientLimitPasaran struct {
+	Client_Username string `json:"client_username"`
+	Client_Company  string `json:"client_company"`
+	Pasaran_Code    string `json:"pasaran_code"`
+	Pasaran_Periode string `json:"pasaran_periode"`
+	Permainan       string `json:"permainan"`
+}
 type parsingjson struct {
 	Record []ytRecord `json:"record"`
 }
@@ -211,6 +218,24 @@ func Fetch_InitPasaran(c *fiber.Ctx) error {
 	}
 
 	result, err := model.FetchAll_MinitPasaran(client.Client_Company, client.Pasaran_Code, client.Permainan)
+
+	if err != nil {
+		c.Status(fiber.StatusBadRequest)
+		return c.JSON(fiber.Map{
+			"status":  fiber.StatusBadRequest,
+			"message": err.Error(),
+			"record":  nil,
+		})
+	}
+	return c.JSON(result)
+}
+func Fetch_LimitPasaran432(c *fiber.Ctx) error {
+	client := new(ClientLimitPasaran)
+	if err := c.BodyParser(client); err != nil {
+		return err
+	}
+
+	result, err := model.Fetch_LimitTransaksiPasaran432(client.Client_Username, client.Client_Company, client.Pasaran_Code, client.Pasaran_Periode, client.Permainan)
 
 	if err != nil {
 		c.Status(fiber.StatusBadRequest)
