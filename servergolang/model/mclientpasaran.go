@@ -5,6 +5,9 @@ import (
 	"log"
 	"strconv"
 
+	"encoding/json"
+
+	"github.com/buger/jsonparser"
 	"github.com/gofiber/fiber/v2"
 	"github.com/nikitamirzani323/gofiberapi/db"
 	"github.com/nleeper/goment"
@@ -1316,18 +1319,127 @@ func Fetch_invoicebet(client_username, client_company, pasaran_code, pasaran_per
 
 func Savetransaksi(client_username, client_company, idtrxkeluaran, idcomppasaran, devicemember, formipaddress, timezone, totalbayarbet string, list4d interface{}) (Response, error) {
 	var res Response
-	// con := db.CreateCon()
-
+	con := db.CreateCon()
+	tglnow, _ := goment.New()
 	flag_loop := false
 	msg := ""
 	totalbelanja, _ := strconv.Atoi(totalbayarbet)
 	dompet := 5000000
-
+	jamtutup_pasaran := ""
+	jamopen_pasaran := ""
+	// limit_sum := 0
+	limit_togel4d := 0
+	limit_togel3d := 0
+	limit_togel2d := 0
+	limit_togel2dd := 0
+	limit_togel2dt := 0
+	limit_togelcolokbebas := 0
+	limit_togelcolokmacau := 0
+	limit_togelcoloknaga := 0
+	limit_togelcolokjitu := 0
+	limit_togel5050umum := 0
+	limit_togel5050special := 0
+	limit_togel5050kombinasi := 0
+	limit_togelkombinasi := 0
+	limit_togeldasar := 0
+	limit_togelshio := 0
 	if int(dompet) < int(totalbelanja) {
 		msg = "Balance Anda Tidak Cukup"
 		flag_loop = true
 	}
+
+	sql := `SELECT 
+		jamtutup, jamopen, 
+		limit_togel_4d, limit_togel_3d, limit_togel_2d, limit_togel_2dd, limit_togel_2dt, 
+		limit_togel_colokbebas, limit_togel_colokmacau, limit_togel_coloknaga, limit_togel_colokjitu, 
+		limit_togel_5050umum, limit_togel_5050special, limit_togel_5050kombinasi, limit_togel_kombinasi, 
+		limit_togel_dasar, limit_togel_shio
+		FROM client_view_pasaran 
+		WHERE idcompany = ? 
+		AND idcomppasaran = ? 
+	`
+	row, err := con.Query(sql, client_company, idcomppasaran)
+	defer row.Close()
+
+	if err != nil {
+		return res, err
+	}
+	nolimit := 0
+	for row.Next() {
+		nolimit = nolimit + 1
+		var (
+			jamtutup, jamopen                                                                                           string
+			limit_togel_4d_db, limit_togel_3d_db, limit_togel_2d_db, limit_togel_2dd_db, limit_togel_2dt_db             float32
+			limit_togel_colokbebas_db, limit_togel_colokmacau_db, limit_togel_coloknaga_db, limit_togel_colokjitu_db    float32
+			limit_togel_5050umum_db, limit_togel_5050special_db, limit_togel_5050kombinasi_db, limit_togel_kombinasi_db float32
+			limit_togel_dasar_db, limit_togel_shio_db                                                                   float32
+		)
+		err = row.Scan(
+			&jamtutup, &jamopen,
+			&limit_togel_4d_db, &limit_togel_3d_db, &limit_togel_2d_db, &limit_togel_2dd_db, &limit_togel_2dt_db,
+			&limit_togel_colokbebas_db, &limit_togel_colokmacau_db, &limit_togel_coloknaga_db, &limit_togel_colokjitu_db,
+			&limit_togel_5050umum_db, &limit_togel_5050special_db, &limit_togel_5050kombinasi_db, &limit_togel_kombinasi_db,
+			&limit_togel_dasar_db, &limit_togel_shio_db)
+
+		if err != nil {
+			return res, err
+		}
+		jamtutup_pasaran = jamtutup
+		jamopen_pasaran = jamopen
+		limit_togel4d = int(limit_togel_4d_db)
+		limit_togel3d = int(limit_togel_3d_db)
+		limit_togel2d = int(limit_togel_2d_db)
+		limit_togel2dd = int(limit_togel_2dd_db)
+		limit_togel2dt = int(limit_togel_2dt_db)
+		limit_togelcolokbebas = int(limit_togel_colokbebas_db)
+		limit_togelcolokmacau = int(limit_togel_colokmacau_db)
+		limit_togelcoloknaga = int(limit_togel_coloknaga_db)
+		limit_togelcolokjitu = int(limit_togel_colokjitu_db)
+		limit_togel5050umum = int(limit_togel_5050umum_db)
+		limit_togel5050special = int(limit_togel_5050special_db)
+		limit_togel5050kombinasi = int(limit_togel_5050kombinasi_db)
+		limit_togelkombinasi = int(limit_togel_kombinasi_db)
+		limit_togeldasar = int(limit_togel_dasar_db)
+		limit_togelshio = int(limit_togel_shio_db)
+	}
+	if nolimit > 0 {
+		taiskrg := tglnow.Format("YYYY-MM-DD HH:mm:ss")
+		jamtutup := tglnow.Format("YYYY-MM-DD") + " " + jamtutup_pasaran
+		jamopen := tglnow.Format("YYYY-MM-DD") + " " + jamopen_pasaran
+
+		if taiskrg >= jamtutup && taiskrg <= jamopen {
+			msg = "Pasaran Sudah Tutup"
+			flag_loop = true
+		}
+	}
+
+	log.Println(limit_togel4d)
+	log.Println(limit_togel3d)
+	log.Println(limit_togel2d)
+	log.Println(limit_togel2dd)
+	log.Println(limit_togel2dt)
+	log.Println(limit_togelcolokbebas)
+	log.Println(limit_togelcolokmacau)
+	log.Println(limit_togelcoloknaga)
+	log.Println(limit_togelcolokjitu)
+	log.Println(limit_togel5050umum)
+	log.Println(limit_togel5050special)
+	log.Println(limit_togel5050kombinasi)
+	log.Println(limit_togelkombinasi)
+	log.Println(limit_togeldasar)
+	log.Println(limit_togelshio)
+
+	// log.Panicln(limit_togel4d)
 	if flag_loop == false {
+		json, _ := json.Marshal(list4d)
+
+		jsonparser.ArrayEach(json, func(value []byte, dataType jsonparser.ValueType, offset int, err error) {
+			nomor, _, _, _ := jsonparser.Get(value, "nomor")
+			permainan, _, _, _ := jsonparser.Get(value, "permainan")
+			bayar, _, _, _ := jsonparser.Get(value, "bayar")
+			log.Printf("%s - %s - %s\n", string(nomor), string(permainan), string(bayar))
+		})
+
 		msg = "Success"
 		res.Status = fiber.StatusOK
 		res.Message = msg
