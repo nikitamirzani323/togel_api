@@ -1137,6 +1137,7 @@ func Fetch_LimitTransaksiPasaran432(client_username, client_company, pasaran_cod
 	var obj MpasaranLimit
 	var res Response
 	con := db.CreateCon()
+	tglnow, _ := goment.New()
 	total4d := 0
 	total3d := 0
 	total2d := 0
@@ -1145,7 +1146,7 @@ func Fetch_LimitTransaksiPasaran432(client_username, client_company, pasaran_cod
 
 	sql := `SELECT 
 		typegame  
-		FROM client_view_pasaran  
+		FROM client_view_invoice 
 		WHERE idcompany = ? 
 		AND username = ?
 		AND keluaranperiode = ?
@@ -1191,5 +1192,6 @@ func Fetch_LimitTransaksiPasaran432(client_username, client_company, pasaran_cod
 	res.Status = fiber.StatusOK
 	res.Message = "success"
 	res.Record = obj
+	res.Time = tglnow.Format("YYYY-MM-DD HH:mm:ss")
 	return res, nil
 }
