@@ -209,6 +209,21 @@ type MpasaranLimit struct {
 	Total_2dd int `json:"total_2dd"`
 	Total_2dt int `json:"total_2dt"`
 }
+type MListinvoicebet struct {
+	Tanggal   string `json:"tanggal"`
+	Permainan string `json:"permainan"`
+	Periode   string `json:"periode"`
+	Nomor     string `json:"nomor"`
+	Bet       int    `json:"bet"`
+	Diskon    int    `json:"diskon"`
+	Kei       int    `json:"kei"`
+	Bayar     int    `json:"bayar"`
+	Win       int    `json:"win"`
+	Menang    int    `json:"menang"`
+}
+type MGroupinvoicebetPermainan struct {
+	Permainan string `json:"permainan"`
+}
 
 func FetchAll_MclientPasaran(client_company string) (Response, error) {
 	var obj Mclientpasaran
@@ -1193,5 +1208,134 @@ func Fetch_LimitTransaksiPasaran432(client_username, client_company, pasaran_cod
 	res.Message = "success"
 	res.Record = obj
 	res.Time = tglnow.Format("YYYY-MM-DD HH:mm:ss")
+	return res, nil
+}
+func Fetch_invoicebet(client_username, client_company, pasaran_code, pasaran_periode string) (ResponseCustom, error) {
+	var obj MListinvoicebet
+	var arraobj []MListinvoicebet
+	var objgroup MGroupinvoicebetPermainan
+	var arraobjgroup []MGroupinvoicebetPermainan
+	var res ResponseCustom
+	var totalbayar int = 0
+
+	msg := "Error"
+	con := db.CreateCon()
+	tglnow, _ := goment.New()
+
+	sql := `SELECT 
+		datetimedetail, username, typegame, nomortogel, idpasarantogel, bet, 
+		diskon, win, kei, statuskeluarandetail, keluaranperiode
+		FROM client_view_invoice 
+		WHERE idcompany = ? 
+		AND username = ?
+		AND keluaranperiode = ?
+		AND idpasarantogel = ?
+		ORDER BY datetimedetail DESC
+	`
+	row, err := con.Query(sql, client_company, client_username, pasaran_periode, pasaran_code)
+	defer row.Close()
+
+	if err != nil {
+		return res, err
+	}
+	for row.Next() {
+		var (
+			datetimedetail, username, typegame, nomortogel, idpasarantogel string
+			bet, diskon, win, kei                                          float32
+			statuskeluarandetail, keluaranperiode                          string
+		)
+		err = row.Scan(
+			&datetimedetail, &username, &typegame, &nomortogel,
+			&idpasarantogel, &bet, &diskon, &win, &kei, &statuskeluarandetail,
+			&keluaranperiode)
+
+		if err != nil {
+			return res, err
+		}
+		var diskon2 float32 = diskon * 100
+		var diskonbet int = int(bet * diskon)
+		var kei2 float32 = kei * 100
+		var keibet int = int(bet * kei)
+		var menang int = int(bet) * int(win)
+		var bayar int = int(bet) - int(diskonbet) - int(keibet)
+		totalbayar = int(totalbayar) + int(bayar)
+
+		obj.Tanggal = datetimedetail
+		obj.Permainan = typegame
+		obj.Periode = idpasarantogel + "-" + keluaranperiode
+		obj.Nomor = nomortogel
+		obj.Bet = int(bet)
+		obj.Diskon = int(diskon2)
+		obj.Kei = int(kei2)
+		obj.Win = int(win)
+		obj.Bayar = bayar
+		obj.Menang = menang
+		arraobj = append(arraobj, obj)
+		msg = "Success"
+	}
+
+	sqlgrouppermainan := `SELECT
+		typegame
+		FROM client_view_invoice
+		WHERE idcompany = ?
+		AND username = ?
+		AND keluaranperiode = ?
+		AND idpasarantogel = ?
+		GROUP BY typegame
+	`
+	rowgrouppermainan, err := con.Query(sqlgrouppermainan, client_company, client_username, pasaran_periode, pasaran_code)
+	defer rowgrouppermainan.Close()
+
+	if err != nil {
+		return res, err
+	}
+	for rowgrouppermainan.Next() {
+		var (
+			typegame string
+		)
+		err = rowgrouppermainan.Scan(
+			&typegame)
+
+		if err != nil {
+			return res, err
+		}
+		objgroup.Permainan = typegame
+		arraobjgroup = append(arraobjgroup, objgroup)
+		msg = "Success"
+	}
+
+	res.Status = fiber.StatusOK
+	res.Message = msg
+	res.Totalrecord = len(arraobj)
+	res.Totalbayar = totalbayar
+	res.Permainan = arraobjgroup
+	res.Record = arraobj
+	res.Time = tglnow.Format("YYYY-MM-DD HH:mm:ss")
+	return res, nil
+}
+
+func Savetransaksi(client_username, client_company, idtrxkeluaran, idcomppasaran, devicemember, formipaddress, timezone, totalbayarbet string, list4d interface{}) (Response, error) {
+	var res Response
+	// con := db.CreateCon()
+
+	flag_loop := false
+	msg := ""
+	totalbelanja, _ := strconv.Atoi(totalbayarbet)
+	dompet := 5000000
+
+	if int(dompet) < int(totalbelanja) {
+		msg = "Balance Anda Tidak Cukup"
+		flag_loop = true
+	}
+	if flag_loop == false {
+		msg = "Success"
+		res.Status = fiber.StatusOK
+		res.Message = msg
+		res.Record = nil
+	} else {
+		res.Status = fiber.StatusOK
+		res.Message = msg
+		res.Record = nil
+	}
 	return res, nil
 }

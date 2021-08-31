@@ -34,6 +34,23 @@ type ClientLimitPasaran struct {
 	Pasaran_Periode string `json:"pasaran_periode"`
 	Permainan       string `json:"permainan"`
 }
+type ClientInvoicePasaran struct {
+	Client_Username string `json:"client_username"`
+	Client_Company  string `json:"client_company"`
+	Pasaran_Code    string `json:"pasaran_code"`
+	Pasaran_Periode string `json:"pasaran_periode"`
+}
+type ClientSaveTogel struct {
+	Client_Username string      `json:"client_username"`
+	Client_Company  string      `json:"client_company"`
+	Idtrxkeluaran   string      `json:"idtrxkeluaran"`
+	Idcomppasaran   string      `json:"idcomppasaran"`
+	Devicemember    string      `json:"devicemember"`
+	Formipaddress   string      `json:"formipaddress"`
+	Timezone        string      `json:"timezone"`
+	Totalbayarbet   string      `json:"totalbayarbet"`
+	List4d          interface{} `json:"list4d"`
+}
 type parsingjson struct {
 	Record []ytRecord `json:"record"`
 }
@@ -237,6 +254,49 @@ func Fetch_LimitPasaran432(c *fiber.Ctx) error {
 
 	result, err := model.Fetch_LimitTransaksiPasaran432(client.Client_Username, client.Client_Company, client.Pasaran_Code, client.Pasaran_Periode, client.Permainan)
 
+	if err != nil {
+		c.Status(fiber.StatusBadRequest)
+		return c.JSON(fiber.Map{
+			"status":  fiber.StatusBadRequest,
+			"message": err.Error(),
+			"record":  nil,
+		})
+	}
+	return c.JSON(result)
+}
+func Fetch_listinvoicebet(c *fiber.Ctx) error {
+	client := new(ClientInvoicePasaran)
+	if err := c.BodyParser(client); err != nil {
+		return err
+	}
+	result, err := model.Fetch_invoicebet(client.Client_Username, client.Client_Company, client.Pasaran_Code, client.Pasaran_Periode)
+	if err != nil {
+		c.Status(fiber.StatusBadRequest)
+		return c.JSON(fiber.Map{
+			"status":  fiber.StatusBadRequest,
+			"message": err.Error(),
+			"record":  nil,
+		})
+	}
+	return c.JSON(result)
+}
+func SaveTogel(c *fiber.Ctx) error {
+	client := new(ClientSaveTogel)
+	if err := c.BodyParser(client); err != nil {
+		return err
+	}
+	// json, _ := json.Marshal(client)
+	// temp, _, _, _ := jsonparser.Get(json, "list4d")
+	// jsonparser.ArrayEach(temp, func(value []byte, dataType jsonparser.ValueType, offset int, err error) {
+	// 	nomor, _, _, _ := jsonparser.Get(value, "nomor")
+	// 	permainan, _, _, _ := jsonparser.Get(value, "permainan")
+	// 	bayar, _, _, _ := jsonparser.Get(value, "bayar")
+	// 	log.Printf("%s - %s - %s\n", string(nomor), string(permainan), string(bayar))
+	// })
+
+	result, err := model.Savetransaksi(
+		client.Client_Username,
+		client.Client_Company, client.Idtrxkeluaran, client.Idcomppasaran, client.Devicemember, client.Formipaddress, client.Timezone, client.Totalbayarbet, client.List4d)
 	if err != nil {
 		c.Status(fiber.StatusBadRequest)
 		return c.JSON(fiber.Map{
