@@ -1423,6 +1423,7 @@ func Savetransaksi(client_username, client_company, idtrxkeluaran, idcomppasaran
 
 		json, _ := json.Marshal(list4d)
 		jsonparser.ArrayEach(json, func(value []byte, dataType jsonparser.ValueType, offset int, err error) {
+
 			nomor_DD, _, _, _ := jsonparser.Get(value, "nomor")
 			permainan_DD, _, _, _ := jsonparser.Get(value, "permainan")
 			bet_DD, _, _, _ := jsonparser.Get(value, "bet")
@@ -1519,6 +1520,7 @@ func Savetransaksi(client_username, client_company, idtrxkeluaran, idcomppasaran
 				msg += string(nomor_DD)
 			}
 			if flag_save == false {
+				flag_counter := false
 				year := tglnow.Format("YYYY")
 				codeyear := tglnow.Format("YYYY")
 				field_column_counter := client_company + "_tbl_trx_keluarantogel_detail" + year
@@ -1530,31 +1532,36 @@ func Savetransaksi(client_username, client_company, idtrxkeluaran, idcomppasaran
 					WHERE nmcounter = ?
 				`
 				var counter int
-				errcounter := con.QueryRow(sqlcounter, field_column_counter).Scan(&counter)
-				if errcounter != nil {
-					log.Panic(errcounter.Error())
+				e := con.QueryRow(sqlcounter, field_column_counter).Scan(&counter)
+				if e != nil {
+					ErrorCheck(e)
 				}
 				if counter > 0 {
-					idrecord_counter = counter + 1
-					stmt, e := con.Prepare("UPDATE tbl_counter SET counter=? WHERE idcounter=? ")
+					idrecord_counter = int(counter) + 1
+					stmt, e := con.Prepare("UPDATE tbl_counter SET counter=? WHERE nmcounter=? ")
 					ErrorCheck(e)
 					res, e := stmt.Exec(idrecord_counter, field_column_counter)
 					ErrorCheck(e)
 					a, e := res.RowsAffected()
 					ErrorCheck(e)
-					log.Println(a)
+					if a > 0 {
+						log.Println("UPDATE")
+						flag_counter = true
+					}
 				} else {
-					stmt, e := con.Prepare("insert into tbl_counter(nmcounter, counter) values (?, ?, ?)")
+					stmt, e := con.Prepare("insert into tbl_counter(nmcounter, counter) values (?, ?)")
 					ErrorCheck(e)
 					res, e := stmt.Exec(field_column_counter, 1)
 					ErrorCheck(e)
 					id, e := res.LastInsertId()
 					ErrorCheck(e)
 					log.Println("Insert id", id)
+					log.Println("NEW")
 				}
-				idrecord_counter2 := strconv.Itoa(idrecord_counter)
-				idrecord := string(codeyear) + idrecord_counter2
-				stmt, e := con.Prepare(`
+				if flag_counter {
+					idrecord_counter2 := strconv.Itoa(idrecord_counter)
+					idrecord := string(codeyear) + idrecord_counter2
+					stmt, e := con.Prepare(`
 					insert into
 					tbl_trx_keluarantogel_detail(
 						idtrxkeluarandetail, idtrxkeluaran, datetimedetail,
@@ -1568,42 +1575,44 @@ func Savetransaksi(client_username, client_company, idtrxkeluaran, idcomppasaran
 						?, ?, ?
 					)
 				`)
-				ErrorCheck(e)
-				//execute
-				res, e := stmt.Exec(
-					idrecord,
-					idtrxkeluaran,
-					tglnow.Format("YYYY-MM-DD HH:mm:ss"),
-					formipaddress,
-					client_company,
-					client_username,
-					string(permainan_DD),
-					string(nomor_DD),
-					string(bet_DD),
-					string(diskonpercen_DD),
-					string(win_DD),
-					string(kei_percen_DD),
-					timezone,
-					"",
-					"",
-					0,
-					"",
-					devicemember,
-					"RUNNING",
-					client_username,
-					tglnow.Format("YYYY-MM-DD HH:mm:ss"),
-					"",
-					tglnow.Format("YYYY-MM-DD HH:mm:ss"))
-				ErrorCheck(e)
+					ErrorCheck(e)
+					res, e := stmt.Exec(
+						idrecord,
+						idtrxkeluaran,
+						tglnow.Format("YYYY-MM-DD HH:mm:ss"),
+						formipaddress,
+						client_company,
+						client_username,
+						string(permainan_DD),
+						string(nomor_DD),
+						string(bet_DD),
+						string(diskonpercen_DD),
+						string(win_DD),
+						string(kei_percen_DD),
+						timezone,
+						"",
+						"",
+						0,
+						"",
+						devicemember,
+						"RUNNING",
+						client_username,
+						tglnow.Format("YYYY-MM-DD HH:mm:ss"),
+						"",
+						tglnow.Format("YYYY-MM-DD HH:mm:ss"))
+					ErrorCheck(e)
 
-				id, e := res.LastInsertId()
-				ErrorCheck(e)
+					id, e := res.LastInsertId()
+					ErrorCheck(e)
 
-				log.Println(id)
+					log.Println(id)
 
-				log.Println("save")
-				msg = "Success"
-				flag_next = true
+					log.Println("save")
+					log.Println(idrecord)
+					msg = "Success"
+					flag_next = true
+				}
+
 			}
 		})
 		if flag_next == true {
@@ -1611,16 +1620,19 @@ func Savetransaksi(client_username, client_company, idtrxkeluaran, idcomppasaran
 			res.Status = fiber.StatusOK
 			res.Message = msg
 			res.Record = nil
+			res.Time = tglnow.Format("YYYY-MM-DD HH:mm:ss")
 		} else {
 			msg = "Failed"
 			res.Status = fiber.StatusBadRequest
 			res.Message = msg
 			res.Record = nil
+			res.Time = tglnow.Format("YYYY-MM-DD HH:mm:ss")
 		}
 	} else {
 		res.Status = fiber.StatusOK
 		res.Message = msg
 		res.Record = nil
+		res.Time = tglnow.Format("YYYY-MM-DD HH:mm:ss")
 	}
 	return res, nil
 }
