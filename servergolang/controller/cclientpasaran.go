@@ -40,6 +40,11 @@ type ClientInvoicePasaran struct {
 	Pasaran_Code    string `json:"pasaran_code"`
 	Pasaran_Periode string `json:"pasaran_periode"`
 }
+type ClientSlipPeriode struct {
+	Client_Username string `json:"client_username"`
+	Client_Company  string `json:"client_company"`
+	Pasaran_Code    string `json:"pasaran_code"`
+}
 type ClientSaveTogel struct {
 	Client_Username string      `json:"client_username"`
 	Client_Company  string      `json:"client_company"`
@@ -280,19 +285,27 @@ func Fetch_listinvoicebet(c *fiber.Ctx) error {
 	}
 	return c.JSON(result)
 }
+func Fetch_slipperiode(c *fiber.Ctx) error {
+	client := new(ClientSlipPeriode)
+	if err := c.BodyParser(client); err != nil {
+		return err
+	}
+	result, err := model.Fetch_invoiceperiode(client.Client_Username, client.Client_Company, client.Pasaran_Code)
+	if err != nil {
+		c.Status(fiber.StatusBadRequest)
+		return c.JSON(fiber.Map{
+			"status":  fiber.StatusBadRequest,
+			"message": err.Error(),
+			"record":  nil,
+		})
+	}
+	return c.JSON(result)
+}
 func SaveTogel(c *fiber.Ctx) error {
 	client := new(ClientSaveTogel)
 	if err := c.BodyParser(client); err != nil {
 		return err
 	}
-	// json, _ := json.Marshal(client)
-	// temp, _, _, _ := jsonparser.Get(json, "list4d")
-	// jsonparser.ArrayEach(temp, func(value []byte, dataType jsonparser.ValueType, offset int, err error) {
-	// 	nomor, _, _, _ := jsonparser.Get(value, "nomor")
-	// 	permainan, _, _, _ := jsonparser.Get(value, "permainan")
-	// 	bayar, _, _, _ := jsonparser.Get(value, "bayar")
-	// 	log.Printf("%s - %s - %s\n", string(nomor), string(permainan), string(bayar))
-	// })
 
 	result, err := model.Savetransaksi(
 		client.Client_Username,

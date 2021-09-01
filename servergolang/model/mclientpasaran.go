@@ -227,6 +227,19 @@ type MListinvoicebet struct {
 type MGroupinvoicebetPermainan struct {
 	Permainan string `json:"permainan"`
 }
+type MListsipperiode struct {
+	Tanggal         string `json:"tglkeluaran"`
+	Idinvoice       string `json:"idinvoice"`
+	Periode         string `json:"periode"`
+	Totalbet        int    `json:"totalbet"`
+	Totalbayar      int    `json:"totalbayar"`
+	Totalwin        int    `json:"totalwin"`
+	Totallose       int    `json:"totallose"`
+	Status          string `json:"status"`
+	Color_lost      string `json:"color_lost"`
+	Background      string `json:"background"`
+	Color_totallose string `json:"color_totallose"`
+}
 
 func FetchAll_MclientPasaran(client_company string) (Response, error) {
 	var obj Mclientpasaran
@@ -1316,7 +1329,145 @@ func Fetch_invoicebet(client_username, client_company, pasaran_code, pasaran_per
 	res.Time = tglnow.Format("YYYY-MM-DD HH:mm:ss")
 	return res, nil
 }
+func Fetch_invoiceperiode(client_username, client_company, pasaran_code string) (Response, error) {
+	var obj MListsipperiode
+	var arraobj []MListsipperiode
+	var res Response
 
+	msg := "Error"
+	con := db.CreateCon()
+	tglnow, _ := goment.New()
+
+	sql := `SELECT 
+		idtrxkeluaran,datekeluaran,idpasarantogel,keluaranperiode,keluarantogel
+		FROM client_view_invoice 
+		WHERE idcompany = ? 
+		AND username = ?
+		AND idpasarantogel = ?
+		GROUP BY idtrxkeluaran
+		ORDER BY datetimedetail DESC
+	`
+	row, err := con.Query(sql, client_company, client_username, pasaran_code)
+	defer row.Close()
+
+	if err != nil {
+		ErrorCheck(err)
+	}
+	no := 0
+	for row.Next() {
+		no = no + 1
+		var (
+			idtrxkeluaran_DB, datekeluaran_DB, idpasarantogel_DB, keluaranperiode_DB, keluarantogel_DB string
+		)
+		err = row.Scan(
+			&idtrxkeluaran_DB, &datekeluaran_DB, &idpasarantogel_DB, &keluaranperiode_DB,
+			&keluarantogel_DB)
+
+		if err != nil {
+			ErrorCheck(err)
+		}
+		var idtrxkeluaran string = idtrxkeluaran_DB
+		var datekeluaran string = datekeluaran_DB
+		var keluarantogel string = keluarantogel_DB
+		var periode string = idpasarantogel_DB + "-" + keluaranperiode_DB
+		var status string = ""
+		var background string = ""
+		var totalbet int = 0
+		var totalbayar int = 0
+		var totalwin int = 0
+		var totallose int = 0
+
+		if keluarantogel != "" {
+			status = "APPROVED"
+		} else {
+			status = "RUNNING"
+		}
+		switch status {
+		case "RUNNING":
+			background = "background:#FFEB3B;font-size:12px;font-weight:bold;color:black;"
+		case "APPROVED":
+			background = "background:#1ba573;color:black;font-weight:bold;font-size:12px;"
+		}
+		if status == "APPROVED" {
+			status = "COMPLETED"
+		}
+
+		sqldetailbet := `SELECT 
+			statuskeluarandetail, typegame, 
+			bet, diskon, kei, win 
+			FROM tbl_trx_keluarantogel_detail 
+			WHERE idcompany = ? 
+			AND username = ? 
+			AND idtrxkeluaran = ? 
+		`
+
+		rowdetailbet, err := con.Query(sqldetailbet, client_company, client_username, idtrxkeluaran)
+		defer rowdetailbet.Close()
+
+		if err != nil {
+			ErrorCheck(err)
+		}
+		for rowdetailbet.Next() {
+			totalbet = totalbet + 1
+
+			var (
+				statuskeluarandetail_DB, typegame_DB string
+				bet_DB, diskon_DB, kei_DB, win_DB    float32
+			)
+			err = rowdetailbet.Scan(
+				&statuskeluarandetail_DB, &typegame_DB,
+				&bet_DB, &diskon_DB, &kei_DB, &win_DB)
+
+			if err != nil {
+				ErrorCheck(err)
+			}
+			var statuskeluarandetail string = statuskeluarandetail_DB
+			var typegame string = typegame_DB
+			var bet int = int(bet_DB)
+			var diskon float32 = diskon_DB
+			var kei float32 = kei_DB
+			var win float32 = win_DB
+			var bayar int = 0
+			var bayarwin int = 0
+			var winhasil int = 0
+			if typegame == "50_50_UMUM" || typegame == "50_50_SPECIAL" || typegame == "50_50_KOMBINASI" || typegame == "DASAR" || typegame == "COLOK_BEBAS" || typegame == "COLOK_NAGA" || typegame == "COLOK_MACAU" || typegame == "COLOK_JITU" {
+				bayar = bet - int(float32(bet)*diskon) - int(float32(bet)*kei)
+				if statuskeluarandetail == "WINNER" {
+					bayarwin = bet - int(float32(bet)*diskon) - int(float32(bet)*kei)
+					winhasil = bayarwin + int(float32(bet)*win)
+					totalwin = totalwin + winhasil
+				}
+			} else {
+				bayar = bet - int(float32(bet)*diskon) - int(float32(bet)*kei)
+				if statuskeluarandetail == "WINNER" {
+					winhasil = int(float32(bet) * win)
+					totalwin = totalwin + winhasil
+				}
+			}
+			totalbayar = totalbayar + bayar
+			totallose = totalwin - totalbayar
+		}
+
+		obj.Idinvoice = idtrxkeluaran
+		obj.Tanggal = datekeluaran
+		obj.Periode = periode
+		obj.Totalbet = totalbet
+		obj.Totalbayar = totalbayar
+		obj.Totalwin = totalwin
+		obj.Totallose = totallose
+		obj.Status = status
+		obj.Background = background
+
+		arraobj = append(arraobj, obj)
+		msg = "Success"
+	}
+	res.Status = fiber.StatusOK
+	res.Message = msg
+	res.Totalrecord = len(arraobj)
+	res.Record = arraobj
+	res.Time = tglnow.Format("YYYY-MM-DD HH:mm:ss")
+	return res, nil
+}
 func Savetransaksi(client_username, client_company, idtrxkeluaran, idcomppasaran, devicemember, formipaddress, timezone, totalbayarbet string, list4d interface{}) (Response, error) {
 	var res Response
 	con := db.CreateCon()
@@ -1636,6 +1787,7 @@ func Savetransaksi(client_username, client_company, idtrxkeluaran, idcomppasaran
 	}
 	return res, nil
 }
+
 func ErrorCheck(err error) {
 	if err != nil {
 		panic(err.Error())
