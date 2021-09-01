@@ -567,11 +567,10 @@ func FetchAll_MinitPasaran(client_company, pasaran_code, permainan string) (Resp
 			1_minbet as min_bet, 
 			1_maxbet4d as max4d_bet, 1_maxbet3d as max3d_bet, 
 			1_maxbet2d as max2d_bet, 1_maxbet2dd as max2dd_bet, 1_maxbet2dt as max2dt_bet, 
+			1_disc4d as disc4d_bet, 1_disc3d as disc3d_bet, 1_disc2d as disc2d_bet, 
+			1_disc2dd as disc2dd_bet, 1_disc2dt as disc2dt_bet, 
 			1_win4d as win4d_bet, 1_win3d as win3d_bet, 1_win2d as win2d_bet, 
 			1_win2dd as win2dd_bet, 1_win2dt as win2dt_bet, 
-			1_disc4d as disc4d_bet, 1_disc3d as disc3d_bet, 
-			1_disc2d as disc2d_bet, 
-			1_disc2dd as disc2dd_bet, 1_disc2dt as disc2dt_bet, 
 			1_limittotal4d as limittotal4d_bet, 1_limittotal3d as limittotal3d_bet, 
 			1_limittotal2d as limittotal2d_bet, 1_limittotal2dd as limittotal2dd_bet, 
 			1_limittotal2dt as limittotal2dt_bet, 
@@ -1468,14 +1467,14 @@ func Fetch_invoiceperiode(client_username, client_company, pasaran_code string) 
 	res.Time = tglnow.Format("YYYY-MM-DD HH:mm:ss")
 	return res, nil
 }
-func Savetransaksi(client_username, client_company, idtrxkeluaran, idcomppasaran, devicemember, formipaddress, timezone, totalbayarbet string, list4d interface{}) (Response, error) {
+func Savetransaksi(client_username, client_company, idtrxkeluaran, idcomppasaran, devicemember, formipaddress, timezone string, totalbayarbet int, list4d interface{}) (Response, error) {
 	var res Response
 	con := db.CreateCon()
 	tglnow, _ := goment.New()
 	flag_loop := false
 	flag_next := false
 	msg := ""
-	totalbelanja, _ := strconv.Atoi(totalbayarbet)
+	totalbelanja := totalbayarbet
 	dompet := 5000000
 	jamtutup_pasaran := ""
 	jamopen_pasaran := ""
@@ -1514,7 +1513,7 @@ func Savetransaksi(client_username, client_company, idtrxkeluaran, idcomppasaran
 	defer row.Close()
 
 	if err != nil {
-		return res, err
+		ErrorCheck(err)
 	}
 	nolimit := 0
 	for row.Next() {
@@ -1534,7 +1533,7 @@ func Savetransaksi(client_username, client_company, idtrxkeluaran, idcomppasaran
 			&limit_togel_dasar_db, &limit_togel_shio_db)
 
 		if err != nil {
-			return res, err
+			ErrorCheck(err)
 		}
 		jamtutup_pasaran = jamtutup
 		jamopen_pasaran = jamopen

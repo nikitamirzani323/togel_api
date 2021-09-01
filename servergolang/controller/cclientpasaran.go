@@ -53,7 +53,7 @@ type ClientSaveTogel struct {
 	Devicemember    string      `json:"devicemember"`
 	Formipaddress   string      `json:"formipaddress"`
 	Timezone        string      `json:"timezone"`
-	Totalbayarbet   string      `json:"totalbayarbet"`
+	Totalbayarbet   int         `json:"totalbayarbet"`
 	List4d          interface{} `json:"list4d"`
 }
 type parsingjson struct {

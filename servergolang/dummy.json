@@ -1,0 +1,17 @@
+{
+    "client_username":"developer",
+    "client_company":"MMD",
+    "idtrxkeluaran":"2121123",
+    "idcomppasaran":"198",
+    "devicemember":"WEBSITE",
+    "formipaddress":"180.252.167.177",
+    "timezone":"Asia/Jakarta",
+    "totalbayarbet":165,
+    "list4d": [
+        {"id": "1", "nomor": "1235", "permainan": "4D", "bet": "500", "diskon": "335", "diskonpercen": "0.67", "bayar": "165", "kei":"0" ,"kei_percen":"0","win":"3000"},
+        {"id": "1", "nomor": "1236", "permainan": "4D", "bet": "500", "diskon": "335", "diskonpercen": "0.67", "bayar": "165", "kei":"0" ,"kei_percen":"0","win":"3000"},
+        {"id": "1", "nomor": "1237", "permainan": "4D", "bet": "500", "diskon": "335", "diskonpercen": "0.67", "bayar": "165", "kei":"0" ,"kei_percen":"0","win":"3000"},
+        {"id": "1", "nomor": "1238", "permainan": "4D", "bet": "500", "diskon": "335", "diskonpercen": "0.67", "bayar": "165", "kei":"0" ,"kei_percen":"0","win":"3000"},
+        {"id": "1", "nomor": "1239", "permainan": "4D", "bet": "500", "diskon": "335", "diskonpercen": "0.67", "bayar": "165", "kei":"0" ,"kei_percen":"0","win":"3000"}
+    ]
+}
