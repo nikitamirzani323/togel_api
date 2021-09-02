@@ -5,8 +5,6 @@ import (
 	"log"
 	"strconv"
 
-	"encoding/json"
-
 	"github.com/buger/jsonparser"
 	"github.com/gofiber/fiber/v2"
 	"github.com/nikitamirzani323/gofiberapi/db"
@@ -239,6 +237,37 @@ type MListsipperiode struct {
 	Color_lost      string `json:"color_lost"`
 	Background      string `json:"background"`
 	Color_totallose string `json:"color_totallose"`
+}
+type MListsipperiodedetail struct {
+	Total4d_bayar             int `json:"total4d_bayar"`
+	Total3d_bayar             int `json:"total3d_bayar"`
+	Total2d_bayar             int `json:"total2d_bayar"`
+	Totalcolokbebas_bayar     int `json:"totalcolokbebas_bayar"`
+	Totalcolokmacau_bayar     int `json:"totalcolokmacau_bayar"`
+	Totalcoloknaga_bayar      int `json:"totalcoloknaga_bayar"`
+	Totalcolokjitu_bayar      int `json:"totalcolokjitu_bayar"`
+	Total5050umum_bayar       int `json:"total5050umum_bayar"`
+	Total5050special_bayar    int `json:"total5050special_bayar"`
+	Total5050kombinasi_bayar  int `json:"total5050kombinasi_bayar"`
+	Totalmacaukombinasi_bayar int `json:"totalmacaukombinasi_bayar"`
+	Totaldasar_bayar          int `json:"totaldasar_bayar"`
+	Totalshio_bayar           int `json:"totalshio_bayar"`
+	Totalwin_4d               int `json:"totalwin_4d"`
+	Totalwin_3d               int `json:"totalwin_3d"`
+	Totalwin_2d               int `json:"totalwin_2d"`
+	Totalwin_colokbebas       int `json:"totalwin_colokbebas"`
+	Totalwin_colokmacau       int `json:"totalwin_colokmacau"`
+	Totalwin_coloknaga        int `json:"totalwin_coloknaga"`
+	Totalwin_colokjitu        int `json:"totalwin_colokjitu"`
+	Totalwin_5050umum         int `json:"totalwin_5050umum"`
+	Totalwin_5050special      int `json:"totalwin_5050special"`
+	Totalwin_5050kombinasi    int `json:"totalwin_5050kombinasi"`
+	Totalwin_macaukombinasi   int `json:"totalwin_macaukombinasi"`
+	Totalwin_dasar            int `json:"totalwin_dasar"`
+	Totalwin_shio             int `json:"totalwin_shio"`
+	Subtotal_bayar            int `json:"subtotal_bayar"`
+	Subtotal_winner           int `json:"subtotal_winner"`
+	Total_winlose             int `json:"total_winlose"`
 }
 
 func FetchAll_MclientPasaran(client_company string) (Response, error) {
@@ -1253,7 +1282,9 @@ func Fetch_invoicebet(client_username, client_company, pasaran_code, pasaran_per
 	if err != nil {
 		return res, err
 	}
+	nobet := 0
 	for row.Next() {
+		nobet = nobet + 1
 		var (
 			datetimedetail, username, typegame, nomortogel, idpasarantogel string
 			bet, diskon, win, kei                                          float32
@@ -1467,7 +1498,247 @@ func Fetch_invoiceperiode(client_username, client_company, pasaran_code string) 
 	res.Time = tglnow.Format("YYYY-MM-DD HH:mm:ss")
 	return res, nil
 }
-func Savetransaksi(client_username, client_company, idtrxkeluaran, idcomppasaran, devicemember, formipaddress, timezone string, totalbayarbet int, list4d interface{}) (Response, error) {
+func Fetch_invoiceperiodedetail(client_username, client_company, idtrxkeluaran string) (Response, error) {
+	var obj MListsipperiodedetail
+	var res Response
+
+	msg := "Error"
+	con := db.CreateCon()
+	tglnow, _ := goment.New()
+
+	sql := `SELECT 
+		statuskeluarandetail, typegame, 
+		bet, diskon, kei, win 
+		FROM tbl_trx_keluarantogel_detail   
+		WHERE idcompany = ? 
+		AND username = ?
+		AND idtrxkeluaran = ?
+	`
+	row, err := con.Query(sql, client_company, client_username, idtrxkeluaran)
+	defer row.Close()
+
+	if err != nil {
+		ErrorCheck(err)
+	}
+	bayar_4d := 0
+	bayar_3d := 0
+	bayar_2d := 0
+	bayar_colokbebas := 0
+	bayar_colokmacau := 0
+	bayar_coloknaga := 0
+	bayar_colokjitu := 0
+	bayar_5050umum := 0
+	bayar_5050special := 0
+	bayar_5050kombinasi := 0
+	bayar_macaukombinasi := 0
+	bayar_dasar := 0
+	bayar_shio := 0
+	total4d_bayar := 0
+	total3d_bayar := 0
+	total2d_bayar := 0
+	totalcolokbebas_bayar := 0
+	totalcolokmacau_bayar := 0
+	totalcoloknaga_bayar := 0
+	totalcolokjitu_bayar := 0
+	total5050umum_bayar := 0
+	total5050special_bayar := 0
+	total5050kombinasi_bayar := 0
+	totalmacaukombinasi_bayar := 0
+	totaldasar_bayar := 0
+	totalshio_bayar := 0
+	totalwin_4d := 0
+	totalwin_3d := 0
+	totalwin_2d := 0
+	totalwin_colokbebas := 0
+	totalwin_colokmacau := 0
+	totalwin_coloknaga := 0
+	totalwin_colokjitu := 0
+	totalwin_5050umum := 0
+	totalwin_5050special := 0
+	totalwin_5050kombinasi := 0
+	totalwin_macaukombinasi := 0
+	totalwin_dasar := 0
+	totalwin_shio := 0
+	subtotal_bayar := 0
+	subtotal_winner := 0
+	total_winlose := 0
+	for row.Next() {
+		var (
+			statuskeluarandetail_DB, typegame_DB string
+			bet_DB, diskon_DB, kei_DB, win_DB    float32
+		)
+		err = row.Scan(
+			&statuskeluarandetail_DB, &typegame_DB, &bet_DB, &diskon_DB,
+			&kei_DB, &win_DB)
+
+		if err != nil {
+			ErrorCheck(err)
+		}
+		var statuskeluarandetail string = statuskeluarandetail_DB
+		var typegame string = typegame_DB
+		var bet int = int(bet_DB)
+		var diskon float32 = diskon_DB
+		var kei float32 = kei_DB
+		var win float32 = win_DB
+		var winhasil int = 0
+		if typegame == "4D" {
+			bayar_4d = bet - int(float32(bet)*diskon)
+			total4d_bayar = total4d_bayar + bayar_4d
+			if statuskeluarandetail == "WINNER" {
+				winhasil = int(float32(bet) * win)
+				totalwin_4d = totalwin_4d + winhasil
+			}
+		}
+		if typegame == "3D" {
+			bayar_3d = bet - int(float32(bet)*diskon)
+			total3d_bayar = total3d_bayar + bayar_3d
+			if statuskeluarandetail == "WINNER" {
+				winhasil = int(float32(bet) * win)
+				totalwin_3d = totalwin_3d + winhasil
+			}
+		}
+		if typegame == "2D" || typegame == "2DD" || typegame == "2DT" {
+			bayar_2d = bet - int(float32(bet)*diskon)
+			total2d_bayar = total2d_bayar + bayar_2d
+			if statuskeluarandetail == "WINNER" {
+				winhasil = int(float32(bet) * win)
+				totalwin_2d = totalwin_2d + winhasil
+			}
+		}
+		if typegame == "COLOK_BEBAS" {
+			bayar_colokbebas = bet - int(float32(bet)*diskon)
+			totalcolokbebas_bayar = totalcolokbebas_bayar + bayar_colokbebas
+			if statuskeluarandetail == "WINNER" {
+				bayar_colokbebas_win := bet - int(float32(bet)*diskon) - int(float32(bet)*kei)
+				winhasil = bayar_colokbebas_win + int(float32(bet)*win)
+				totalwin_colokbebas = totalwin_colokbebas + winhasil
+			}
+		}
+		if typegame == "COLOK_MACAU" {
+			bayar_colokmacau = bet - int(float32(bet)*diskon)
+			totalcolokmacau_bayar = totalcolokmacau_bayar + bayar_colokmacau
+			if statuskeluarandetail == "WINNER" {
+				bayar_colokmacau_win := bet - int(float32(bet)*diskon) - int(float32(bet)*kei)
+				winhasil = bayar_colokmacau_win + int(float32(bet)*win)
+				totalwin_colokmacau = totalwin_colokmacau + winhasil
+			}
+		}
+		if typegame == "COLOK_NAGA" {
+			bayar_coloknaga = bet - int(float32(bet)*diskon)
+			totalcoloknaga_bayar = totalcoloknaga_bayar + bayar_coloknaga
+			if statuskeluarandetail == "WINNER" {
+				bayar_coloknaga_win := bet - int(float32(bet)*diskon) - int(float32(bet)*kei)
+				winhasil = bayar_coloknaga_win + int(float32(bet)*win)
+				totalwin_coloknaga = totalwin_coloknaga + winhasil
+			}
+		}
+		if typegame == "COLOK_JITU" {
+			bayar_colokjitu = bet - int(float32(bet)*diskon)
+			totalcolokjitu_bayar = totalcolokjitu_bayar + bayar_colokjitu
+			if statuskeluarandetail == "WINNER" {
+				bayar_colokjitu_win := bet - int(float32(bet)*diskon) - int(float32(bet)*kei)
+				winhasil = bayar_colokjitu_win + int(float32(bet)*win)
+				totalwin_colokjitu = totalwin_colokjitu + winhasil
+			}
+		}
+		if typegame == "50_50_UMUM" {
+			bayar_5050umum = bet - int(float32(bet)*diskon) - int(float32(bet)*kei)
+			total5050umum_bayar = total5050umum_bayar + bayar_5050umum
+			if statuskeluarandetail == "WINNER" {
+				bayar_5050umum_win := bet - int(float32(bet)*diskon) - int(float32(bet)*kei)
+				winhasil = bayar_5050umum_win + int(float32(bet)*win)
+				totalwin_5050umum = totalwin_5050umum + winhasil
+			}
+		}
+		if typegame == "50_50_SPECIAL" {
+			bayar_5050special = bet - int(float32(bet)*diskon) - int(float32(bet)*kei)
+			total5050special_bayar = total5050special_bayar + bayar_5050special
+			if statuskeluarandetail == "WINNER" {
+				bayar_5050special_win := bet - int(float32(bet)*diskon) - int(float32(bet)*kei)
+				winhasil = bayar_5050special_win + int(float32(bet)*win)
+				totalwin_5050special = totalwin_5050special + winhasil
+			}
+		}
+		if typegame == "50_50_KOMBINASI" {
+			bayar_5050kombinasi = bet - int(float32(bet)*diskon) - int(float32(bet)*kei)
+			total5050kombinasi_bayar = total5050kombinasi_bayar + bayar_5050kombinasi
+			if statuskeluarandetail == "WINNER" {
+				bayar_5050kombinasi_win := bet - int(float32(bet)*diskon) - int(float32(bet)*kei)
+				winhasil = bayar_5050kombinasi_win + int(float32(bet)*win)
+				totalwin_5050kombinasi = totalwin_5050kombinasi + winhasil
+			}
+		}
+		if typegame == "MACAU_KOMBINASI" {
+			bayar_macaukombinasi = bet - int(float32(bet)*diskon) - int(float32(bet)*kei)
+			totalmacaukombinasi_bayar = totalmacaukombinasi_bayar + bayar_macaukombinasi
+			if statuskeluarandetail == "WINNER" {
+				bayar_macaukombinasi_win := bet - int(float32(bet)*diskon) - int(float32(bet)*kei)
+				winhasil = bayar_macaukombinasi_win + int(float32(bet)*win)
+				totalwin_macaukombinasi = totalwin_macaukombinasi + winhasil
+			}
+		}
+		if typegame == "DASAR" {
+			bayar_dasar = bet - int(float32(bet)*diskon) - int(float32(bet)*kei)
+			totaldasar_bayar = totaldasar_bayar + bayar_dasar
+			if statuskeluarandetail == "WINNER" {
+				bayar_dasar_win := bet - int(float32(bet)*diskon) - int(float32(bet)*kei)
+				winhasil = bayar_dasar_win + int(float32(bet)*win)
+				totalwin_dasar = totalwin_dasar + winhasil
+			}
+		}
+		if typegame == "SHIO" {
+			bayar_shio = bet - int(float32(bet)*diskon) - int(float32(bet)*kei)
+			totalshio_bayar = totalshio_bayar + bayar_shio
+			if statuskeluarandetail == "WINNER" {
+				bayar_shio_win := bet - int(float32(bet)*diskon) - int(float32(bet)*kei)
+				winhasil = bayar_shio_win + int(float32(bet)*win)
+				totalwin_shio = totalwin_shio + winhasil
+			}
+		}
+		msg = "Success"
+	}
+	subtotal_bayar = total4d_bayar + total3d_bayar + total2d_bayar + totalcolokbebas_bayar + totalcolokmacau_bayar + totalcoloknaga_bayar + totalcolokjitu_bayar + total5050umum_bayar + total5050special_bayar + total5050kombinasi_bayar + totalmacaukombinasi_bayar + totaldasar_bayar + totalshio_bayar
+	subtotal_winner = totalwin_4d + totalwin_3d + totalwin_2d + totalwin_colokbebas + totalwin_colokmacau + totalwin_coloknaga + totalwin_colokjitu + totalwin_5050umum + totalwin_5050special + totalwin_5050kombinasi + totalwin_macaukombinasi + totalwin_dasar + totalwin_shio
+	total_winlose = subtotal_winner - subtotal_bayar
+
+	obj.Total4d_bayar = total4d_bayar
+	obj.Total3d_bayar = total3d_bayar
+	obj.Total2d_bayar = total2d_bayar
+	obj.Totalcolokbebas_bayar = totalcolokbebas_bayar
+	obj.Totalcolokmacau_bayar = totalcolokmacau_bayar
+	obj.Totalcoloknaga_bayar = totalcoloknaga_bayar
+	obj.Totalcolokjitu_bayar = totalcolokjitu_bayar
+	obj.Total5050umum_bayar = total5050umum_bayar
+	obj.Total5050special_bayar = total5050special_bayar
+	obj.Total5050kombinasi_bayar = total5050kombinasi_bayar
+	obj.Totalmacaukombinasi_bayar = totalmacaukombinasi_bayar
+	obj.Totaldasar_bayar = totaldasar_bayar
+	obj.Totalshio_bayar = totalshio_bayar
+	obj.Totalwin_4d = totalwin_4d
+	obj.Totalwin_3d = totalwin_3d
+	obj.Totalwin_2d = totalwin_2d
+	obj.Totalwin_colokbebas = totalwin_colokbebas
+	obj.Totalwin_colokmacau = totalwin_colokmacau
+	obj.Totalwin_coloknaga = totalwin_coloknaga
+	obj.Totalwin_colokjitu = totalwin_colokjitu
+	obj.Totalwin_5050umum = totalwin_5050umum
+	obj.Totalwin_5050special = totalwin_5050special
+	obj.Totalwin_5050kombinasi = totalwin_5050kombinasi
+	obj.Totalwin_macaukombinasi = totalwin_macaukombinasi
+	obj.Totalwin_dasar = totalwin_dasar
+	obj.Totalwin_shio = totalwin_shio
+	obj.Subtotal_bayar = subtotal_bayar
+	obj.Subtotal_winner = subtotal_winner
+	obj.Total_winlose = total_winlose
+
+	res.Status = fiber.StatusOK
+	res.Message = msg
+	res.Totalrecord = 0
+	res.Record = obj
+	res.Time = tglnow.Format("YYYY-MM-DD HH:mm:ss")
+	return res, nil
+}
+func Savetransaksi(client_username, client_company, idtrxkeluaran, idcomppasaran, devicemember, formipaddress, timezone string, totalbayarbet int, list4d string) (Response, error) {
 	var res Response
 	con := db.CreateCon()
 	tglnow, _ := goment.New()
@@ -1571,7 +1842,10 @@ func Savetransaksi(client_username, client_company, idtrxkeluaran, idcomppasaran
 		var totalbayar int = 0
 		flag_save := false
 
-		json, _ := json.Marshal(list4d)
+		// json, err := json.Marshal(list4d)
+		// ErrorCheck(err)
+		json := []byte(list4d)
+		log.Println(json)
 		jsonparser.ArrayEach(json, func(value []byte, dataType jsonparser.ValueType, offset int, err error) {
 
 			nomor_DD, _, _, _ := jsonparser.Get(value, "nomor")
@@ -1779,6 +2053,7 @@ func Savetransaksi(client_username, client_company, idtrxkeluaran, idcomppasaran
 			res.Time = tglnow.Format("YYYY-MM-DD HH:mm:ss")
 		}
 	} else {
+
 		res.Status = fiber.StatusOK
 		res.Message = msg
 		res.Record = nil

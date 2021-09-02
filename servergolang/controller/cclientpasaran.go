@@ -45,16 +45,21 @@ type ClientSlipPeriode struct {
 	Client_Company  string `json:"client_company"`
 	Pasaran_Code    string `json:"pasaran_code"`
 }
+type ClientSlipPeriodeDetail struct {
+	Client_Username string `json:"client_username"`
+	Client_Company  string `json:"client_company"`
+	Idtrxkeluaran   string `json:"idtrxkeluaran"`
+}
 type ClientSaveTogel struct {
-	Client_Username string      `json:"client_username"`
-	Client_Company  string      `json:"client_company"`
-	Idtrxkeluaran   string      `json:"idtrxkeluaran"`
-	Idcomppasaran   string      `json:"idcomppasaran"`
-	Devicemember    string      `json:"devicemember"`
-	Formipaddress   string      `json:"formipaddress"`
-	Timezone        string      `json:"timezone"`
-	Totalbayarbet   int         `json:"totalbayarbet"`
-	List4d          interface{} `json:"list4d"`
+	Client_Username string `json:"client_username"`
+	Client_Company  string `json:"client_company"`
+	Idtrxkeluaran   string `json:"idtrxkeluaran"`
+	Idcomppasaran   string `json:"idcomppasaran"`
+	Devicemember    string `json:"devicemember"`
+	Formipaddress   string `json:"formipaddress"`
+	Timezone        string `json:"timezone"`
+	Totalbayarbet   int    `json:"totalbayarbet"`
+	List4d          string `json:"list4d"`
 }
 type parsingjson struct {
 	Record []ytRecord `json:"record"`
@@ -301,19 +306,36 @@ func Fetch_slipperiode(c *fiber.Ctx) error {
 	}
 	return c.JSON(result)
 }
+func Fetch_slipperiodedetail(c *fiber.Ctx) error {
+	client := new(ClientSlipPeriodeDetail)
+	if err := c.BodyParser(client); err != nil {
+		return err
+	}
+	result, err := model.Fetch_invoiceperiodedetail(client.Client_Username, client.Client_Company, client.Idtrxkeluaran)
+	if err != nil {
+		c.Status(fiber.StatusBadRequest)
+		return c.JSON(fiber.Map{
+			"status":  fiber.StatusBadRequest,
+			"message": err.Error(),
+			"record":  nil,
+		})
+	}
+	return c.JSON(result)
+}
 func SaveTogel(c *fiber.Ctx) error {
 	client := new(ClientSaveTogel)
 	if err := c.BodyParser(client); err != nil {
-		return err
+		panic(err.Error())
 	}
 
 	result, err := model.Savetransaksi(
 		client.Client_Username,
 		client.Client_Company, client.Idtrxkeluaran, client.Idcomppasaran, client.Devicemember, client.Formipaddress, client.Timezone, client.Totalbayarbet, client.List4d)
 	if err != nil {
+		// panic(err.Error())
 		c.Status(fiber.StatusBadRequest)
 		return c.JSON(fiber.Map{
-			"status":  fiber.StatusBadRequest,
+			"status":  fiber.StatusAccepted,
 			"message": err.Error(),
 			"record":  nil,
 		})
