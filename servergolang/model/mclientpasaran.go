@@ -211,16 +211,16 @@ type MpasaranLimit struct {
 	Total_2dt int `json:"total_2dt"`
 }
 type MListinvoicebet struct {
-	Tanggal   string `json:"tanggal"`
-	Permainan string `json:"permainan"`
-	Periode   string `json:"periode"`
-	Nomor     string `json:"nomor"`
-	Bet       int    `json:"bet"`
-	Diskon    int    `json:"diskon"`
-	Kei       int    `json:"kei"`
-	Bayar     int    `json:"bayar"`
-	Win       int    `json:"win"`
-	Menang    int    `json:"menang"`
+	Tanggal   string  `json:"tanggal"`
+	Permainan string  `json:"permainan"`
+	Periode   string  `json:"periode"`
+	Nomor     string  `json:"nomor"`
+	Bet       int     `json:"bet"`
+	Diskon    float32 `json:"diskon"`
+	Kei       float32 `json:"kei"`
+	Bayar     int     `json:"bayar"`
+	Win       int     `json:"win"`
+	Menang    int     `json:"menang"`
 }
 type MGroupinvoicebetPermainan struct {
 	Permainan string `json:"permainan"`
@@ -1311,8 +1311,8 @@ func Fetch_invoicebet(client_username, client_company, pasaran_code, pasaran_per
 		obj.Periode = idpasarantogel + "-" + keluaranperiode
 		obj.Nomor = nomortogel
 		obj.Bet = int(bet)
-		obj.Diskon = int(diskon2)
-		obj.Kei = int(kei2)
+		obj.Diskon = diskon2
+		obj.Kei = kei2
 		obj.Win = int(win)
 		obj.Bayar = bayar
 		obj.Menang = menang
@@ -1369,13 +1369,13 @@ func Fetch_invoiceperiode(client_username, client_company, pasaran_code string) 
 	tglnow, _ := goment.New()
 
 	sql := `SELECT 
-		idtrxkeluaran,datekeluaran,idpasarantogel,keluaranperiode,keluarantogel
+		idtrxkeluaran,datekeluaran,idpasarantogel,keluaranperiode,keluarantogel 
 		FROM client_view_invoice 
 		WHERE idcompany = ? 
-		AND username = ?
-		AND idpasarantogel = ?
-		GROUP BY idtrxkeluaran
-		ORDER BY datetimedetail DESC
+		AND username = ? 
+		AND idpasarantogel = ? 
+		GROUP BY idtrxkeluaran 
+		ORDER BY datetimedetail DESC 
 	`
 	row, err := con.Query(sql, client_company, client_username, pasaran_code)
 	defer row.Close()
