@@ -412,7 +412,7 @@ func FetchAll_MclientPasaranResult(client_company, pasaran_code string) (Respons
 		WHERE B.idcompany = ? 
 		AND B.idpasarantogel = ?
 		AND A.keluarantogel != '' 
-		ORDER BY A.datekeluaran DESC LIMIT 250
+		ORDER BY A.datekeluaran DESC LIMIT 93
 	`
 	rowresult, err := con.Query(sqlresult, client_company, pasaran_code)
 	defer rowresult.Close()
@@ -1375,7 +1375,7 @@ func Fetch_invoiceperiode(client_username, client_company, pasaran_code string) 
 		AND username = ? 
 		AND idpasarantogel = ? 
 		GROUP BY idtrxkeluaran 
-		ORDER BY datetimedetail DESC 
+		ORDER BY datetimedetail DESC LIMIT 62
 	`
 	row, err := con.Query(sql, client_company, client_username, pasaran_code)
 	defer row.Close()
