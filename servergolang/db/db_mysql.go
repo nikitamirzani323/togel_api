@@ -18,7 +18,8 @@ func Init() {
 	if err != nil {
 		panic("koneksi string serror")
 	}
-
+	db.SetMaxOpenConns(100)
+	db.SetMaxIdleConns(4)
 	err = db.Ping()
 	if err != nil {
 		panic("DNS invalid")
