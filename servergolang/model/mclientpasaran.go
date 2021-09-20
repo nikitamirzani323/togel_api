@@ -1730,7 +1730,6 @@ func Savetransaksi(client_username, client_company, idtrxkeluaran, idcomppasaran
 		AND idcomppasaran = ? 
 	`
 	row, err := con.QueryContext(ctx, sql_select, client_company, idcomppasaran)
-	defer row.Close()
 
 	helpers.ErrorCheck(err)
 	nolimit := 0
@@ -1769,6 +1768,7 @@ func Savetransaksi(client_username, client_company, idtrxkeluaran, idcomppasaran
 		limit_togeldasar = int(limit_togel_dasar_db)
 		limit_togelshio = int(limit_togel_shio_db)
 	}
+	defer row.Close()
 	if nolimit > 0 {
 		taiskrg := tglnow.Format("YYYY-MM-DD HH:mm:ss")
 		jamtutup := tglnow.Format("YYYY-MM-DD") + " " + jamtutup_pasaran
@@ -1887,17 +1887,15 @@ func Savetransaksi(client_username, client_company, idtrxkeluaran, idcomppasaran
 				msg += string(nomor_DD)
 			}
 			if !flag_save {
-				flag_counter := false
 				year := tglnow.Format("YY")
 				month := tglnow.Format("MM")
 				field_column_counter := "tbl_trx_keluarantogel_detail" + tglnow.Format("YYYY") + month
 				idrecord_counter := Get_counter(field_column_counter)
 
-				if flag_counter {
-					idrecord_counter2 := strconv.Itoa(idrecord_counter)
-					idrecord := string(year) + string(month) + idrecord_counter2
+				idrecord_counter2 := strconv.Itoa(idrecord_counter)
+				idrecord := string(year) + string(month) + idrecord_counter2
 
-					sql_insert := `
+				sql_insert := `
 						INSERT INTO ` + config.DB_tbl_trx_keluarantogel_detail + ` 
 						(
 							idtrxkeluarandetail, idtrxkeluaran, datetimedetail,
@@ -1912,46 +1910,44 @@ func Savetransaksi(client_username, client_company, idtrxkeluaran, idcomppasaran
 						)
 					`
 
-					stmt, e := con.PrepareContext(ctx, sql_insert)
-					helpers.ErrorCheck(e)
-					res, e := stmt.ExecContext(ctx,
-						idrecord,
-						idtrxkeluaran,
-						tglnow.Format("YYYY-MM-DD HH:mm:ss"),
-						formipaddress,
-						client_company,
-						client_username,
-						string(permainan),
-						string(nomor_DD),
-						string(bet_DD),
-						string(diskonpercen_DD),
-						string(win_DD),
-						string(kei_percen_DD),
-						timezone,
-						"",
-						"",
-						0,
-						"",
-						devicemember,
-						"RUNNING",
-						client_username,
-						tglnow.Format("YYYY-MM-DD HH:mm:ss"),
-						"",
-						tglnow.Format("YYYY-MM-DD HH:mm:ss"))
-					helpers.ErrorCheck(e)
+				stmt, e := con.PrepareContext(ctx, sql_insert)
+				helpers.ErrorCheck(e)
+				res, e := stmt.ExecContext(ctx,
+					idrecord,
+					idtrxkeluaran,
+					tglnow.Format("YYYY-MM-DD HH:mm:ss"),
+					formipaddress,
+					client_company,
+					client_username,
+					string(permainan),
+					string(nomor_DD),
+					string(bet_DD),
+					string(diskonpercen_DD),
+					string(win_DD),
+					string(kei_percen_DD),
+					timezone,
+					"",
+					"",
+					0,
+					"",
+					devicemember,
+					"RUNNING",
+					client_username,
+					tglnow.Format("YYYY-MM-DD HH:mm:ss"),
+					"",
+					tglnow.Format("YYYY-MM-DD HH:mm:ss"))
+				helpers.ErrorCheck(e)
 
-					id_insert, err_inser := res.RowsAffected()
-					helpers.ErrorCheck(err_inser)
-					if id_insert > 0 {
-						msg = "Success"
-						flag_next = true
-						log.Println("Data berhasil di simpan dengan idrecord : ", idrecord)
-					} else {
-						msg = "Failed"
-						flag_next = false
-						log.Println("Data gagal di simpan")
-					}
-
+				id_insert, err_inser := res.RowsAffected()
+				helpers.ErrorCheck(err_inser)
+				if id_insert > 0 {
+					msg = "Success"
+					flag_next = true
+					log.Println("Data berhasil di simpan dengan idrecord : ", idrecord)
+				} else {
+					msg = "Failed"
+					flag_next = false
+					log.Println("Data gagal di simpan")
 				}
 
 			}
