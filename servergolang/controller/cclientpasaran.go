@@ -83,12 +83,29 @@ func Fetch_token(c *fiber.Ctx) error {
 			"record":  nil,
 		})
 	}
+	member_username := ""
+	member_company := ""
+	member_saldo := 0
+	switch client.Token {
+	case "qC5YmBvXzabGp34jJlKvnC6wCrr3pLCwBzsLoSzl4k=":
+		member_username = "developer"
+		member_company = "MMD"
+		member_saldo = 5000000
+	case "1234567890":
+		member_username = "developerisb"
+		member_company = "ISB"
+		member_saldo = 1000000
+	case "0987654321`":
+		member_username = "developernuke"
+		member_company = "NUKE"
+		member_saldo = 2000000
+	}
 	return c.JSON(fiber.Map{
 		"status":          fiber.StatusOK,
 		"token":           client.Token,
-		"member_username": "developer",
-		"member_company":  "MMD",
-		"member_credit":   5000000,
+		"member_username": member_username,
+		"member_company":  member_company,
+		"member_credit":   member_saldo,
 	})
 }
 func FetchAll_pasaran(c *fiber.Ctx) error {
