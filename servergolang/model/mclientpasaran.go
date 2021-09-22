@@ -1465,6 +1465,7 @@ func Fetch_invoiceperiodedetail(client_username, client_company, idtrxkeluaran s
 		AND username = ?
 		AND idtrxkeluaran = ?
 	`
+
 	row, err := con.QueryContext(ctx, sql, client_company, client_username, idtrxkeluaran)
 	defer row.Close()
 
@@ -1919,7 +1920,7 @@ func Savetransaksi(client_username, client_company, idtrxkeluaran, idcomppasaran
 					formipaddress,
 					client_company,
 					client_username,
-					string(permainan),
+					string(permainan_DD),
 					string(nomor_DD),
 					string(bet_DD),
 					string(diskonpercen_DD),
