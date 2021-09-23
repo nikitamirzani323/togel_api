@@ -464,18 +464,18 @@ func CheckPasaran(client_company, pasaran_code string) (helpers.Response, error)
 	intVar, _ := strconv.ParseInt(daynow, 0, 8)
 	daynowhari := myDays[intVar]
 
-	tbl_trx_keluaran, _, view_client := Get_mappingdatabase(client_company)
+	tbl_trx_keluaran, _, _ := Get_mappingdatabase(client_company)
 
 	sqlpasaran := `SELECT 
 		idcomppasaran, nmpasarantogel, 
 		jamtutup, jamopen  
-		FROM ` + view_client + `  
+		FROM ` + config.DB_VIEW_CLIENT_VIEW_PASARAN + `  
 		WHERE idcompany = ? 
-		AND idpasarantogel = ?
+		AND idpasarantogel = ? 
 	`
+
 	rowpasaran, err := con.QueryContext(ctx, sqlpasaran, client_company, pasaran_code)
 	defer rowpasaran.Close()
-
 	helpers.ErrorCheck(err)
 	for rowpasaran.Next() {
 		var (
