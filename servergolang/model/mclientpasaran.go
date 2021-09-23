@@ -290,13 +290,7 @@ func FetchAll_MclientPasaran(client_company string) (helpers.Response, error) {
 	intVar, _ := strconv.ParseInt(daynow, 0, 8)
 	daynowhari := myDays[intVar]
 
-	tbl_trx_keluaran := ""
-	switch client_company {
-	case "MMD":
-		tbl_trx_keluaran = config.DB_tbl_trx_keluarantogel
-	case "ISB":
-		tbl_trx_keluaran = config.DB_tbl_trx_keluarantogel_isb
-	}
+	tbl_trx_keluaran, _, _ := Get_mappingdatabase(client_company)
 
 	sqlpasaran := `SELECT 
 		idcomppasaran, idpasarantogel, nmpasarantogel, jamtutup, jamjadwal, jamopen 
@@ -406,13 +400,7 @@ func FetchAll_MclientPasaranResult(client_company, pasaran_code string) (helpers
 	render_page := time.Now()
 	con := db.CreateCon()
 	ctx := context.Background()
-	tbl_trx_keluaran := ""
-	switch client_company {
-	case "MMD":
-		tbl_trx_keluaran = config.DB_tbl_trx_keluarantogel
-	case "ISB":
-		tbl_trx_keluaran = config.DB_tbl_trx_keluarantogel_isb
-	}
+	tbl_trx_keluaran, _, _ := Get_mappingdatabase(client_company)
 	sqlresult := `SELECT 
 		A.keluaranperiode, A.datekeluaran, A.keluarantogel, B.idpasarantogel 
 		FROM ` + tbl_trx_keluaran + ` as A 
@@ -476,18 +464,12 @@ func CheckPasaran(client_company, pasaran_code string) (helpers.Response, error)
 	intVar, _ := strconv.ParseInt(daynow, 0, 8)
 	daynowhari := myDays[intVar]
 
-	tbl_trx_keluaran := ""
-	switch client_company {
-	case "MMD":
-		tbl_trx_keluaran = config.DB_tbl_trx_keluarantogel
-	case "ISB":
-		tbl_trx_keluaran = config.DB_tbl_trx_keluarantogel_isb
-	}
+	tbl_trx_keluaran, _, view_client := Get_mappingdatabase(client_company)
 
 	sqlpasaran := `SELECT 
 		idcomppasaran, nmpasarantogel, 
 		jamtutup, jamopen  
-		FROM ` + config.DB_VIEW_CLIENT_VIEW_PASARAN + `  
+		FROM ` + view_client + `  
 		WHERE idcompany = ? 
 		AND idpasarantogel = ?
 	`
@@ -1175,16 +1157,12 @@ func Fetch_LimitTransaksiPasaran432(client_username, client_company, pasaran_cod
 	total2d := 0
 	total2dd := 0
 	total2dt := 0
-	view_client_invoice := ""
-	switch client_company {
-	case "MMD":
-		view_client_invoice = config.DB_VIEW_CLIENT_VIEW_INVOICE_MMD
-	case "ISB":
-		view_client_invoice = config.DB_VIEW_CLIENT_VIEW_INVOICE_ISB
-	}
+
+	_, _, view_client := Get_mappingdatabase(client_company)
+
 	sql := `SELECT 
 		typegame  
-		FROM ` + view_client_invoice + `  
+		FROM ` + view_client + `  
 		WHERE idcompany = ? 
 		AND username = ?
 		AND keluaranperiode = ?
@@ -1241,13 +1219,8 @@ func Fetch_invoicebet(client_username, client_company, pasaran_code, pasaran_per
 	ctx := context.Background()
 	con := db.CreateCon()
 	render_page := time.Now()
-	view_client_invoice := ""
-	switch client_company {
-	case "MMD":
-		view_client_invoice = config.DB_VIEW_CLIENT_VIEW_INVOICE_MMD
-	case "ISB":
-		view_client_invoice = config.DB_VIEW_CLIENT_VIEW_INVOICE_ISB
-	}
+	_, _, view_client_invoice := Get_mappingdatabase(client_company)
+
 	sql := `SELECT 
 		datetimedetail, username, typegame, nomortogel, idpasarantogel, bet, 
 		diskon, win, kei, statuskeluarandetail, keluaranperiode
@@ -1344,17 +1317,8 @@ func Fetch_invoiceperiode(client_username, client_company, pasaran_code string) 
 	con := db.CreateCon()
 	ctx := context.Background()
 	render_page := time.Now()
+	_, trx_keluarantogel_detail, view_client_invoice := Get_mappingdatabase(client_company)
 
-	trx_keluarantogel_detail := ""
-	view_client_invoice := ""
-	switch client_company {
-	case "MMD":
-		trx_keluarantogel_detail = config.DB_tbl_trx_keluarantogel_detail
-		view_client_invoice = config.DB_VIEW_CLIENT_VIEW_INVOICE_MMD
-	case "ISB":
-		trx_keluarantogel_detail = config.DB_tbl_trx_keluarantogel_detail_isb
-		view_client_invoice = config.DB_VIEW_CLIENT_VIEW_INVOICE_ISB
-	}
 	sql := `SELECT 
 		idtrxkeluaran,datekeluaran,idpasarantogel,keluaranperiode,keluarantogel 
 		FROM ` + view_client_invoice + `  
@@ -1485,14 +1449,7 @@ func Fetch_invoiceperiodedetail(client_username, client_company, idtrxkeluaran s
 	con := db.CreateCon()
 	ctx := context.Background()
 	render_page := time.Now()
-
-	trx_keluarantogel_detail := ""
-	switch client_company {
-	case "MMD":
-		trx_keluarantogel_detail = config.DB_tbl_trx_keluarantogel_detail
-	case "ISB":
-		trx_keluarantogel_detail = config.DB_tbl_trx_keluarantogel_detail_isb
-	}
+	_, trx_keluarantogel_detail, _ := Get_mappingdatabase(client_company)
 
 	sql := `SELECT 
 		statuskeluarandetail, typegame, 
@@ -1756,16 +1713,8 @@ func Savetransaksi(client_username, client_company, idtrxkeluaran, idcomppasaran
 		msg = "Balance Anda Tidak Cukup"
 		flag_loop = true
 	}
-	trx_keluarantogel_detail := ""
-	view_client_invoice := ""
-	switch client_company {
-	case "MMD":
-		trx_keluarantogel_detail = config.DB_tbl_trx_keluarantogel_detail
-		view_client_invoice = config.DB_VIEW_CLIENT_VIEW_INVOICE_MMD
-	case "ISB":
-		trx_keluarantogel_detail = config.DB_tbl_trx_keluarantogel_detail_isb
-		view_client_invoice = config.DB_VIEW_CLIENT_VIEW_INVOICE_ISB
-	}
+	_, trx_keluarantogel_detail, view_client_invoice := Get_mappingdatabase(client_company)
+
 	sql_select := `SELECT 
 		jamtutup, jamopen, 
 		limit_togel_4d, limit_togel_3d, limit_togel_2d, limit_togel_2dd, limit_togel_2dt, 

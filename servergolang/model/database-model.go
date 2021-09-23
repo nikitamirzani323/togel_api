@@ -53,3 +53,19 @@ func Get_counter(field_column string) int {
 	}
 	return idrecord_counter
 }
+func Get_mappingdatabase(company string) (string, string, string) {
+	tbl_trx_keluarantogel := ""
+	tbl_trx_keluarantogel_detail := ""
+	view_client := ""
+	switch company {
+	case "MMD":
+		tbl_trx_keluarantogel = config.DB_tbl_trx_keluarantogel
+		tbl_trx_keluarantogel_detail = config.DB_tbl_trx_keluarantogel_detail
+		view_client = config.DB_VIEW_CLIENT_VIEW_INVOICE_MMD
+	case "ISB":
+		tbl_trx_keluarantogel = config.DB_tbl_trx_keluarantogel_isb
+		tbl_trx_keluarantogel_detail = config.DB_tbl_trx_keluarantogel_detail_isb
+		view_client = config.DB_VIEW_CLIENT_VIEW_INVOICE_ISB
+	}
+	return tbl_trx_keluarantogel, tbl_trx_keluarantogel_detail, view_client
+}
