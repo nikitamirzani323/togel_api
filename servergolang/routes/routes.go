@@ -4,6 +4,7 @@ import (
 	"time"
 
 	"github.com/gofiber/fiber/v2"
+	"github.com/gofiber/fiber/v2/middleware/compress"
 	"github.com/gofiber/fiber/v2/middleware/logger"
 	"github.com/gofiber/fiber/v2/middleware/recover"
 	"github.com/nikitamirzani323/gofiberapi/controller"
@@ -17,6 +18,7 @@ func Init() *fiber.App {
 	})
 	app.Use(logger.New())
 	app.Use(recover.New())
+	app.Use(compress.New())
 
 	app.Get("/", func(c *fiber.Ctx) error {
 		return c.JSON(fiber.Map{
