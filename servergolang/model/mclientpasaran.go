@@ -1788,7 +1788,6 @@ func Savetransaksi(client_username, client_company, idtrxkeluaran, idcomppasaran
 		json := []byte(list4d)
 		log.Println(json)
 		jsonparser.ArrayEach(json, func(value []byte, dataType jsonparser.ValueType, offset int, err error) {
-
 			nomor_DD, _, _, _ := jsonparser.Get(value, "nomor")
 			permainan_DD, _, _, _ := jsonparser.Get(value, "permainan")
 			bet_DD, _, _, _ := jsonparser.Get(value, "bet")
