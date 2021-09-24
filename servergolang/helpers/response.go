@@ -1,5 +1,7 @@
 package helpers
 
+import "log"
+
 type Response struct {
 	Status      int         `json:"status"`
 	Message     string      `json:"message"`
@@ -23,6 +25,6 @@ type ErrorResponse struct {
 
 func ErrorCheck(err error) {
 	if err != nil {
-		panic(err.Error())
+		log.Panic(err.Error())
 	}
 }

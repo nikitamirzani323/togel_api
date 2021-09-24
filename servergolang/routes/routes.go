@@ -1,18 +1,22 @@
 package routes
 
 import (
+	"time"
+
 	"github.com/gofiber/fiber/v2"
 	"github.com/gofiber/fiber/v2/middleware/logger"
-	"github.com/gofiber/fiber/v2/middleware/pprof"
 	"github.com/gofiber/fiber/v2/middleware/recover"
 	"github.com/nikitamirzani323/gofiberapi/controller"
 )
 
+const idleTimeout = 5 * time.Second
+
 func Init() *fiber.App {
-	app := fiber.New()
+	app := fiber.New(fiber.Config{
+		IdleTimeout: idleTimeout,
+	})
 	app.Use(logger.New())
 	app.Use(recover.New())
-	app.Use(pprof.New())
 
 	app.Get("/", func(c *fiber.Ctx) error {
 		return c.JSON(fiber.Map{
