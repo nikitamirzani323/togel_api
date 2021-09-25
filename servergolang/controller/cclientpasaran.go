@@ -4,6 +4,7 @@ import (
 	"context"
 	"encoding/json"
 	"log"
+	"time"
 
 	"github.com/buger/jsonparser"
 	"github.com/go-redis/redis/v8"
@@ -91,6 +92,14 @@ func Fetch_token(c *fiber.Ctx) error {
 		member_username = "developer"
 		member_company = "MMD"
 		member_saldo = 5000000
+	case "qwertyuiop":
+		member_username = "Jhon Wick"
+		member_company = "MMD"
+		member_saldo = 1000000
+	case "asdfghjkl":
+		member_username = "Edo Febrian"
+		member_company = "MMD"
+		member_saldo = 200000
 	case "1234567890":
 		member_username = "developerisb"
 		member_company = "ISB"
@@ -177,9 +186,17 @@ func AdminDell_pasaran(c *fiber.Ctx) error {
 		"message": "Delete Success",
 	})
 }
+
+type responseredis struct {
+	No      int    `json:"no"`
+	Date    string `json:"date"`
+	Periode string `json:"periode"`
+	Result  string `json:"result"`
+}
+
 func FetchAll_result(c *fiber.Ctx) error {
 	client := new(ClientResult)
-
+	render_page := time.Now()
 	if err := c.BodyParser(client); err != nil {
 		return err
 	}
@@ -190,7 +207,28 @@ func FetchAll_result(c *fiber.Ctx) error {
 		Password: conf.DB_PASSWORD,
 		DB:       conf.DB_NAME,
 	})
+	var obj responseredis
+	var arraobj []responseredis
 	resultredis, err := rdb.Get(ctx, "listresult_"+client.Client_Company+"_"+client.Pasaran_Code).Result()
+
+	jsonredis := []byte(resultredis)
+	record_RD, _, _, _ := jsonparser.Get(jsonredis, "record")
+
+	jsonparser.ArrayEach(record_RD, func(value []byte, dataType jsonparser.ValueType, offset int, err error) {
+
+		no_RD, _ := jsonparser.GetInt(value, "no")
+		date_RD, _ := jsonparser.GetString(value, "date")
+		periode_RD, _ := jsonparser.GetString(value, "periode")
+		result_RD, _ := jsonparser.GetString(value, "result")
+
+		obj.No = int(no_RD)
+		obj.Date = date_RD
+		obj.Periode = periode_RD
+		obj.Result = result_RD
+		arraobj = append(arraobj, obj)
+
+	})
+
 	if err == redis.Nil {
 		result, err := model.FetchAll_MclientPasaranResult(client.Client_Company, client.Pasaran_Code)
 
@@ -215,7 +253,14 @@ func FetchAll_result(c *fiber.Ctx) error {
 	} else {
 		log.Println("cache")
 		rdb.Close()
-		return c.SendString(resultredis)
+
+		return c.JSON(fiber.Map{
+			"status":  fiber.StatusOK,
+			"message": "Success",
+			"record":  arraobj,
+			"time":    time.Since(render_page).String(),
+		})
+
 	}
 }
 func AdminDell_result(c *fiber.Ctx) error {
