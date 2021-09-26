@@ -25,17 +25,26 @@ func FetchAll_Mbukumimpi(tipe, nama string) (helpers.Response, error) {
 	con := db.CreateCon()
 	sql_bukumimpi := ""
 
-	sql_bukumimpi += ""
-	sql_bukumimpi += "SELECT "
-	sql_bukumimpi += "typebukumimpi, nmbukumimpi, nmrbukumimpi "
-	sql_bukumimpi += "FROM " + config.DB_tbl_bukumimpi + " "
-	if tipe != "" {
+	if tipe == "" {
+		sql_bukumimpi += ""
+		sql_bukumimpi += "SELECT "
+		sql_bukumimpi += "typebukumimpi, nmbukumimpi, nmrbukumimpi "
+		sql_bukumimpi += "FROM " + config.DB_tbl_bukumimpi + " "
+		if nama != "" {
+			sql_bukumimpi += "WHERE nmbukumimpi LIKE '%" + nama + "%' "
+		}
+		sql_bukumimpi += "ORDER BY nmbukumimpi ASC LIMIT 50 "
+	} else {
+		sql_bukumimpi += ""
+		sql_bukumimpi += "SELECT "
+		sql_bukumimpi += "typebukumimpi, nmbukumimpi, nmrbukumimpi "
+		sql_bukumimpi += "FROM " + config.DB_tbl_bukumimpi + " "
 		sql_bukumimpi += "WHERE typebukumimpi='" + tipe + "' "
+		if nama != "" {
+			sql_bukumimpi += "OR nmbukumimpi LIKE '%" + nama + "%' "
+		}
+		sql_bukumimpi += "ORDER BY nmbukumimpi ASC LIMIT 50 "
 	}
-	if nama != "" {
-		sql_bukumimpi += "WHERE nmbukumimpi LIKE '%" + nama + "%' "
-	}
-	sql_bukumimpi += "ORDER BY nmbukumimpi ASC LIMIT 50 "
 
 	rows, err := con.QueryContext(ctx, sql_bukumimpi)
 	defer rows.Close()
@@ -46,10 +55,20 @@ func FetchAll_Mbukumimpi(tipe, nama string) (helpers.Response, error) {
 		)
 		err = rows.Scan(&typebukumimpi_db, &nmbukumimpi_db, &nmrbukumimpi_db)
 		helpers.ErrorCheck(err)
-		obj.Tipe = typebukumimpi_db
-		obj.Nama = nmbukumimpi_db
-		obj.Nomor = nmrbukumimpi_db
-		arraobj = append(arraobj, obj)
+
+		if tipe != "" {
+			if typebukumimpi_db == tipe {
+				obj.Tipe = typebukumimpi_db
+				obj.Nama = nmbukumimpi_db
+				obj.Nomor = nmrbukumimpi_db
+				arraobj = append(arraobj, obj)
+			}
+		} else {
+			obj.Tipe = typebukumimpi_db
+			obj.Nama = nmbukumimpi_db
+			obj.Nomor = nmrbukumimpi_db
+			arraobj = append(arraobj, obj)
+		}
 	}
 	res.Status = fiber.StatusOK
 	res.Message = "Success"
