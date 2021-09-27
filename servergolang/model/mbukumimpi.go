@@ -33,17 +33,19 @@ func FetchAll_Mbukumimpi(tipe, nama string) (helpers.Response, error) {
 		if nama != "" {
 			sql_bukumimpi += "WHERE nmbukumimpi LIKE '%" + nama + "%' "
 		}
-		sql_bukumimpi += "ORDER BY nmbukumimpi ASC LIMIT 50 "
+		sql_bukumimpi += "ORDER BY displaybukumimpi ASC, nmbukumimpi ASC LIMIT 50 "
 	} else {
 		sql_bukumimpi += ""
 		sql_bukumimpi += "SELECT "
 		sql_bukumimpi += "typebukumimpi, nmbukumimpi, nmrbukumimpi "
 		sql_bukumimpi += "FROM " + config.DB_tbl_bukumimpi + " "
-		sql_bukumimpi += "WHERE typebukumimpi='" + tipe + "' "
 		if nama != "" {
-			sql_bukumimpi += "OR nmbukumimpi LIKE '%" + nama + "%' "
+			sql_bukumimpi += "WHERE nmbukumimpi LIKE '%" + nama + "%' "
+			sql_bukumimpi += "OR typebukumimpi='" + tipe + "' "
+		} else {
+			sql_bukumimpi += "WHERE typebukumimpi='" + tipe + "' "
 		}
-		sql_bukumimpi += "ORDER BY nmbukumimpi ASC LIMIT 50 "
+		sql_bukumimpi += "ORDER BY displaybukumimpi ASC, nmbukumimpi ASC LIMIT 50 "
 	}
 
 	rows, err := con.QueryContext(ctx, sql_bukumimpi)
