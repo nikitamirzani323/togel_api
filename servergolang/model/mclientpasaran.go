@@ -1786,15 +1786,15 @@ func Savetransaksi(client_username, client_company, idtrxkeluaran, idcomppasaran
 		// json, err := json.Marshal(list4d)
 		// ErrorCheck(err)
 		json := []byte(list4d)
-		log.Println(json)
+		// log.Println(json)
 		jsonparser.ArrayEach(json, func(value []byte, dataType jsonparser.ValueType, offset int, err error) {
 			nomor_DD, _, _, _ := jsonparser.Get(value, "nomor")
 			permainan_DD, _, _, _ := jsonparser.Get(value, "permainan")
 			bet_DD, _, _, _ := jsonparser.Get(value, "bet")
-			bayar_DD, _, _, _ := jsonparser.Get(value, "bayar")
-			diskon_DD, _, _, _ := jsonparser.Get(value, "diskon")
+			// bayar_DD, _, _, _ := jsonparser.Get(value, "bayar")
+			// diskon_DD, _, _, _ := jsonparser.Get(value, "diskon")
 			diskonpercen_DD, _, _, _ := jsonparser.Get(value, "diskonpercen")
-			kei_DD, _, _, _ := jsonparser.Get(value, "kei")
+			// kei_DD, _, _, _ := jsonparser.Get(value, "kei")
 			kei_percen_DD, _, _, _ := jsonparser.Get(value, "kei_percen")
 			win_DD, _, _, _ := jsonparser.Get(value, "win")
 			switch string(permainan_DD) {
@@ -1844,16 +1844,16 @@ func Savetransaksi(client_username, client_company, idtrxkeluaran, idcomppasaran
 				permainan = "SHIO"
 				limit_global_togel = limit_togelshio
 			}
-			log.Printf("%s - %s - %s - %s - %s - %s - %s - %s - %s\n",
-				string(nomor_DD),
-				string(permainan_DD),
-				string(bet_DD),
-				string(diskon_DD),
-				string(diskonpercen_DD),
-				string(kei_DD),
-				string(kei_percen_DD),
-				string(bayar_DD),
-				string(win_DD))
+			// log.Printf("%s - %s - %s - %s - %s - %s - %s - %s - %s\n",
+			// 	string(nomor_DD),
+			// 	string(permainan_DD),
+			// 	string(bet_DD),
+			// 	string(diskon_DD),
+			// 	string(diskonpercen_DD),
+			// 	string(kei_DD),
+			// 	string(kei_percen_DD),
+			// 	string(bayar_DD),
+			// 	string(win_DD))
 
 			bet := string(bet_DD)
 			diskon := string(diskonpercen_DD)

@@ -25,9 +25,9 @@ func Get_counter(field_column string) int {
 	case sql.ErrNoRows:
 		log.Println("No rows were returned!")
 	case nil:
-		log.Println(counter)
+		// log.Println(counter)
 	default:
-		panic(e)
+		log.Panic(e)
 	}
 	if counter > 0 {
 		idrecord_counter = int(counter) + 1
@@ -38,7 +38,9 @@ func Get_counter(field_column string) int {
 		a, e := res.RowsAffected()
 		helpers.ErrorCheck(e)
 		if a > 0 {
-			log.Println("UPDATE")
+			// log.Println("UPDATE COUNTER")
+		} else {
+			log.Panic(e)
 		}
 	} else {
 		stmt, e := con.PrepareContext(ctx, "insert into "+config.DB_tbl_counter+" (nmcounter, counter) values (?, ?)")
@@ -47,9 +49,13 @@ func Get_counter(field_column string) int {
 		helpers.ErrorCheck(e)
 		id, e := res.RowsAffected()
 		helpers.ErrorCheck(e)
-		log.Println("Insert id", id)
-		log.Println("NEW")
-		idrecord_counter = 1
+		if id > 0 {
+			idrecord_counter = 1
+		} else {
+			log.Panic(e)
+		}
+		// log.Println("COUNTER Insert id", id)
+		// log.Println("NEW")
 	}
 	return idrecord_counter
 }
