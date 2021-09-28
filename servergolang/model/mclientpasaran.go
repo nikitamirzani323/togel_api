@@ -410,6 +410,7 @@ func FetchAll_MclientPasaranResult(client_company, pasaran_code string) (helpers
 		AND A.keluarantogel != '' 
 		ORDER BY A.datekeluaran DESC LIMIT 93
 	`
+
 	rowresult, err := con.QueryContext(ctx, sqlresult, client_company, pasaran_code)
 	defer rowresult.Close()
 	helpers.ErrorCheck(err)
