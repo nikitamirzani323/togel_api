@@ -1,7 +1,0 @@
-PORT=9000
-
-DB_HOST='165.22.242.64'
-DB_PORT=3306
-DB_USER='sperma'
-DB_PASS='asdQWE123!@#'
-DB_DATABASE='db_tot'

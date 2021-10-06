@@ -1,0 +1,14 @@
+{
+    "username":"developer",
+    "company":"MMD",
+    "pasaran_idtransaction":"2121123",
+    "pasaran_idcomp":"198",
+    "devicemember":"WEBSITE",
+    "ipaddress":"180.252.167.177",
+    "timezone":"Asia/Jakarta",
+	"token":"qC5Ym BvXzabGp34jJlKvnC6wCrr3pLCwBzsLoSzl4k=",
+    "total":165,
+    "data": [
+        {"id": "1", "nomor": "1235", "permainan": "2D", "bet": "500", "diskon": 145, "diskonpercen": 0.29, "bayar": 355, "kei":0 ,"kei_percen":0,"win":70}
+    ]
+}
