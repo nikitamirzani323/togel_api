@@ -288,15 +288,15 @@ type responseinvoiceall struct {
 	Color_totallose string `json:"color_totallose"`
 }
 type responseinvoiceidpermainan struct {
-	No        int    `json:"no"`
-	Status    string `json:"status"`
-	Permainan string `json:"permainan"`
-	Nomor     string `json:"nomor"`
-	Bet       int    `json:"bet"`
-	Diskon    int    `json:"diskon"`
-	Kei       int    `json:"kei"`
-	Bayar     int    `json:"bayar"`
-	Win       int    `json:"win"`
+	No        int     `json:"no"`
+	Status    string  `json:"status"`
+	Permainan string  `json:"permainan"`
+	Nomor     string  `json:"nomor"`
+	Bet       int     `json:"bet"`
+	Diskon    float32 `json:"diskon"`
+	Kei       float32 `json:"kei"`
+	Bayar     int     `json:"bayar"`
+	Win       int     `json:"win"`
 }
 
 var ctx = context.Background()
@@ -1034,8 +1034,8 @@ func Fetch_listinvoicebetid(c *fiber.Ctx) error {
 		permainan, _ := jsonparser.GetString(value, "permainan")
 		nomor, _ := jsonparser.GetString(value, "nomor")
 		bet, _ := jsonparser.GetInt(value, "bet")
-		diskon, _ := jsonparser.GetInt(value, "diskon")
-		kei, _ := jsonparser.GetInt(value, "kei")
+		diskon, _ := jsonparser.GetFloat(value, "diskon")
+		kei, _ := jsonparser.GetFloat(value, "kei")
 		bayar, _ := jsonparser.GetInt(value, "bayar")
 		win, _ := jsonparser.GetInt(value, "win")
 
@@ -1044,8 +1044,8 @@ func Fetch_listinvoicebetid(c *fiber.Ctx) error {
 		obj.Permainan = permainan
 		obj.Nomor = nomor
 		obj.Bet = int(bet)
-		obj.Diskon = int(diskon)
-		obj.Kei = int(kei)
+		obj.Diskon = float32(diskon)
+		obj.Kei = float32(kei)
 		obj.Bayar = int(bayar)
 		obj.Win = int(win)
 		arraobj = append(arraobj, obj)
