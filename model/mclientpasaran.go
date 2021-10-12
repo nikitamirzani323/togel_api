@@ -31,6 +31,13 @@ type MclientpasaranResult struct {
 	Periode string `json:"periode"`
 	Result  string `json:"result"`
 }
+type MclientpasaranResultAll struct {
+	No      uint16 `json:"no"`
+	Date    string `json:"date"`
+	Periode string `json:"periode"`
+	Pasaran string `json:"pasaran"`
+	Result  string `json:"result"`
+}
 type MclientpasaranCheckPasaran struct {
 	PasaranIdtansaction string `json:"pasaran_idtransaction"`
 	PasaranName         string `json:"pasaran_name"`
@@ -242,6 +249,20 @@ type MListsipperiode struct {
 	Background      string `json:"background"`
 	Color_totallose string `json:"color_totallose"`
 }
+type MListsipperiodeall struct {
+	Tanggal         string `json:"tglkeluaran"`
+	Idinvoice       string `json:"idinvoice"`
+	Pasaran         string `json:"pasaran"`
+	Periode         string `json:"periode"`
+	Totalbet        int    `json:"totalbet"`
+	Totalbayar      int    `json:"totalbayar"`
+	Totalwin        int    `json:"totalwin"`
+	Totallose       int    `json:"totallose"`
+	Status          string `json:"status"`
+	Color_lost      string `json:"color_lost"`
+	Background      string `json:"background"`
+	Color_totallose string `json:"color_totallose"`
+}
 type MListsipperiodedetail struct {
 	Total4d_bayar             int `json:"total4d_bayar"`
 	Total3d_bayar             int `json:"total3d_bayar"`
@@ -279,12 +300,12 @@ func FetchAll_MclientPasaran(client_company string) (helpers.Response, error) {
 	var arraobj []Mclientpasaran
 	var res helpers.Response
 	var myDays = []string{"minggu", "senin", "selasa", "rabu", "kamis", "jumat", "sabtu"}
-	statuspasaran := "ONLINE"
+	statuspasaran := "OFFLINE"
 	msg := "Error"
 	render_page := time.Now()
 	ctx := context.Background()
 	con := db.CreateCon()
-
+	flag := false
 	tglnow, _ := goment.New()
 	daynow := tglnow.Format("d")
 	intVar, _ := strconv.ParseInt(daynow, 0, 8)
@@ -323,11 +344,17 @@ func FetchAll_MclientPasaran(client_company string) (helpers.Response, error) {
 			ORDER BY datekeluaran DESC
 			LIMIT 1
 		`
-		err := con.QueryRowContext(ctx, sqlkeluaran, idcomppasaran).Scan(&tglkeluaran, &periodekerluaran)
-
-		helpers.ErrorCheck(err)
-
-		sqlpasaranonline := `
+		row := con.QueryRowContext(ctx, sqlkeluaran, idcomppasaran)
+		switch err := row.Scan(&tglkeluaran, &periodekerluaran); err {
+		case sql.ErrNoRows:
+			flag = false
+		case nil:
+			flag = true
+		default:
+			helpers.ErrorCheck(err)
+		}
+		if flag {
+			sqlpasaranonline := `
 			SELECT
 				haripasaran
 			FROM ` + config.DB_tbl_mst_company_game_pasaran_offline + ` 
@@ -336,31 +363,28 @@ func FetchAll_MclientPasaran(client_company string) (helpers.Response, error) {
 			AND haripasaran = ? 
 		`
 
-		errpasaranonline := con.QueryRowContext(ctx, sqlpasaranonline, idcomppasaran, client_company, daynowhari).Scan(&haripasaran)
+			errpasaranonline := con.QueryRowContext(ctx, sqlpasaranonline, idcomppasaran, client_company, daynowhari).Scan(&haripasaran)
 
-		if errpasaranonline != sql.ErrNoRows {
-			taiskrg := tglnow.Format("YYYY-MM-DD HH:mm:ss")
-			jamtutup := tglnow.Format("YYYY-MM-DD") + " " + jamtutup
-			jamopen := tglnow.Format("YYYY-MM-DD") + " " + jamopen
-			tutup, _ := goment.New(jamtutup)
-			open, _ := goment.New(jamopen)
-			nowconvert := tglnow.Format("x")
-			tutupconvert := tutup.Format("x")
-			openconvert := open.Format("x")
+			if errpasaranonline != sql.ErrNoRows {
+				taiskrg := tglnow.Format("YYYY-MM-DD HH:mm:ss")
+				jamtutup := tglnow.Format("YYYY-MM-DD") + " " + jamtutup
+				jamopen := tglnow.Format("YYYY-MM-DD") + " " + jamopen
+				tutup, _ := goment.New(jamtutup)
+				open, _ := goment.New(jamopen)
+				nowconvert := tglnow.Format("x")
+				tutupconvert := tutup.Format("x")
+				openconvert := open.Format("x")
 
-			// intNow, _ := strconv.Atoi(nowconvert)
-			// intTutup, _ := strconv.Atoi(tutupconvert)
-			// intOpen, _ := strconv.Atoi(openconvert)
+				if taiskrg >= jamtutup && taiskrg <= jamopen {
+					statuspasaran = "OFFLINE"
+				} else {
+					statuspasaran = "ONLINE"
+				}
 
-			if taiskrg >= jamtutup && taiskrg <= jamopen {
-				statuspasaran = "OFFLINE"
-			} else {
-				statuspasaran = "ONLINE"
+				// log.Println(idpasarantogel + " - " + tglnow.Format("YYYY-MM-DD HH:mm:ss") + " - " + jamtutup + " - " + jamopen + " - " + statuspasaran)
+				log.Println(idpasarantogel + " - " + nowconvert + " - " + tutupconvert + " - " + openconvert + " - " + statuspasaran)
+
 			}
-
-			// log.Println(idpasarantogel + " - " + tglnow.Format("YYYY-MM-DD HH:mm:ss") + " - " + jamtutup + " - " + jamopen + " - " + statuspasaran)
-			log.Println(idpasarantogel + " - " + nowconvert + " - " + tutupconvert + " - " + openconvert + " - " + statuspasaran)
-
 		}
 
 		obj.PasaranId = idpasarantogel
@@ -448,7 +472,81 @@ func FetchAll_MclientPasaranResult(client_company, pasaran_code string) (helpers
 
 	return res, nil
 }
+func FetchAll_MclientPasaranResultAll(client_company string) (helpers.Response, error) {
+	var obj MclientpasaranResultAll
+	var arraobj []MclientpasaranResultAll
+	var res helpers.Response
+	msg := "Error"
+	render_page := time.Now()
+	con := db.CreateCon()
+	ctx := context.Background()
+	tbl_trx_keluaran, _, _ := Get_mappingdatabase(client_company)
+	sql_listpasarancompany := `SELECT 
+		idcomppasaran, idpasarantogel, nmpasarantogel
+		FROM ` + config.DB_VIEW_CLIENT_VIEW_PASARAN + ` 
+		WHERE idcompany = ? 
+		AND statuspasaranactive = 'Y' 
+		ORDER BY nmpasarantogel ASC 
+	`
 
+	rowresult, err := con.QueryContext(ctx, sql_listpasarancompany, client_company)
+	defer rowresult.Close()
+	helpers.ErrorCheck(err)
+	var norecord uint16 = 1
+	for rowresult.Next() {
+		var (
+			idcomppasaran_db                                      int
+			idpasarantogel_db, nmpasarantogel_db                  string
+			tglkeluaran_db, periodekerluaran_db, keluarantogel_db string
+		)
+
+		err = rowresult.Scan(&idcomppasaran_db, &idpasarantogel_db, &nmpasarantogel_db)
+		helpers.ErrorCheck(err)
+
+		sqlkeluaran := `
+			SELECT 
+			datekeluaran, keluaranperiode, keluarantogel
+			FROM ` + tbl_trx_keluaran + `  
+			WHERE idcomppasaran = ?
+			AND keluarantogel != "" 
+			ORDER BY datekeluaran DESC
+			LIMIT 1
+		`
+		row := con.QueryRowContext(ctx, sqlkeluaran, idcomppasaran_db)
+		switch err := row.Scan(&tglkeluaran_db, &periodekerluaran_db, &keluarantogel_db); err {
+		case sql.ErrNoRows:
+			_ = false
+		case nil:
+			_ = true
+		default:
+			helpers.ErrorCheck(err)
+		}
+
+		obj.No = norecord
+		obj.Date = tglkeluaran_db
+		obj.Pasaran = nmpasarantogel_db
+		obj.Periode = idpasarantogel_db + "-" + periodekerluaran_db
+		obj.Result = keluarantogel_db
+		arraobj = append(arraobj, obj)
+		msg = "Success"
+		norecord = norecord + 1
+	}
+	if len(arraobj) > 0 {
+		res.Status = fiber.StatusOK
+		res.Message = msg
+		res.Totalrecord = len(arraobj)
+		res.Record = arraobj
+		res.Time = time.Since(render_page).String()
+	} else {
+		res.Status = fiber.StatusBadRequest
+		res.Message = "Not Found"
+		res.Totalrecord = 0
+		res.Record = nil
+		res.Time = time.Since(render_page).String()
+	}
+
+	return res, nil
+}
 func CheckPasaran(client_company, pasaran_code string) (helpers.Response, error) {
 	var obj MclientpasaranCheckPasaran
 	var arraobj []MclientpasaranCheckPasaran
@@ -1424,6 +1522,140 @@ func Fetch_invoiceperiode(client_username, client_company, pasaran_code string) 
 
 		obj.Idinvoice = idtrxkeluaran
 		obj.Tanggal = datekeluaran
+		obj.Periode = periode
+		obj.Totalbet = totalbet
+		obj.Totalbayar = totalbayar
+		obj.Totalwin = totalwin
+		obj.Totallose = totallose
+		obj.Status = status
+		obj.Background = background
+
+		arraobj = append(arraobj, obj)
+		msg = "Success"
+	}
+	res.Status = fiber.StatusOK
+	res.Message = msg
+	res.Totalrecord = len(arraobj)
+	res.Record = arraobj
+	res.Time = time.Since(render_page).String()
+	return res, nil
+}
+func Fetch_invoiceperiodeall(client_username, client_company string) (helpers.Response, error) {
+	var obj MListsipperiodeall
+	var arraobj []MListsipperiodeall
+	var res helpers.Response
+
+	msg := "Error"
+	con := db.CreateCon()
+	ctx := context.Background()
+	render_page := time.Now()
+	_, trx_keluarantogel_detail, view_client_invoice := Get_mappingdatabase(client_company)
+
+	sql := `SELECT 
+		idtrxkeluaran,datekeluaran,idpasarantogel,nmpasarantogel,keluaranperiode,keluarantogel 
+		FROM ` + view_client_invoice + `  
+		WHERE idcompany = ? 
+		AND username = ? 
+		GROUP BY idtrxkeluaran 
+		ORDER BY datekeluaran DESC LIMIT 31 
+	`
+
+	row, err := con.QueryContext(ctx, sql, client_company, client_username)
+	defer row.Close()
+
+	helpers.ErrorCheck(err)
+	no := 0
+	for row.Next() {
+		no = no + 1
+		var (
+			idtrxkeluaran_DB, datekeluaran_DB, idpasarantogel_DB, nmpasarantogel_db, keluaranperiode_DB, keluarantogel_DB string
+		)
+		err = row.Scan(
+			&idtrxkeluaran_DB, &datekeluaran_DB, &idpasarantogel_DB, &nmpasarantogel_db, &keluaranperiode_DB,
+			&keluarantogel_DB)
+
+		helpers.ErrorCheck(err)
+		var idtrxkeluaran string = idtrxkeluaran_DB
+		var datekeluaran string = datekeluaran_DB
+		var keluarantogel string = keluarantogel_DB
+		var pasarantogel string = nmpasarantogel_db
+		var periode string = idpasarantogel_DB + "-" + keluaranperiode_DB
+		var status string = ""
+		var background string = ""
+		var totalbet int = 0
+		var totalbayar int = 0
+		var totalwin int = 0
+		var totallose int = 0
+
+		if keluarantogel != "" {
+			status = "APPROVED"
+		} else {
+			status = "RUNNING"
+		}
+		switch status {
+		case "RUNNING":
+			background = "background:#FFEB3B;font-size:12px;font-weight:bold;color:black;"
+		case "APPROVED":
+			background = "background:#1ba573;color:black;font-weight:bold;font-size:12px;"
+		}
+		if status == "APPROVED" {
+			status = "COMPLETED"
+		}
+
+		sqldetailbet := `SELECT 
+			statuskeluarandetail, typegame, 
+			bet, diskon, kei, win 
+			FROM ` + trx_keluarantogel_detail + `  
+			WHERE idcompany = ? 
+			AND username = ? 
+			AND idtrxkeluaran = ? 
+		`
+		rowdetailbet, err := con.QueryContext(ctx, sqldetailbet, client_company, client_username, idtrxkeluaran)
+		defer rowdetailbet.Close()
+
+		helpers.ErrorCheck(err)
+		for rowdetailbet.Next() {
+			totalbet = totalbet + 1
+
+			var (
+				statuskeluarandetail_DB, typegame_DB string
+				bet_DB, diskon_DB, kei_DB, win_DB    float32
+			)
+			err = rowdetailbet.Scan(
+				&statuskeluarandetail_DB, &typegame_DB,
+				&bet_DB, &diskon_DB, &kei_DB, &win_DB)
+
+			helpers.ErrorCheck(err)
+			var statuskeluarandetail string = statuskeluarandetail_DB
+			var typegame string = typegame_DB
+			var bet int = int(bet_DB)
+			var diskon float32 = diskon_DB
+			var kei float32 = kei_DB
+			var win float32 = win_DB
+			var bayar int = 0
+			var bayarwin int = 0
+			var winhasil int = 0
+			if typegame == "50_50_UMUM" || typegame == "50_50_SPECIAL" || typegame == "50_50_KOMBINASI" || typegame == "DASAR" || typegame == "COLOK_BEBAS" || typegame == "COLOK_NAGA" || typegame == "COLOK_MACAU" || typegame == "COLOK_JITU" {
+				bayar = bet - int(float32(bet)*diskon) - int(float32(bet)*kei)
+				if statuskeluarandetail == "WINNER" {
+					bayarwin = bet - int(float32(bet)*diskon) - int(float32(bet)*kei)
+					winhasil = bayarwin + int(float32(bet)*win)
+					totalwin = totalwin + winhasil
+				}
+			} else {
+				bayar = bet - int(float32(bet)*diskon) - int(float32(bet)*kei)
+				if statuskeluarandetail == "WINNER" {
+					winhasil = int(float32(bet) * win)
+					totalwin = totalwin + winhasil
+				}
+			}
+			totalbayar = totalbayar + bayar
+			totallose = totalwin - totalbayar
+		}
+
+		obj.Idinvoice = idtrxkeluaran
+		obj.Tanggal = datekeluaran
+		obj.Pasaran = pasarantogel
 		obj.Periode = periode
 		obj.Totalbet = totalbet
 		obj.Totalbayar = totalbayar

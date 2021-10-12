@@ -22,6 +22,9 @@ type ClientResult struct {
 	Client_Company string `json:"client_company"`
 	Pasaran_Code   string `json:"pasaran_code"`
 }
+type ClientResultAll struct {
+	Client_Company string `json:"client_company"`
+}
 type ClientConfPasaran struct {
 	Client_Company string `json:"client_company"`
 	Pasaran_Code   string `json:"pasaran_code"`
@@ -44,6 +47,10 @@ type ClientSlipPeriode struct {
 	Client_Username string `json:"client_username"`
 	Client_Company  string `json:"client_company"`
 	Pasaran_Code    string `json:"pasaran_code"`
+}
+type ClientSlipPeriodeAll struct {
+	Client_Username string `json:"client_username"`
+	Client_Company  string `json:"client_company"`
 }
 type ClientSlipPeriodeDetail struct {
 	Client_Username string `json:"client_username"`
@@ -253,6 +260,20 @@ type responseredisinit_shio struct {
 	Win_bet     float32 `json:"win_bet"`
 	Limit_total int     `json:"limit_total"`
 }
+type responseinvoiceall struct {
+	Invoice_tglkeluaran     string `json:"invoice_tglkeluaran"`
+	Invoice_idinvoice       string `json:"idinvoice"`
+	Invoice_pasaran         string `json:"pasaran"`
+	Invoice_periode         string `json:"periode"`
+	Invoice_totalbet        int    `json:"totalbet"`
+	Invoice_totalbayar      int    `json:"totalbayar"`
+	Invoice_totalwin        int    `json:"totalwin"`
+	Invoice_totallose       int    `json:"totallose"`
+	Invoice_status          string `json:"status"`
+	Invoice_color_lost      string `json:"color_lost"`
+	Invoice_background      string `json:"background"`
+	Invoice_color_totallose string `json:"color_totallose"`
+}
 
 var ctx = context.Background()
 
@@ -371,7 +392,7 @@ func FetchAll_pasaran(c *fiber.Ctx) error {
 		})
 	}
 }
-func FetchAll_result(c *fiber.Ctx) error {
+func FetchAll_resultbypasaran(c *fiber.Ctx) error {
 	client := new(ClientResult)
 	render_page := time.Now()
 	if err := c.BodyParser(client); err != nil {
@@ -402,6 +423,63 @@ func FetchAll_result(c *fiber.Ctx) error {
 
 	if !flag {
 		result, err := model.FetchAll_MclientPasaranResult(client.Client_Company, client.Pasaran_Code)
+
+		if err != nil {
+			c.Status(fiber.StatusBadRequest)
+			return c.JSON(fiber.Map{
+				"status":  fiber.StatusBadRequest,
+				"message": err.Error(),
+				"record":  nil,
+			})
+		}
+
+		log.Println("mysql")
+		if result.Status == 200 {
+			helpers.SetRedis(field_redis, result, 0)
+		}
+		return c.JSON(result)
+	} else {
+		log.Println("cache")
+		return c.JSON(fiber.Map{
+			"status":  fiber.StatusOK,
+			"message": "Success",
+			"record":  arraobj,
+			"time":    time.Since(render_page).String(),
+		})
+
+	}
+}
+func FetchAll_result(c *fiber.Ctx) error {
+	client := new(ClientResultAll)
+	render_page := time.Now()
+	if err := c.BodyParser(client); err != nil {
+		return err
+	}
+
+	field_redis := "listresult_" + client.Client_Company
+	var obj responseredis
+	var arraobj []responseredis
+	resultredis, flag := helpers.GetRedis(field_redis)
+	jsonredis := []byte(resultredis)
+	record_RD, _, _, _ := jsonparser.Get(jsonredis, "record")
+
+	jsonparser.ArrayEach(record_RD, func(value []byte, dataType jsonparser.ValueType, offset int, err error) {
+
+		no_RD, _ := jsonparser.GetInt(value, "no")
+		date_RD, _ := jsonparser.GetString(value, "date")
+		periode_RD, _ := jsonparser.GetString(value, "periode")
+		result_RD, _ := jsonparser.GetString(value, "result")
+
+		obj.No = int(no_RD)
+		obj.Date = date_RD
+		obj.Periode = periode_RD
+		obj.Result = result_RD
+		arraobj = append(arraobj, obj)
+
+	})
+
+	if !flag {
+		result, err := model.FetchAll_MclientPasaranResultAll(client.Client_Company)
 
 		if err != nil {
 			c.Status(fiber.StatusBadRequest)
@@ -927,6 +1005,71 @@ func Fetch_slipperiode(c *fiber.Ctx) error {
 		})
 	}
 	return c.JSON(result)
+}
+func Fetch_slipperiodeall(c *fiber.Ctx) error {
+	client := new(ClientSlipPeriodeAll)
+	if err := c.BodyParser(client); err != nil {
+		return err
+	}
+	field_redis := "listinvoiceall_" + client.Client_Company + "_" + client.Client_Username
+	render_page := time.Now()
+	var obj responseinvoiceall
+	var arraobj []responseinvoiceall
+	resultredis, flag := helpers.GetRedis(field_redis)
+	jsonredis := []byte(resultredis)
+	record_RD, _, _, _ := jsonparser.Get(jsonredis, "record")
+	jsonparser.ArrayEach(record_RD, func(value []byte, dataType jsonparser.ValueType, offset int, err error) {
+		tglkeluaran, _ := jsonparser.GetString(value, "tglkeluaran")
+		idinvoice, _ := jsonparser.GetString(value, "idinvoice")
+		pasaran, _ := jsonparser.GetString(value, "pasaran")
+		periode, _ := jsonparser.GetString(value, "periode")
+		totalbet, _ := jsonparser.GetInt(value, "totalbet")
+		totalbayar, _ := jsonparser.GetInt(value, "totalbayar")
+		totalwin, _ := jsonparser.GetInt(value, "totalwin")
+		totallose, _ := jsonparser.GetInt(value, "totallose")
+		status, _ := jsonparser.GetString(value, "status")
+		color_lost, _ := jsonparser.GetString(value, "color_lost")
+		background, _ := jsonparser.GetString(value, "background")
+		color_totallose, _ := jsonparser.GetString(value, "color_totallose")
+
+		obj.Invoice_tglkeluaran = tglkeluaran
+		obj.Invoice_idinvoice = idinvoice
+		obj.Invoice_pasaran = pasaran
+		obj.Invoice_periode = periode
+		obj.Invoice_totalbet = int(totalbet)
+		obj.Invoice_totalbayar = int(totalbayar)
+		obj.Invoice_totalwin = int(totalwin)
+		obj.Invoice_totallose = int(totallose)
+		obj.Invoice_status = status
+		obj.Invoice_color_lost = color_lost
+		obj.Invoice_background = background
+		obj.Invoice_color_totallose = color_totallose
+		arraobj = append(arraobj, obj)
+
+	})
+	if !flag {
+		result, err := model.Fetch_invoiceperiodeall(client.Client_Username, client.Client_Company)
+		if err != nil {
+			c.Status(fiber.StatusBadRequest)
+			return c.JSON(fiber.Map{
+				"status":  fiber.StatusBadRequest,
+				"message": err.Error(),
+				"record":  nil,
+			})
+		}
+		helpers.SetRedis(field_redis, result, 5*time.Minute)
+		log.Println("MYSQL")
+		return c.JSON(result)
+	} else {
+		log.Println("cache")
+		return c.JSON(fiber.Map{
+			"status":  fiber.StatusOK,
+			"message": "Success",
+			"record":  arraobj,
+			"time":    time.Since(render_page).String(),
+		})
+	}
+
 }
 func Fetch_slipperiodedetail(c *fiber.Ctx) error {
 	client := new(ClientSlipPeriodeDetail)
