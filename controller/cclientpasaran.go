@@ -92,6 +92,13 @@ type responseredis struct {
 	Periode string `json:"periode"`
 	Result  string `json:"result"`
 }
+type responseredisall struct {
+	No      int    `json:"no"`
+	Date    string `json:"date"`
+	Pasaran string `json:"pasaran"`
+	Periode string `json:"periode"`
+	Result  string `json:"result"`
+}
 type responseredisinit_432 struct {
 	Min_bet           int     `json:"min_bet"`
 	Max4d_bet         int     `json:"max4d_bet"`
@@ -457,8 +464,8 @@ func FetchAll_result(c *fiber.Ctx) error {
 	}
 
 	field_redis := "listresult_" + client.Client_Company
-	var obj responseredis
-	var arraobj []responseredis
+	var obj responseredisall
+	var arraobj []responseredisall
 	resultredis, flag := helpers.GetRedis(field_redis)
 	jsonredis := []byte(resultredis)
 	record_RD, _, _, _ := jsonparser.Get(jsonredis, "record")
@@ -467,11 +474,13 @@ func FetchAll_result(c *fiber.Ctx) error {
 
 		no_RD, _ := jsonparser.GetInt(value, "no")
 		date_RD, _ := jsonparser.GetString(value, "date")
+		pasaran_RD, _ := jsonparser.GetString(value, "pasaran")
 		periode_RD, _ := jsonparser.GetString(value, "periode")
 		result_RD, _ := jsonparser.GetString(value, "result")
 
 		obj.No = int(no_RD)
 		obj.Date = date_RD
+		obj.Pasaran = pasaran_RD
 		obj.Periode = periode_RD
 		obj.Result = result_RD
 		arraobj = append(arraobj, obj)
