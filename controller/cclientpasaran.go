@@ -2,15 +2,12 @@ package controller
 
 import (
 	"context"
-	"encoding/json"
 	"log"
 	"time"
 
-	"bitbucket.org/isbtotogroup/api_go/config"
 	"bitbucket.org/isbtotogroup/api_go/helpers"
 	"bitbucket.org/isbtotogroup/api_go/model"
 	"github.com/buger/jsonparser"
-	"github.com/go-redis/redis/v8"
 	"github.com/gofiber/fiber/v2"
 	"github.com/nleeper/goment"
 )
@@ -309,7 +306,6 @@ func FetchAll_pasaran(c *fiber.Ctx) error {
 	if err := c.BodyParser(client); err != nil {
 		return err
 	}
-
 	field_redis := "listpasaran_" + client.Client_Company
 	render_page := time.Now()
 	tglnow, _ := goment.New()
@@ -375,25 +371,6 @@ func FetchAll_pasaran(c *fiber.Ctx) error {
 		})
 	}
 }
-func AdminDell_pasaran(c *fiber.Ctx) error {
-	client := new(ClientInit)
-
-	if err := c.BodyParser(client); err != nil {
-		return err
-	}
-	conf := config.GetConfigRedis()
-	rdb := redis.NewClient(&redis.Options{
-		Addr:     conf.DB_HOST,
-		Password: conf.DB_PASSWORD,
-		DB:       conf.DB_NAME,
-	})
-
-	rdb.Del(ctx, "listpasaran_"+client.Client_Company)
-	return c.JSON(fiber.Map{
-		"status":  fiber.StatusOK,
-		"message": "Delete Success",
-	})
-}
 func FetchAll_result(c *fiber.Ctx) error {
 	client := new(ClientResult)
 	render_page := time.Now()
@@ -401,16 +378,10 @@ func FetchAll_result(c *fiber.Ctx) error {
 		return err
 	}
 
-	conf := config.GetConfigRedis()
-	rdb := redis.NewClient(&redis.Options{
-		Addr:     conf.DB_HOST,
-		Password: conf.DB_PASSWORD,
-		DB:       conf.DB_NAME,
-	})
+	field_redis := "listresult_" + client.Client_Company + "_" + client.Pasaran_Code
 	var obj responseredis
 	var arraobj []responseredis
-	resultredis, err := rdb.Get(ctx, "listresult_"+client.Client_Company+"_"+client.Pasaran_Code).Result()
-
+	resultredis, flag := helpers.GetRedis(field_redis)
 	jsonredis := []byte(resultredis)
 	record_RD, _, _, _ := jsonparser.Get(jsonredis, "record")
 
@@ -429,7 +400,7 @@ func FetchAll_result(c *fiber.Ctx) error {
 
 	})
 
-	if err == redis.Nil {
+	if !flag {
 		result, err := model.FetchAll_MclientPasaranResult(client.Client_Company, client.Pasaran_Code)
 
 		if err != nil {
@@ -443,17 +414,11 @@ func FetchAll_result(c *fiber.Ctx) error {
 
 		log.Println("mysql")
 		if result.Status == 200 {
-			json, _ := json.Marshal(result)
-			err = rdb.Set(ctx, "listresult_"+client.Client_Company+"_"+client.Pasaran_Code, json, 0).Err()
-			if err != nil {
-				panic(err)
-			}
+			helpers.SetRedis(field_redis, result, 0)
 		}
 		return c.JSON(result)
 	} else {
 		log.Println("cache")
-		rdb.Close()
-
 		return c.JSON(fiber.Map{
 			"status":  fiber.StatusOK,
 			"message": "Success",
@@ -462,25 +427,6 @@ func FetchAll_result(c *fiber.Ctx) error {
 		})
 
 	}
-}
-func AdminDell_result(c *fiber.Ctx) error {
-	client := new(ClientResult)
-
-	if err := c.BodyParser(client); err != nil {
-		return err
-	}
-	conf := config.GetConfigRedis()
-	rdb := redis.NewClient(&redis.Options{
-		Addr:     conf.DB_HOST,
-		Password: conf.DB_PASSWORD,
-		DB:       conf.DB_NAME,
-	})
-
-	rdb.Del(ctx, "listresult_"+client.Client_Company+"_"+client.Pasaran_Code)
-	return c.JSON(fiber.Map{
-		"status":  fiber.StatusOK,
-		"message": "Delete Success",
-	})
 }
 func Fetch_CheckPasaran(c *fiber.Ctx) error {
 	client := new(ClientResult)
@@ -506,12 +452,7 @@ func Fetch_InitPasaran(c *fiber.Ctx) error {
 	if err := c.BodyParser(client); err != nil {
 		return err
 	}
-	conf := config.GetConfigRedis()
-	rdb := redis.NewClient(&redis.Options{
-		Addr:     conf.DB_HOST,
-		Password: conf.DB_PASSWORD,
-		DB:       conf.DB_NAME,
-	})
+	field_redis := "config_" + client.Client_Company + "_" + client.Pasaran_Code + "_" + client.Permainan
 	var obj_432 responseredisinit_432
 	var arraobj_432 []responseredisinit_432
 	var obj_colok responseredisinit_colok
@@ -524,7 +465,7 @@ func Fetch_InitPasaran(c *fiber.Ctx) error {
 	var arraobj_dasar []responseredisinit_dasar
 	var obj_shio responseredisinit_shio
 	var arraobj_shio []responseredisinit_shio
-	resultredis, err := rdb.Get(ctx, "config_"+client.Client_Company+"_"+client.Pasaran_Code+"_"+client.Permainan).Result()
+	resultredis, flag := helpers.GetRedis(field_redis)
 	jsonredis := []byte(resultredis)
 	record_RD, _, _, _ := jsonparser.Get(jsonredis, "record")
 	jsonparser.ArrayEach(record_RD, func(value []byte, dataType jsonparser.ValueType, offset int, err error) {
@@ -866,7 +807,7 @@ func Fetch_InitPasaran(c *fiber.Ctx) error {
 		}
 
 	})
-	if err == redis.Nil {
+	if !flag {
 		result, err := model.FetchAll_MinitPasaran(client.Client_Company, client.Pasaran_Code, client.Permainan)
 
 		if err != nil {
@@ -878,18 +819,13 @@ func Fetch_InitPasaran(c *fiber.Ctx) error {
 			})
 		}
 
-		log.Println("mysql: " + "config_" + client.Client_Company + "_" + client.Pasaran_Code + "_" + client.Permainan)
+		log.Println("mysql")
 		if result.Status == 200 {
-			json, _ := json.Marshal(result)
-			err = rdb.Set(ctx, "config_"+client.Client_Company+"_"+client.Pasaran_Code+"_"+client.Permainan, json, 0).Err()
-			if err != nil {
-				panic(err)
-			}
+			helpers.SetRedis(field_redis, result, 0)
 		}
 		return c.JSON(result)
 	} else {
-		log.Println("cache: " + "config_" + client.Client_Company + "_" + client.Pasaran_Code + "_" + client.Permainan)
-		rdb.Close()
+		log.Println("cache")
 		switch client.Permainan {
 		case "colok":
 			arraobj := &arraobj_colok
