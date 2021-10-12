@@ -7,10 +7,12 @@ import (
 	"time"
 
 	"bitbucket.org/isbtotogroup/api_go/config"
+	"bitbucket.org/isbtotogroup/api_go/helpers"
 	"bitbucket.org/isbtotogroup/api_go/model"
 	"github.com/buger/jsonparser"
 	"github.com/go-redis/redis/v8"
 	"github.com/gofiber/fiber/v2"
+	"github.com/nleeper/goment"
 )
 
 type ClientToken struct {
@@ -69,6 +71,16 @@ type ytRecord struct {
 	PasaranId      string `json:"pasaran_id"`
 	PasaranTogel   string `json:"pasaran_togel"`
 	PasaranPeriode string `json:"pasaran_periode"`
+}
+type responseredisfetch struct {
+	Pasaran_id             string `json:"pasaran_id"`
+	Pasaran_togel          string `json:"pasaran_togel"`
+	Pasaran_periode        string `json:"pasaran_periode"`
+	Pasaran_tglkeluaran    string `json:"pasaran_tglkeluaran"`
+	Pasaran_marketclose    string `json:"pasaran_marketclose"`
+	Pasaran_marketschedule string `json:"pasaran_marketschedule"`
+	Pasaran_marketopen     string `json:"pasaran_marketopen"`
+	Pasaran_status         string `json:"pasaran_status"`
 }
 type responseredis struct {
 	No      int    `json:"no"`
@@ -297,18 +309,51 @@ func FetchAll_pasaran(c *fiber.Ctx) error {
 	if err := c.BodyParser(client); err != nil {
 		return err
 	}
-	conf := config.GetConfigRedis()
-	rdb := redis.NewClient(&redis.Options{
-		Addr:     conf.DB_HOST,
-		Password: conf.DB_PASSWORD,
-		DB:       conf.DB_NAME,
+
+	field_redis := "listpasaran_" + client.Client_Company
+	render_page := time.Now()
+	tglnow, _ := goment.New()
+	var obj responseredisfetch
+	var arraobj []responseredisfetch
+	resultredis, flag := helpers.GetRedis(field_redis)
+	jsonredis := []byte(resultredis)
+	record_RD, _, _, _ := jsonparser.Get(jsonredis, "record")
+	statuspasaran := "ONLINE"
+	jsonparser.ArrayEach(record_RD, func(value []byte, dataType jsonparser.ValueType, offset int, err error) {
+		pasaran_id, _ := jsonparser.GetString(value, "pasaran_id")
+		pasaran_togel, _ := jsonparser.GetString(value, "pasaran_togel")
+		pasaran_periode, _ := jsonparser.GetString(value, "pasaran_periode")
+		pasaran_tglkeluaran, _ := jsonparser.GetString(value, "pasaran_tglkeluaran")
+		pasaran_marketclose, _ := jsonparser.GetString(value, "pasaran_marketclose")
+		pasaran_marketschedule, _ := jsonparser.GetString(value, "pasaran_marketschedule")
+		pasaran_marketopen, _ := jsonparser.GetString(value, "pasaran_marketopen")
+		// pasaran_status, _ := jsonparser.GetString(value, "pasaran_status")
+		tgltutup, _ := goment.New(pasaran_marketclose)
+		tglopen, _ := goment.New(pasaran_marketopen)
+
+		taiskrg := tglnow.Format("YYYY-MM-DD HH:mm:ss")
+		jamtutup := tgltutup.Format("YYYY-MM-DD HH:mm:ss")
+		jamopen := tglopen.Format("YYYY-MM-DD HH:mm:ss")
+
+		if taiskrg >= jamtutup && taiskrg <= jamopen {
+			statuspasaran = "OFFLINE"
+		} else {
+			statuspasaran = "ONLINE"
+		}
+
+		obj.Pasaran_id = pasaran_id
+		obj.Pasaran_togel = pasaran_togel
+		obj.Pasaran_periode = pasaran_periode
+		obj.Pasaran_tglkeluaran = pasaran_tglkeluaran
+		obj.Pasaran_marketclose = pasaran_marketclose
+		obj.Pasaran_marketschedule = pasaran_marketschedule
+		obj.Pasaran_marketopen = pasaran_marketopen
+		obj.Pasaran_status = statuspasaran
+		arraobj = append(arraobj, obj)
+
 	})
-
-	// rdb.Del(ctx, "listpasaran_"+client.Client_Company)
-	resultredis, err := rdb.Get(ctx, "listpasaran_"+client.Client_Company).Result()
-	if err == redis.Nil {
+	if !flag {
 		result, err := model.FetchAll_MclientPasaran(client.Client_Company)
-
 		if err != nil {
 			c.Status(fiber.StatusBadRequest)
 			return c.JSON(fiber.Map{
@@ -317,28 +362,17 @@ func FetchAll_pasaran(c *fiber.Ctx) error {
 				"record":  nil,
 			})
 		}
-		// json, _ := json.Marshal(result)
-		// log.Println("mysql")
-		// err = rdb.Set(ctx, "listpasaran_"+client.Client_Company, json, 0).Err()
-		// if err != nil {
-		// 	panic(err)
-		// }
+		helpers.SetRedis(field_redis, result, 0)
+		log.Println("MYSQL")
 		return c.JSON(result)
 	} else {
-		data := []byte(resultredis)
-		temp, _, _, _ := jsonparser.Get(data, "record")
-
-		jsonparser.ArrayEach(temp, func(value []byte, dataType jsonparser.ValueType, offset int, err error) {
-			var1, _, _, _ := jsonparser.Get(value, "pasaran_id")
-			var2, _, _, _ := jsonparser.Get(value, "pasaran_togel")
-			var3, _, _, _ := jsonparser.Get(value, "pasaran_periode")
-			var4, _, _, _ := jsonparser.Get(value, "pasaran_tglkeluaran")
-			log.Printf("%s - %s - %s - %s\n", string(var1), string(var2), string(var3), string(var4))
-		})
-
 		log.Println("cache")
-		rdb.Close()
-		return c.SendString(resultredis)
+		return c.JSON(fiber.Map{
+			"status":  fiber.StatusOK,
+			"message": "Success",
+			"record":  arraobj,
+			"time":    time.Since(render_page).String(),
+		})
 	}
 }
 func AdminDell_pasaran(c *fiber.Ctx) error {

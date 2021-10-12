@@ -2,29 +2,41 @@ package db
 
 import (
 	"database/sql"
+	"os"
+	"time"
 
-	"bitbucket.org/isbtotogroup/api_go/config"
+	"bitbucket.org/isbtotogroup/api_go/helpers"
 	_ "github.com/go-sql-driver/mysql"
+	"github.com/joho/godotenv"
 )
 
 var db *sql.DB
 var err error
 
 func Init() {
-	conf := config.GetConfigMysql()
-	connectionString := conf.DB_USERNAME + ":" + conf.DB_PASSWORD + "@tcp(" + conf.DB_HOST + ":" + conf.DB_PORT + ")/" + conf.DB_NAME + "?net_write_timeout=6000"
+	err := godotenv.Load()
+	if err != nil {
+		panic("Failed to load env file")
+	}
 
-	db, err = sql.Open("mysql", connectionString)
+	dbUser := os.Getenv("DB_USER")
+	dbPass := os.Getenv("DB_PASS")
+	dbHost := os.Getenv("DB_HOST")
+	dbPort := os.Getenv("DB_PORT")
+	dbName := os.Getenv("DB_NAME")
+
+	conString := dbUser + ":" + dbPass + "@tcp(" + dbHost + ":" + dbPort + ")/" + dbName
+
+	db, err = sql.Open("mysql", conString)
 	if err != nil {
 		panic("koneksi string serror")
 	}
+	db.SetMaxIdleConns(10)
 	db.SetMaxOpenConns(100)
-	db.SetMaxIdleConns(4)
-	// db.SetConnMaxLifetime(time.Minute * 4)
+	db.SetConnMaxIdleTime(5 * time.Minute)
+	db.SetConnMaxLifetime(60 * time.Minute)
 	err = db.Ping()
-	if err != nil {
-		panic("DNS invalid")
-	}
+	helpers.ErrorCheck(err)
 }
 func CreateCon() *sql.DB {
 	return db
