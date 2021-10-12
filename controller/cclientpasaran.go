@@ -3,6 +3,7 @@ package controller
 import (
 	"context"
 	"log"
+	"strconv"
 	"time"
 
 	"bitbucket.org/isbtotogroup/api_go/helpers"
@@ -1021,7 +1022,7 @@ func Fetch_listinvoicebetid(c *fiber.Ctx) error {
 	if err := c.BodyParser(client); err != nil {
 		return err
 	}
-	field_redis := "listinvoice_" + client.Client_Company + "_" + client.Client_Username + "_" + client.Permainan
+	field_redis := "listinvoice_" + strconv.Itoa(client.Client_Idinvoice) + "_" + client.Client_Company + "_" + client.Client_Username + "_" + client.Permainan
 	render_page := time.Now()
 	var obj responseinvoiceidpermainan
 	var arraobj []responseinvoiceidpermainan
