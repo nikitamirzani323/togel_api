@@ -382,6 +382,9 @@ func FetchAll_pasaran(c *fiber.Ctx) error {
 		} else {
 			statuspasaran = "ONLINE"
 		}
+		if taiskrg >= jamtutup {
+			statuspasaran = "OFFLINE"
+		}
 
 		obj.Pasaran_id = pasaran_id
 		obj.Pasaran_togel = pasaran_togel

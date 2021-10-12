@@ -391,7 +391,9 @@ func FetchAll_MclientPasaran(client_company string) (helpers.Response, error) {
 				} else {
 					statuspasaran = "ONLINE"
 				}
-
+				if taiskrg >= jamtutup {
+					statuspasaran = "OFFLINE"
+				}
 				// log.Println(idpasarantogel + " - " + tglnow.Format("YYYY-MM-DD HH:mm:ss") + " - " + jamtutup + " - " + jamopen + " - " + statuspasaran)
 				log.Println(idpasarantogel + " - " + nowconvert + " - " + tutupconvert + " - " + openconvert + " - " + statuspasaran)
 
