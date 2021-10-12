@@ -233,6 +233,17 @@ type MListinvoicebet struct {
 	Win       int     `json:"win"`
 	Menang    int     `json:"menang"`
 }
+type MListinvoicebetid struct {
+	No        int     `json:"no"`
+	Status    string  `json:"status"`
+	Permainan string  `json:"permainan"`
+	Nomor     string  `json:"nomor"`
+	Bet       int     `json:"bet"`
+	Diskon    float32 `json:"diskon"`
+	Kei       float32 `json:"kei"`
+	Bayar     int     `json:"bayar"`
+	Win       int     `json:"win"`
+}
 type MGroupinvoicebetPermainan struct {
 	Permainan string `json:"permainan"`
 }
@@ -415,7 +426,6 @@ func FetchAll_MclientPasaran(client_company string) (helpers.Response, error) {
 
 	return res, nil
 }
-
 func FetchAll_MclientPasaranResult(client_company, pasaran_code string) (helpers.Response, error) {
 	var obj MclientpasaranResult
 	var arraobj []MclientpasaranResult
@@ -1403,6 +1413,120 @@ func Fetch_invoicebet(client_username, client_company, pasaran_code, pasaran_per
 	res.Totalrecord = len(arraobj)
 	res.Totalbayar = totalbayar
 	res.Permainan = arraobjgroup
+	res.Record = arraobj
+	res.Time = time.Since(render_page).String()
+	return res, nil
+}
+func Fetch_invoicebetbyid(idtrxkeluaran int, client_username, client_company, typegame string) (helpers.Response, error) {
+	var obj MListinvoicebetid
+	var arraobj []MListinvoicebetid
+	var res helpers.Response
+	flag_2dd := false
+	flag_2dt := false
+	msg := "Error"
+	ctx := context.Background()
+	con := db.CreateCon()
+	render_page := time.Now()
+	_, _, view_client_invoice := Get_mappingdatabase(client_company)
+
+	sql_select := `SELECT 
+		nomortogel, typegame, bet, diskon, kei,winhasil, statuskeluarandetail 
+		FROM ` + view_client_invoice + `  
+		WHERE idtrxkeluaran = ? 
+		AND idcompany = ? 
+		AND username = ? 
+		ORDER BY nomortogel ASC 
+	`
+	log.Println(typegame)
+	row, err := con.QueryContext(ctx, sql_select, idtrxkeluaran, client_company, client_username)
+	defer row.Close()
+
+	helpers.ErrorCheck(err)
+	nobet := 0
+	for row.Next() {
+		var (
+			nomortogel_db, typegame_db, statuskeluarandetail_db string
+			bet_db, diskon_db, kei_db                           float32
+			winhasil_db                                         int
+		)
+		err = row.Scan(
+			&nomortogel_db, &typegame_db, &bet_db, &diskon_db,
+			&kei_db, &winhasil_db, &statuskeluarandetail_db)
+		helpers.ErrorCheck(err)
+
+		if typegame == typegame_db {
+			nobet = nobet + 1
+			var diskon2 float32 = diskon_db * 100
+			var diskonbet int = int(bet_db * diskon_db)
+			var kei2 float32 = kei_db * 100
+			var keibet int = int(bet_db * kei_db)
+			var bayar int = int(bet_db) - int(diskonbet) - int(keibet)
+
+			obj.No = nobet
+			obj.Status = statuskeluarandetail_db
+			obj.Permainan = typegame_db
+			obj.Nomor = nomortogel_db
+			obj.Bet = int(bet_db)
+			obj.Diskon = diskon2
+			obj.Kei = kei2
+			obj.Bayar = bayar
+			obj.Win = int(winhasil_db)
+			arraobj = append(arraobj, obj)
+			msg = "Success"
+		}
+		if typegame == "2D" {
+			flag_2dd = true
+			flag_2dt = true
+		}
+		if flag_2dd {
+			if typegame_db == "2DD" {
+				nobet = nobet + 1
+				var diskon2 float32 = diskon_db * 100
+				var diskonbet int = int(bet_db * diskon_db)
+				var kei2 float32 = kei_db * 100
+				var keibet int = int(bet_db * kei_db)
+				var bayar int = int(bet_db) - int(diskonbet) - int(keibet)
+
+				obj.No = nobet
+				obj.Status = statuskeluarandetail_db
+				obj.Permainan = typegame_db
+				obj.Nomor = nomortogel_db
+				obj.Bet = int(bet_db)
+				obj.Diskon = diskon2
+				obj.Kei = kei2
+				obj.Bayar = bayar
+				obj.Win = int(winhasil_db)
+				arraobj = append(arraobj, obj)
+				msg = "Success"
+			}
+		}
+		if flag_2dt {
+			if typegame_db == "2DT" {
+				nobet = nobet + 1
+				var diskon2 float32 = diskon_db * 100
+				var diskonbet int = int(bet_db * diskon_db)
+				var kei2 float32 = kei_db * 100
+				var keibet int = int(bet_db * kei_db)
+				var bayar int = int(bet_db) - int(diskonbet) - int(keibet)
+
+				obj.No = nobet
+				obj.Status = statuskeluarandetail_db
+				obj.Permainan = typegame_db
+				obj.Nomor = nomortogel_db
+				obj.Bet = int(bet_db)
+				obj.Diskon = diskon2
+				obj.Kei = kei2
+				obj.Bayar = bayar
+				obj.Win = int(winhasil_db)
+				arraobj = append(arraobj, obj)
+				msg = "Success"
+			}
+		}
+	}
+
+	res.Status = fiber.StatusOK
+	res.Message = msg
+	res.Totalrecord = len(arraobj)
 	res.Record = arraobj
 	res.Time = time.Since(render_page).String()
 	return res, nil

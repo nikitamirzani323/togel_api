@@ -43,6 +43,12 @@ type ClientInvoicePasaran struct {
 	Pasaran_Code    string `json:"pasaran_code"`
 	Pasaran_Periode string `json:"pasaran_periode"`
 }
+type ClientInvoicePasaranId struct {
+	Client_Idinvoice int    `json:"client_idinvoice"`
+	Client_Username  string `json:"client_username"`
+	Client_Company   string `json:"client_company"`
+	Permainan        string `json:"permainan"`
+}
 type ClientSlipPeriode struct {
 	Client_Username string `json:"client_username"`
 	Client_Company  string `json:"client_company"`
@@ -989,6 +995,24 @@ func Fetch_listinvoicebet(c *fiber.Ctx) error {
 		return err
 	}
 	result, err := model.Fetch_invoicebet(client.Client_Username, client.Client_Company, client.Pasaran_Code, client.Pasaran_Periode)
+	if err != nil {
+		c.Status(fiber.StatusBadRequest)
+		return c.JSON(fiber.Map{
+			"status":  fiber.StatusBadRequest,
+			"message": err.Error(),
+			"record":  nil,
+		})
+	}
+	return c.JSON(result)
+}
+func Fetch_listinvoicebetid(c *fiber.Ctx) error {
+	client := new(ClientInvoicePasaranId)
+	if err := c.BodyParser(client); err != nil {
+		return err
+	}
+	result, err := model.Fetch_invoicebetbyid(
+		client.Client_Idinvoice, client.Client_Username,
+		client.Client_Company, client.Permainan)
 	if err != nil {
 		c.Status(fiber.StatusBadRequest)
 		return c.JSON(fiber.Map{
