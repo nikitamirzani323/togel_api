@@ -268,18 +268,18 @@ type responseredisinit_shio struct {
 	Limit_total int     `json:"limit_total"`
 }
 type responseinvoiceall struct {
-	Invoice_tglkeluaran     string `json:"invoice_tglkeluaran"`
-	Invoice_idinvoice       string `json:"idinvoice"`
-	Invoice_pasaran         string `json:"pasaran"`
-	Invoice_periode         string `json:"periode"`
-	Invoice_totalbet        int    `json:"totalbet"`
-	Invoice_totalbayar      int    `json:"totalbayar"`
-	Invoice_totalwin        int    `json:"totalwin"`
-	Invoice_totallose       int    `json:"totallose"`
-	Invoice_status          string `json:"status"`
-	Invoice_color_lost      string `json:"color_lost"`
-	Invoice_background      string `json:"background"`
-	Invoice_color_totallose string `json:"color_totallose"`
+	Tglkeluaran     string `json:"tglkeluaran"`
+	Idinvoice       string `json:"idinvoice"`
+	Pasaran         string `json:"pasaran"`
+	Periode         string `json:"periode"`
+	Totalbet        int    `json:"totalbet"`
+	Totalbayar      int    `json:"totalbayar"`
+	Totalwin        int    `json:"totalwin"`
+	Totallose       int    `json:"totallose"`
+	Status          string `json:"status"`
+	Color_lost      string `json:"color_lost"`
+	Background      string `json:"background"`
+	Color_totallose string `json:"color_totallose"`
 }
 
 var ctx = context.Background()
@@ -1041,18 +1041,18 @@ func Fetch_slipperiodeall(c *fiber.Ctx) error {
 		background, _ := jsonparser.GetString(value, "background")
 		color_totallose, _ := jsonparser.GetString(value, "color_totallose")
 
-		obj.Invoice_tglkeluaran = tglkeluaran
-		obj.Invoice_idinvoice = idinvoice
-		obj.Invoice_pasaran = pasaran
-		obj.Invoice_periode = periode
-		obj.Invoice_totalbet = int(totalbet)
-		obj.Invoice_totalbayar = int(totalbayar)
-		obj.Invoice_totalwin = int(totalwin)
-		obj.Invoice_totallose = int(totallose)
-		obj.Invoice_status = status
-		obj.Invoice_color_lost = color_lost
-		obj.Invoice_background = background
-		obj.Invoice_color_totallose = color_totallose
+		obj.Tglkeluaran = tglkeluaran
+		obj.Idinvoice = idinvoice
+		obj.Pasaran = pasaran
+		obj.Periode = periode
+		obj.Totalbet = int(totalbet)
+		obj.Totalbayar = int(totalbayar)
+		obj.Totalwin = int(totalwin)
+		obj.Totallose = int(totallose)
+		obj.Status = status
+		obj.Color_lost = color_lost
+		obj.Background = background
+		obj.Color_totallose = color_totallose
 		arraobj = append(arraobj, obj)
 
 	})

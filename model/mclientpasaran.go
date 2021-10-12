@@ -1550,7 +1550,7 @@ func Fetch_invoiceperiodeall(client_username, client_company string) (helpers.Re
 	ctx := context.Background()
 	render_page := time.Now()
 	_, trx_keluarantogel_detail, view_client_invoice := Get_mappingdatabase(client_company)
-
+	log.Println(client_username + " " + client_username)
 	sql := `SELECT 
 		idtrxkeluaran,datekeluaran,idpasarantogel,nmpasarantogel,keluaranperiode,keluarantogel 
 		FROM ` + view_client_invoice + `  
