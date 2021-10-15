@@ -352,6 +352,25 @@ func FetchAll_pasaran(c *fiber.Ctx) error {
 	if err := c.BodyParser(client); err != nil {
 		return err
 	}
+	result, err := model.FetchAll_MclientPasaran(client.Client_Company)
+	if err != nil {
+		c.Status(fiber.StatusBadRequest)
+		return c.JSON(fiber.Map{
+			"status":  fiber.StatusBadRequest,
+			"message": err.Error(),
+			"record":  nil,
+		})
+	}
+	// helpers.SetRedis(field_redis, result, 0)
+	log.Println("MYSQL")
+	return c.JSON(result)
+}
+func FetchAll_pasaran2(c *fiber.Ctx) error {
+	client := new(ClientInit)
+
+	if err := c.BodyParser(client); err != nil {
+		return err
+	}
 	field_redis := "listpasaran_" + client.Client_Company
 	render_page := time.Now()
 	tglnow, _ := goment.New()

@@ -325,7 +325,7 @@ func FetchAll_MclientPasaran(client_company string) (helpers.Response, error) {
 	tbl_trx_keluaran, _, _ := Get_mappingdatabase(client_company)
 
 	sqlpasaran := `SELECT 
-		idcomppasaran, idpasarantogel, nmpasarantogel, jamtutup, jamjadwal, jamopen 
+		idcomppasaran, idpasarantogel, nmpasarantogel, jamtutup, jamjadwal, jamopen   
 		FROM ` + config.DB_VIEW_CLIENT_VIEW_PASARAN + `  
 		WHERE statuspasaranactive = 'Y' 
 		AND idcompany = ?
@@ -365,18 +365,21 @@ func FetchAll_MclientPasaran(client_company string) (helpers.Response, error) {
 			helpers.ErrorCheck(err)
 		}
 		if flag {
+			jamtutupdoc, _ := goment.New(tglkeluaran)
 			sqlpasaranonline := `
-			SELECT
-				haripasaran
-			FROM ` + config.DB_tbl_mst_company_game_pasaran_offline + ` 
-			WHERE idcomppasaran = ?
-			AND idcompany = ? 
-			AND haripasaran = ? 
-		`
+				SELECT
+					haripasaran
+				FROM ` + config.DB_tbl_mst_company_game_pasaran_offline + ` 
+				WHERE idcomppasaran = ?
+				AND idcompany = ? 
+				AND haripasaran = ? 
+			`
 
 			errpasaranonline := con.QueryRowContext(ctx, sqlpasaranonline, idcomppasaran, client_company, daynowhari).Scan(&haripasaran)
-
+			jamtutupdoc2 := jamtutupdoc.Format("YYYY-MM-DD")
+			taiskrg2 := tglnow.Format("YYYY-MM-DD")
 			if errpasaranonline != sql.ErrNoRows {
+
 				taiskrg := tglnow.Format("YYYY-MM-DD HH:mm:ss")
 				jamtutup := tglnow.Format("YYYY-MM-DD") + " " + jamtutup
 				jamopen := tglnow.Format("YYYY-MM-DD") + " " + jamopen
@@ -391,12 +394,12 @@ func FetchAll_MclientPasaran(client_company string) (helpers.Response, error) {
 				} else {
 					statuspasaran = "ONLINE"
 				}
-				if taiskrg >= jamtutup {
-					statuspasaran = "OFFLINE"
-				}
 				// log.Println(idpasarantogel + " - " + tglnow.Format("YYYY-MM-DD HH:mm:ss") + " - " + jamtutup + " - " + jamopen + " - " + statuspasaran)
 				log.Println(idpasarantogel + " - " + nowconvert + " - " + tutupconvert + " - " + openconvert + " - " + statuspasaran)
 
+			}
+			if taiskrg2 > jamtutupdoc2 {
+				statuspasaran = "OFFLINE"
 			}
 		}
 
