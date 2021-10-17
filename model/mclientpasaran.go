@@ -3,8 +3,11 @@ package model
 import (
 	"context"
 	"database/sql"
+	"fmt"
 	"log"
+	"runtime"
 	"strconv"
+	"sync"
 	"time"
 
 	"bitbucket.org/isbtotogroup/api_go/config"
@@ -305,6 +308,8 @@ type MListsipperiodedetail struct {
 	Subtotal_winner           int `json:"subtotal_winner"`
 	Total_winlose             int `json:"total_winlose"`
 }
+
+var mutex sync.RWMutex
 
 func FetchAll_MclientPasaran(client_company string) (helpers.Response, error) {
 	var obj Mclientpasaran
@@ -2042,7 +2047,7 @@ func Fetch_invoiceperiodedetail(client_username, client_company, idtrxkeluaran s
 	res.Time = time.Since(render_page).String()
 	return res, nil
 }
-func Savetransaksi(client_username, client_company, idtrxkeluaran, idcomppasaran, devicemember, formipaddress, timezone string, totalbayarbet int, list4d string) (helpers.Response, error) {
+func Savetransaksiold(client_username, client_company, idtrxkeluaran, idcomppasaran, devicemember, formipaddress, timezone string, totalbayarbet int, list4d string) (helpers.Response, error) {
 	var res helpers.Response
 	con := db.CreateCon()
 	ctx := context.Background()
@@ -2149,16 +2154,15 @@ func Savetransaksi(client_username, client_company, idtrxkeluaran, idcomppasaran
 		(
 			idtrxkeluarandetail, idtrxkeluaran, datetimedetail,
 			ipaddress, idcompany, username, typegame, nomortogel, bet,
-			diskon, win, kei, browsertogel, posisitogel, upline, upline_ref,
-			type_ref, devicetogel, statuskeluarandetail, createkeluarandetail,
-			createdatekeluarandetail, updatekeluarandetail, updatedatekeluarandetail
+			diskon, win, kei, browsertogel, devicetogel, statuskeluarandetail, 
+			createkeluarandetail, createdatekeluarandetail
 		) values `
 		json := []byte(list4d)
 		temp_totalbet := 0
 		jsonparser.ArrayEach(json, func(value []byte, dataType jsonparser.ValueType, offset int, err error) {
 			temp_totalbet = temp_totalbet + 1
 		})
-		log.Println("TOTALBET : ", temp_totalbet)
+		log.Println("TOTALBET :", temp_totalbet)
 		jsonparser.ArrayEach(json, func(value []byte, dataType jsonparser.ValueType, offset int, err error) {
 			nomor_DD, _, _, _ := jsonparser.Get(value, "nomor")
 			permainan_DD, _, _, _ := jsonparser.Get(value, "permainan")
@@ -2256,34 +2260,17 @@ func Savetransaksi(client_username, client_company, idtrxkeluaran, idcomppasaran
 				idrecord := string(year) + string(month) + idrecord_counter2
 
 				bulk_insert += `(
-					?, ?, ?, ?, ?, ?, ?, ?, ?, ?,
-					?, ?, ?, ?, ?, ?, ?, ?, ?, ?,
-					?, ?, ?
+					?, ?, ?, 
+					?, ?, ?, ?, ?, ?, 
+					?, ?, ?, ?, ?, ?,
+					?, ?
 				),`
 
-				vals = append(vals, idrecord,
-					idtrxkeluaran,
-					tglnow.Format("YYYY-MM-DD HH:mm:ss"),
-					formipaddress,
-					client_company,
-					client_username,
-					string(permainan_DD),
-					string(nomor_DD),
-					string(bet_DD),
-					string(diskonpercen_DD),
-					string(win_DD),
-					string(kei_percen_DD),
-					timezone,
-					"",
-					"",
-					0,
-					"",
-					devicemember,
-					"RUNNING",
-					client_username,
-					tglnow.Format("YYYY-MM-DD HH:mm:ss"),
-					"",
-					tglnow.Format("YYYY-MM-DD HH:mm:ss"))
+				vals = append(vals,
+					idrecord, idtrxkeluaran, tglnow.Format("YYYY-MM-DD HH:mm:ss"),
+					formipaddress, client_company, client_username, string(permainan_DD), string(nomor_DD), string(bet_DD),
+					string(diskonpercen_DD), string(win_DD), string(kei_percen_DD), timezone, devicemember, "RUNNING",
+					client_username, tglnow.Format("YYYY-MM-DD HH:mm:ss"))
 			}
 		})
 		bulk_insert = bulk_insert[0 : len(bulk_insert)-1]
@@ -2325,4 +2312,369 @@ func Savetransaksi(client_username, client_company, idtrxkeluaran, idcomppasaran
 	}
 	log.Println(time.Since(render_page).String())
 	return res, nil
+}
+
+type datajobs struct {
+	Idtrxkeluarandetail      string
+	Idtrxkeluaran            string
+	Datetimedetail           string
+	Ipaddress                string
+	Idcompany                string
+	Username                 string
+	Typegame                 string
+	Nomortogel               string
+	Bet                      string
+	Diskon                   string
+	Win                      string
+	Kei                      string
+	Browsertogel             string
+	Devicetogel              string
+	Statuskeluarandetail     string
+	Createkeluarandetail     string
+	Createdatekeluarandetail string
+}
+type dataresult struct {
+	Idtrxkeluarandetail string
+	Status              string
+}
+
+func Savetransaksi(client_username, client_company, idtrxkeluaran, idcomppasaran, devicemember, formipaddress, timezone string, totalbayarbet int, list4d string) (helpers.Response, error) {
+	var res helpers.Response
+	con := db.CreateCon()
+	ctx := context.Background()
+	render_page := time.Now()
+	tglnow, _ := goment.New()
+	flag_loop := false
+	flag_next := false
+	msg := ""
+	totalbelanja := totalbayarbet
+	dompet := 5000000
+	jamtutup_pasaran := ""
+	jamopen_pasaran := ""
+	limit_togel4d := 0
+	limit_togel3d := 0
+	limit_togel2d := 0
+	limit_togel2dd := 0
+	limit_togel2dt := 0
+	limit_togelcolokbebas := 0
+	limit_togelcolokmacau := 0
+	limit_togelcoloknaga := 0
+	limit_togelcolokjitu := 0
+	limit_togel5050umum := 0
+	limit_togel5050special := 0
+	limit_togel5050kombinasi := 0
+	limit_togelkombinasi := 0
+	limit_togeldasar := 0
+	limit_togelshio := 0
+	if int(dompet) < int(totalbelanja) {
+		msg = "Balance Anda Tidak Cukup"
+		flag_loop = true
+	}
+	_, trx_keluarantogel_detail, view_client_invoice := Get_mappingdatabase(client_company)
+
+	sql_select := `SELECT 
+		jamtutup, jamopen, 
+		limit_togel_4d, limit_togel_3d, limit_togel_2d, limit_togel_2dd, limit_togel_2dt, 
+		limit_togel_colokbebas, limit_togel_colokmacau, limit_togel_coloknaga, limit_togel_colokjitu, 
+		limit_togel_5050umum, limit_togel_5050special, limit_togel_5050kombinasi, limit_togel_kombinasi, 
+		limit_togel_dasar, limit_togel_shio
+		FROM ` + config.DB_VIEW_CLIENT_VIEW_PASARAN + `  
+		WHERE idcompany = ? 
+		AND idcomppasaran = ? 
+	`
+	row, err := con.QueryContext(ctx, sql_select, client_company, idcomppasaran)
+
+	helpers.ErrorCheck(err)
+	nolimit := 0
+	for row.Next() {
+		nolimit = nolimit + 1
+		var (
+			jamtutup, jamopen                                                                                           string
+			limit_togel_4d_db, limit_togel_3d_db, limit_togel_2d_db, limit_togel_2dd_db, limit_togel_2dt_db             float32
+			limit_togel_colokbebas_db, limit_togel_colokmacau_db, limit_togel_coloknaga_db, limit_togel_colokjitu_db    float32
+			limit_togel_5050umum_db, limit_togel_5050special_db, limit_togel_5050kombinasi_db, limit_togel_kombinasi_db float32
+			limit_togel_dasar_db, limit_togel_shio_db                                                                   float32
+		)
+		err = row.Scan(
+			&jamtutup, &jamopen,
+			&limit_togel_4d_db, &limit_togel_3d_db, &limit_togel_2d_db, &limit_togel_2dd_db, &limit_togel_2dt_db,
+			&limit_togel_colokbebas_db, &limit_togel_colokmacau_db, &limit_togel_coloknaga_db, &limit_togel_colokjitu_db,
+			&limit_togel_5050umum_db, &limit_togel_5050special_db, &limit_togel_5050kombinasi_db, &limit_togel_kombinasi_db,
+			&limit_togel_dasar_db, &limit_togel_shio_db)
+
+		helpers.ErrorCheck(err)
+		jamtutup_pasaran = jamtutup
+		jamopen_pasaran = jamopen
+		limit_togel4d = int(limit_togel_4d_db)
+		limit_togel3d = int(limit_togel_3d_db)
+		limit_togel2d = int(limit_togel_2d_db)
+		limit_togel2dd = int(limit_togel_2dd_db)
+		limit_togel2dt = int(limit_togel_2dt_db)
+		limit_togelcolokbebas = int(limit_togel_colokbebas_db)
+		limit_togelcolokmacau = int(limit_togel_colokmacau_db)
+		limit_togelcoloknaga = int(limit_togel_coloknaga_db)
+		limit_togelcolokjitu = int(limit_togel_colokjitu_db)
+		limit_togel5050umum = int(limit_togel_5050umum_db)
+		limit_togel5050special = int(limit_togel_5050special_db)
+		limit_togel5050kombinasi = int(limit_togel_5050kombinasi_db)
+		limit_togelkombinasi = int(limit_togel_kombinasi_db)
+		limit_togeldasar = int(limit_togel_dasar_db)
+		limit_togelshio = int(limit_togel_shio_db)
+	}
+	defer row.Close()
+	if nolimit > 0 {
+		taiskrg := tglnow.Format("YYYY-MM-DD HH:mm:ss")
+		jamtutup := tglnow.Format("YYYY-MM-DD") + " " + jamtutup_pasaran
+		jamopen := tglnow.Format("YYYY-MM-DD") + " " + jamopen_pasaran
+
+		if taiskrg >= jamtutup && taiskrg <= jamopen {
+			msg = "Pasaran Sudah Tutup"
+			flag_loop = true
+		}
+	}
+	if !flag_loop {
+		permainan := ""
+		var limit_global_togel int = 0
+		var limit_sum int = 0
+		var totalbet_all int = 0
+		var totalbayar int = 0
+		flag_save := false
+		json := []byte(list4d)
+		temp_totalbet := 0
+		jsonparser.ArrayEach(json, func(value []byte, dataType jsonparser.ValueType, offset int, err error) {
+			temp_totalbet = temp_totalbet + 1
+		})
+		log.Println("TOTALBET :", temp_totalbet)
+		runtime.GOMAXPROCS(8)
+		totalWorker := 100
+		totals_bet := temp_totalbet
+		buffer_bet := totals_bet + 1
+		jobs_bet := make(chan datajobs, buffer_bet)
+		results_bet := make(chan dataresult, buffer_bet)
+
+		wg := &sync.WaitGroup{}
+		for w := 0; w < totalWorker; w++ {
+			wg.Add(1)
+			mutex.Lock()
+			go _doJobInsert(trx_keluarantogel_detail, jobs_bet, results_bet, con, wg)
+			mutex.Unlock()
+		}
+
+		jsonparser.ArrayEach(json, func(value []byte, dataType jsonparser.ValueType, offset int, err error) {
+			mutex.Lock()
+			nomor_DD, _, _, _ := jsonparser.Get(value, "nomor")
+			permainan_DD, _, _, _ := jsonparser.Get(value, "permainan")
+			bet_DD, _, _, _ := jsonparser.Get(value, "bet")
+			diskonpercen_DD, _, _, _ := jsonparser.Get(value, "diskonpercen")
+			kei_percen_DD, _, _, _ := jsonparser.Get(value, "kei_percen")
+			win_DD, _, _, _ := jsonparser.Get(value, "win")
+			switch string(permainan_DD) {
+			case "4D":
+				permainan = "4D/3D/2D"
+				limit_global_togel = limit_togel4d
+			case "3D":
+				permainan = "4D/3D/2D"
+				limit_global_togel = limit_togel3d
+			case "2D":
+				permainan = "4D/3D/2D"
+				limit_global_togel = limit_togel2d
+			case "2DD":
+				permainan = "4D/3D/2D"
+				limit_global_togel = limit_togel2dd
+			case "2DT":
+				permainan = "4D/3D/2D"
+				limit_global_togel = limit_togel2dt
+			case "COLOK_BEBAS":
+				permainan = "COLOK BEBAS"
+				limit_global_togel = limit_togelcolokbebas
+			case "COLOK_MACAU":
+				permainan = "COLOK MACAU"
+				limit_global_togel = limit_togelcolokmacau
+			case "COLOK_NAGA":
+				permainan = "COLOK NAGA"
+				limit_global_togel = limit_togelcoloknaga
+			case "COLOK_JITU":
+				permainan = "COLOK JITU"
+				limit_global_togel = limit_togelcolokjitu
+			case "50_50_UMUM":
+				permainan = "50 - 50 UMUM"
+				limit_global_togel = limit_togel5050umum
+			case "50_50_SPECIAL":
+				permainan = "50 - 50 SPECIAL"
+				limit_global_togel = limit_togel5050special
+			case "50_50_KOMBINASI":
+				permainan = "50 - 50 KOMBINASI"
+				limit_global_togel = limit_togel5050kombinasi
+			case "MACAU_KOMBINASI":
+				permainan = "MACAU / KOMBINASI"
+				limit_global_togel = limit_togelkombinasi
+			case "DASAR":
+				permainan = "DASAR"
+				limit_global_togel = limit_togeldasar
+			case "SHIO":
+				permainan = "SHIO"
+				limit_global_togel = limit_togelshio
+			}
+			bet := string(bet_DD)
+			diskon := string(diskonpercen_DD)
+			kei := string(kei_percen_DD)
+			bet2, _ := strconv.Atoi(bet)
+			diskon2, _ := strconv.ParseFloat(diskon, 32)
+			kei2, _ := strconv.ParseFloat(kei, 32)
+
+			bayar := bet2 - int(float64(bet2)*diskon2) - int(float64(bet2)*kei2)
+			totalbayar = totalbayar + int(bayar)
+
+			sqllimitsum := `SELECT
+					COALESCE(SUM(bet), 0) AS total
+					FROM ` + view_client_invoice + ` 
+					WHERE idtrxkeluaran = ?
+					AND typegame = ?
+					AND nomortogel = ?
+				`
+
+			row := con.QueryRowContext(ctx, sqllimitsum, idtrxkeluaran, string(permainan_DD), string(nomor_DD))
+			switch e := row.Scan(&limit_sum); e {
+			case sql.ErrNoRows:
+				log.Println("No rows were returned!")
+			case nil:
+				// log.Println(iddoc)
+			default:
+				// panic(e)
+			}
+
+			totalbet_all = limit_sum + bet2
+			if limit_global_togel < totalbet_all {
+				flag_save = true
+				msg += string(nomor_DD)
+			}
+			if !flag_save {
+				year := tglnow.Format("YY")
+				month := tglnow.Format("MM")
+				field_column_counter := trx_keluarantogel_detail + tglnow.Format("YYYY") + month
+				idrecord_counter := Get_counter(field_column_counter)
+
+				idrecord_counter2 := strconv.Itoa(idrecord_counter)
+				idrecord := string(year) + string(month) + idrecord_counter2
+
+				jobs_bet <- datajobs{
+					Idtrxkeluarandetail:      idrecord,
+					Idtrxkeluaran:            idtrxkeluaran,
+					Datetimedetail:           tglnow.Format("YYYY-MM-DD HH:mm:ss"),
+					Ipaddress:                formipaddress,
+					Idcompany:                client_company,
+					Username:                 client_username,
+					Typegame:                 string(permainan_DD),
+					Nomortogel:               string(nomor_DD),
+					Bet:                      string(bet_DD),
+					Diskon:                   string(diskonpercen_DD),
+					Win:                      string(win_DD),
+					Kei:                      string(kei_percen_DD),
+					Browsertogel:             timezone,
+					Devicetogel:              devicemember,
+					Statuskeluarandetail:     "RUNNING",
+					Createkeluarandetail:     client_username,
+					Createdatekeluarandetail: tglnow.Format("YYYY-MM-DD HH:mm:ss")}
+
+			}
+			mutex.Unlock()
+		})
+		close(jobs_bet)
+		flag_next = true
+		for a := 1; a <= totals_bet; a++ { //RESULT
+			flag_result := <-results_bet
+			if flag_result.Status == "Failed" {
+				flag_next = false
+			}
+		}
+		close(results_bet)
+		wg.Wait()
+
+		log.Println(time.Since(render_page).String())
+		if flag_next {
+			msg = "Success"
+			res.Status = fiber.StatusOK
+			res.Message = msg
+			res.Record = nil
+			res.Time = time.Since(render_page).String()
+		} else {
+			msg = "Failed"
+			res.Status = fiber.StatusBadRequest
+			res.Message = msg
+			res.Record = nil
+			res.Time = time.Since(render_page).String()
+		}
+
+	} else {
+
+		res.Status = fiber.StatusOK
+		res.Message = msg
+		res.Record = nil
+		res.Time = time.Since(render_page).String()
+	}
+
+	return res, nil
+}
+func _doJobInsert(fieldtable string, jobs <-chan datajobs, results chan<- dataresult, con *sql.DB, wg *sync.WaitGroup) {
+	ctx := context.Background()
+	for capture := range jobs {
+		for {
+			var outerError error
+			func(outerError *error) {
+				defer func() {
+					if err := recover(); err != nil {
+						*outerError = fmt.Errorf("%v", err)
+					}
+				}()
+				sql_insert := `
+					INSERT INTO ` + fieldtable + ` 
+					(
+						idtrxkeluarandetail, idtrxkeluaran, datetimedetail,
+						ipaddress, idcompany, username, typegame, nomortogel, bet,
+						diskon, win, kei, browsertogel, devicetogel, statuskeluarandetail, 
+						createkeluarandetail, createdatekeluarandetail
+					) values (
+						?, ?, ?, 
+						?, ?, ?, ?, ?, ?, 
+						?, ?, ?, ?, ?, ?,
+						?, ?
+					)
+				`
+
+				stmt, err := con.PrepareContext(ctx, sql_insert)
+				helpers.ErrorCheck(err)
+				defer stmt.Close()
+				res, err := stmt.ExecContext(ctx,
+					capture.Idtrxkeluarandetail,
+					capture.Idtrxkeluaran,
+					capture.Datetimedetail,
+					capture.Ipaddress,
+					capture.Idcompany,
+					capture.Username,
+					capture.Typegame,
+					capture.Nomortogel,
+					capture.Bet,
+					capture.Diskon,
+					capture.Win,
+					capture.Kei,
+					capture.Browsertogel,
+					capture.Devicetogel,
+					capture.Statuskeluarandetail,
+					capture.Createkeluarandetail,
+					capture.Createdatekeluarandetail)
+				helpers.ErrorCheck(err)
+				id_insert, err_insert := res.RowsAffected()
+				helpers.ErrorCheck(err_insert)
+				if id_insert > 0 {
+					results <- dataresult{Idtrxkeluarandetail: capture.Idtrxkeluarandetail, Status: "Success"}
+				} else {
+					results <- dataresult{Idtrxkeluarandetail: capture.Idtrxkeluarandetail, Status: "Failed"}
+				}
+			}(&outerError)
+			if outerError == nil {
+				break
+			}
+		}
+	}
+	wg.Done()
 }
