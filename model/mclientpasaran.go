@@ -2055,7 +2055,6 @@ func Savetransaksi(client_username, client_company, idtrxkeluaran, idcomppasaran
 	dompet := 5000000
 	jamtutup_pasaran := ""
 	jamopen_pasaran := ""
-	// limit_sum := 0
 	limit_togel4d := 0
 	limit_togel3d := 0
 	limit_togel2d := 0
@@ -2155,7 +2154,11 @@ func Savetransaksi(client_username, client_company, idtrxkeluaran, idcomppasaran
 			createdatekeluarandetail, updatekeluarandetail, updatedatekeluarandetail
 		) values `
 		json := []byte(list4d)
-
+		temp_totalbet := 0
+		jsonparser.ArrayEach(json, func(value []byte, dataType jsonparser.ValueType, offset int, err error) {
+			temp_totalbet = temp_totalbet + 1
+		})
+		log.Println("TOTALBET : ", temp_totalbet)
 		jsonparser.ArrayEach(json, func(value []byte, dataType jsonparser.ValueType, offset int, err error) {
 			nomor_DD, _, _, _ := jsonparser.Get(value, "nomor")
 			permainan_DD, _, _, _ := jsonparser.Get(value, "permainan")
@@ -2227,9 +2230,16 @@ func Savetransaksi(client_username, client_company, idtrxkeluaran, idcomppasaran
 				AND typegame = ?
 				AND nomortogel = ?
 			`
-			var totalsumbet int
-			e := con.QueryRowContext(ctx, sqllimitsum, idtrxkeluaran, string(permainan_DD), string(nomor_DD)).Scan(&totalsumbet)
-			helpers.ErrorCheck(e)
+
+			row := con.QueryRowContext(ctx, sqllimitsum, idtrxkeluaran, string(permainan_DD), string(nomor_DD))
+			switch e := row.Scan(&limit_sum); e {
+			case sql.ErrNoRows:
+				log.Println("No rows were returned!")
+			case nil:
+				// log.Println(iddoc)
+			default:
+				// panic(e)
+			}
 
 			totalbet_all = limit_sum + bet2
 			if limit_global_togel < totalbet_all {
