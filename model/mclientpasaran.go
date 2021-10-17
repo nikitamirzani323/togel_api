@@ -2144,19 +2144,23 @@ func Savetransaksi(client_username, client_company, idtrxkeluaran, idcomppasaran
 		var totalbet_all int = 0
 		var totalbayar int = 0
 		flag_save := false
-
-		// json, err := json.Marshal(list4d)
-		// ErrorCheck(err)
+		vals := []interface{}{}
+		bulk_insert := `
+		INSERT INTO ` + trx_keluarantogel_detail + ` 
+		(
+			idtrxkeluarandetail, idtrxkeluaran, datetimedetail,
+			ipaddress, idcompany, username, typegame, nomortogel, bet,
+			diskon, win, kei, browsertogel, posisitogel, upline, upline_ref,
+			type_ref, devicetogel, statuskeluarandetail, createkeluarandetail,
+			createdatekeluarandetail, updatekeluarandetail, updatedatekeluarandetail
+		) values `
 		json := []byte(list4d)
-		// log.Println(json)
+
 		jsonparser.ArrayEach(json, func(value []byte, dataType jsonparser.ValueType, offset int, err error) {
 			nomor_DD, _, _, _ := jsonparser.Get(value, "nomor")
 			permainan_DD, _, _, _ := jsonparser.Get(value, "permainan")
 			bet_DD, _, _, _ := jsonparser.Get(value, "bet")
-			// bayar_DD, _, _, _ := jsonparser.Get(value, "bayar")
-			// diskon_DD, _, _, _ := jsonparser.Get(value, "diskon")
 			diskonpercen_DD, _, _, _ := jsonparser.Get(value, "diskonpercen")
-			// kei_DD, _, _, _ := jsonparser.Get(value, "kei")
 			kei_percen_DD, _, _, _ := jsonparser.Get(value, "kei_percen")
 			win_DD, _, _, _ := jsonparser.Get(value, "win")
 			switch string(permainan_DD) {
@@ -2206,17 +2210,6 @@ func Savetransaksi(client_username, client_company, idtrxkeluaran, idcomppasaran
 				permainan = "SHIO"
 				limit_global_togel = limit_togelshio
 			}
-			// log.Printf("%s - %s - %s - %s - %s - %s - %s - %s - %s\n",
-			// 	string(nomor_DD),
-			// 	string(permainan_DD),
-			// 	string(bet_DD),
-			// 	string(diskon_DD),
-			// 	string(diskonpercen_DD),
-			// 	string(kei_DD),
-			// 	string(kei_percen_DD),
-			// 	string(bayar_DD),
-			// 	string(win_DD))
-
 			bet := string(bet_DD)
 			diskon := string(diskonpercen_DD)
 			kei := string(kei_percen_DD)
@@ -2252,25 +2245,13 @@ func Savetransaksi(client_username, client_company, idtrxkeluaran, idcomppasaran
 				idrecord_counter2 := strconv.Itoa(idrecord_counter)
 				idrecord := string(year) + string(month) + idrecord_counter2
 
-				sql_insert := `
-						INSERT INTO ` + trx_keluarantogel_detail + ` 
-						(
-							idtrxkeluarandetail, idtrxkeluaran, datetimedetail,
-							ipaddress, idcompany, username, typegame, nomortogel, bet,
-							diskon, win, kei, browsertogel, posisitogel, upline, upline_ref,
-							type_ref, devicetogel, statuskeluarandetail, createkeluarandetail,
-							createdatekeluarandetail, updatekeluarandetail, updatedatekeluarandetail
-						) values (
-							?, ?, ?, ?, ?, ?, ?, ?, ?, ?,
-							?, ?, ?, ?, ?, ?, ?, ?, ?, ?,
-							?, ?, ?
-						)
-					`
+				bulk_insert += `(
+					?, ?, ?, ?, ?, ?, ?, ?, ?, ?,
+					?, ?, ?, ?, ?, ?, ?, ?, ?, ?,
+					?, ?, ?
+				),`
 
-				stmt, e := con.PrepareContext(ctx, sql_insert)
-				helpers.ErrorCheck(e)
-				res, e := stmt.ExecContext(ctx,
-					idrecord,
+				vals = append(vals, idrecord,
 					idtrxkeluaran,
 					tglnow.Format("YYYY-MM-DD HH:mm:ss"),
 					formipaddress,
@@ -2293,22 +2274,24 @@ func Savetransaksi(client_username, client_company, idtrxkeluaran, idcomppasaran
 					tglnow.Format("YYYY-MM-DD HH:mm:ss"),
 					"",
 					tglnow.Format("YYYY-MM-DD HH:mm:ss"))
-				helpers.ErrorCheck(e)
-
-				id_insert, err_inser := res.RowsAffected()
-				helpers.ErrorCheck(err_inser)
-				if id_insert > 0 {
-					msg = "Success"
-					flag_next = true
-					log.Println("Data berhasil di simpan dengan idrecord : ", idrecord)
-				} else {
-					msg = "Failed"
-					flag_next = false
-					log.Println("Data gagal di simpan")
-				}
-
 			}
 		})
+		bulk_insert = bulk_insert[0 : len(bulk_insert)-1]
+		stmt_insert, e := con.PrepareContext(ctx, bulk_insert)
+		helpers.ErrorCheck(e)
+		res_insert, e_insert := stmt_insert.ExecContext(ctx, vals...)
+		helpers.ErrorCheck(e_insert)
+
+		id_insert, err_inser := res_insert.RowsAffected()
+		helpers.ErrorCheck(err_inser)
+		if id_insert > 0 {
+			msg = "Success"
+			flag_next = true
+		} else {
+			msg = "Failed"
+			flag_next = false
+			log.Println("Data gagal di simpan")
+		}
 		if flag_next {
 			msg = "Success"
 			res.Status = fiber.StatusOK
@@ -2322,6 +2305,7 @@ func Savetransaksi(client_username, client_company, idtrxkeluaran, idcomppasaran
 			res.Record = nil
 			res.Time = time.Since(render_page).String()
 		}
+
 	} else {
 
 		res.Status = fiber.StatusOK
@@ -2329,5 +2313,6 @@ func Savetransaksi(client_username, client_company, idtrxkeluaran, idcomppasaran
 		res.Record = nil
 		res.Time = time.Since(render_page).String()
 	}
+	log.Println(time.Since(render_page).String())
 	return res, nil
 }
