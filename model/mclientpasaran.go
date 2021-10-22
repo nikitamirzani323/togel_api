@@ -2349,8 +2349,7 @@ func Savetransaksi(client_username, client_company, idtrxkeluaran, idcomppasaran
 	msg := ""
 	totalbelanja := totalbayarbet
 	dompet := 5000000
-	jamtutup_pasaran := ""
-	jamopen_pasaran := ""
+	pasaran_code := ""
 	limit_togel4d := 0
 	limit_togel3d := 0
 	limit_togel2d := 0
@@ -2373,7 +2372,7 @@ func Savetransaksi(client_username, client_company, idtrxkeluaran, idcomppasaran
 	_, trx_keluarantogel_detail, view_client_invoice := Get_mappingdatabase(client_company)
 
 	sql_select := `SELECT 
-		jamtutup, jamopen, 
+		idpasarantogel, 
 		limit_togel_4d, limit_togel_3d, limit_togel_2d, limit_togel_2dd, limit_togel_2dt, 
 		limit_togel_colokbebas, limit_togel_colokmacau, limit_togel_coloknaga, limit_togel_colokjitu, 
 		limit_togel_5050umum, limit_togel_5050special, limit_togel_5050kombinasi, limit_togel_kombinasi, 
@@ -2389,22 +2388,21 @@ func Savetransaksi(client_username, client_company, idtrxkeluaran, idcomppasaran
 	for row.Next() {
 		nolimit = nolimit + 1
 		var (
-			jamtutup, jamopen                                                                                           string
+			idpasarantogel_db                                                                                           string
 			limit_togel_4d_db, limit_togel_3d_db, limit_togel_2d_db, limit_togel_2dd_db, limit_togel_2dt_db             float32
 			limit_togel_colokbebas_db, limit_togel_colokmacau_db, limit_togel_coloknaga_db, limit_togel_colokjitu_db    float32
 			limit_togel_5050umum_db, limit_togel_5050special_db, limit_togel_5050kombinasi_db, limit_togel_kombinasi_db float32
 			limit_togel_dasar_db, limit_togel_shio_db                                                                   float32
 		)
 		err = row.Scan(
-			&jamtutup, &jamopen,
+			&idpasarantogel_db,
 			&limit_togel_4d_db, &limit_togel_3d_db, &limit_togel_2d_db, &limit_togel_2dd_db, &limit_togel_2dt_db,
 			&limit_togel_colokbebas_db, &limit_togel_colokmacau_db, &limit_togel_coloknaga_db, &limit_togel_colokjitu_db,
 			&limit_togel_5050umum_db, &limit_togel_5050special_db, &limit_togel_5050kombinasi_db, &limit_togel_kombinasi_db,
 			&limit_togel_dasar_db, &limit_togel_shio_db)
 
 		helpers.ErrorCheck(err)
-		jamtutup_pasaran = jamtutup
-		jamopen_pasaran = jamopen
+		pasaran_code = idpasarantogel_db
 		limit_togel4d = int(limit_togel_4d_db)
 		limit_togel3d = int(limit_togel_3d_db)
 		limit_togel2d = int(limit_togel_2d_db)
@@ -2423,12 +2421,10 @@ func Savetransaksi(client_username, client_company, idtrxkeluaran, idcomppasaran
 	}
 	defer row.Close()
 	if nolimit > 0 {
-		taiskrg := tglnow.Format("YYYY-MM-DD HH:mm:ss")
-		jamtutup := tglnow.Format("YYYY-MM-DD") + " " + jamtutup_pasaran
-		jamopen := tglnow.Format("YYYY-MM-DD") + " " + jamopen_pasaran
+		statuspasaran := _checkpasaran(client_company, pasaran_code)
 
-		if taiskrg >= jamtutup && taiskrg <= jamopen {
-			msg = "Pasaran Sudah Tutup"
+		if statuspasaran == "OFFLINE" {
+			msg = "Maaf, Pasaran Sudah Tutup"
 			flag_loop = true
 		}
 	}
@@ -2606,8 +2602,7 @@ func Savetransaksi(client_username, client_company, idtrxkeluaran, idcomppasaran
 		}
 
 	} else {
-
-		res.Status = fiber.StatusOK
+		res.Status = fiber.StatusBadRequest
 		res.Message = msg
 		res.Record = nil
 		res.Time = time.Since(render_page).String()
@@ -2677,4 +2672,74 @@ func _doJobInsert(fieldtable string, jobs <-chan datajobs, results chan<- datare
 		}
 	}
 	wg.Done()
+}
+func _checkpasaran(client_company, pasaran_code string) string {
+	var myDays = []string{"minggu", "senin", "selasa", "rabu", "kamis", "jumat", "sabtu"}
+	statuspasaran := "ONLINE"
+
+	con := db.CreateCon()
+	ctx := context.Background()
+
+	tglnow, _ := goment.New()
+	daynow := tglnow.Format("d")
+	intVar, _ := strconv.ParseInt(daynow, 0, 8)
+	daynowhari := myDays[intVar]
+
+	tbl_trx_keluaran, _, _ := Get_mappingdatabase(client_company)
+
+	sqlpasaran := `SELECT 
+		idcomppasaran, nmpasarantogel, 
+		jamtutup, jamopen  
+		FROM ` + config.DB_VIEW_CLIENT_VIEW_PASARAN + `  
+		WHERE idcompany = ? 
+		AND idpasarantogel = ? 
+	`
+
+	rowpasaran, err := con.QueryContext(ctx, sqlpasaran, client_company, pasaran_code)
+	defer rowpasaran.Close()
+	helpers.ErrorCheck(err)
+	for rowpasaran.Next() {
+		var (
+			idcomppasaran, nmpasarantogel, jamtutup, jamopen string
+			idtrxkeluaran, keluaranperiode, haripasaran      string
+		)
+
+		err = rowpasaran.Scan(&idcomppasaran, &nmpasarantogel, &jamtutup, &jamopen)
+		helpers.ErrorCheck(err)
+
+		sqlkeluaran := `
+			SELECT 
+			idtrxkeluaran, keluaranperiode
+			FROM ` + tbl_trx_keluaran + `  
+			WHERE idcompany = ?
+			AND idcomppasaran = ?
+			AND keluarantogel = ''
+			LIMIT 1
+		`
+		err := con.QueryRowContext(ctx, sqlkeluaran, client_company, idcomppasaran).Scan(&idtrxkeluaran, &keluaranperiode)
+		helpers.ErrorCheck(err)
+
+		sqlpasaranonline := `
+			SELECT
+				haripasaran
+			FROM ` + config.DB_tbl_mst_company_game_pasaran_offline + ` 
+			WHERE idcomppasaran = ?
+			AND idcompany = ? 
+			AND haripasaran = ? 
+		`
+
+		errpasaranonline := con.QueryRowContext(ctx, sqlpasaranonline, idcomppasaran, client_company, daynowhari).Scan(&haripasaran)
+
+		if errpasaranonline != sql.ErrNoRows {
+			tglskrg := tglnow.Format("YYYY-MM-DD HH:mm:ss")
+			jamtutup := tglnow.Format("YYYY-MM-DD") + " " + jamtutup
+			jamopen := tglnow.Format("YYYY-MM-DD") + " " + jamopen
+
+			if tglskrg >= jamtutup && tglskrg <= jamopen {
+				statuspasaran = "OFFLINE"
+			}
+		}
+	}
+
+	return statuspasaran
 }
