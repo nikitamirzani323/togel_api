@@ -23,14 +23,17 @@ type setting struct {
 	EndMaintenance   string `json:"maintenance_end"`
 }
 type Mclientpasaran struct {
-	PasaranId          string `json:"pasaran_id"`
-	PasaranTogel       string `json:"pasaran_togel"`
-	PasaranPeriode     string `json:"pasaran_periode"`
-	PasaranTglKeluaran string `json:"pasaran_tglkeluaran"`
-	PasaranJamTutup    string `json:"pasaran_marketclose"`
-	PasaranJamJadwal   string `json:"pasaran_marketschedule"`
-	PasaranJamOpen     string `json:"pasaran_marketopen"`
-	PasaranStatus      string `json:"pasaran_status"`
+	PasaranId             string `json:"pasaran_id"`
+	PasaranTogel          string `json:"pasaran_togel"`
+	PasaranPeriode        string `json:"pasaran_periode"`
+	PasaranTglKeluaran    string `json:"pasaran_tglkeluaran"`
+	Pasaranmarketclose    string `json:"pasaran_marketclose"`
+	Pasaranmarketschedule string `json:"pasaran_marketschedule"`
+	Pasaranmarketopen     string `json:"pasaran_marketopen"`
+	Pasaranjamtutup       string `json:"pasaran_jamtutup"`
+	Pasaranjamopen        string `json:"pasaran_jamopen"`
+	Pasaranhari           string `json:"pasaran_hari"`
+	PasaranStatus         string `json:"pasaran_status"`
 }
 type MclientpasaranResult struct {
 	No      uint16 `json:"no"`
@@ -365,7 +368,7 @@ func FetchAll_MclientPasaran(client_company string) (helpers.Response, error) {
 	daynow := tglnow.Format("d")
 	intVar, _ := strconv.ParseInt(daynow, 0, 8)
 	daynowhari := myDays[intVar]
-
+	pasaranhariini := "OFFLINE"
 	tbl_trx_keluaran, _, _ := Get_mappingdatabase(client_company)
 
 	sqlpasaran := `SELECT 
@@ -379,6 +382,7 @@ func FetchAll_MclientPasaran(client_company string) (helpers.Response, error) {
 	helpers.ErrorCheck(err)
 
 	for rowspasaran.Next() {
+		pasaranhariini = "OFFLINE"
 		statuspasaran = "ONLINE"
 		var (
 			idcomppasaran                                                int
@@ -423,7 +427,7 @@ func FetchAll_MclientPasaran(client_company string) (helpers.Response, error) {
 			jamtutupdoc2 := jamtutupdoc.Format("YYYY-MM-DD")
 			taiskrg2 := tglnow.Format("YYYY-MM-DD")
 			if errpasaranonline != sql.ErrNoRows {
-
+				pasaranhariini = "ONLINE"
 				taiskrg := tglnow.Format("YYYY-MM-DD HH:mm:ss")
 				jamtutup := tglnow.Format("YYYY-MM-DD") + " " + jamtutup
 				jamopen := tglnow.Format("YYYY-MM-DD") + " " + jamopen
@@ -451,9 +455,12 @@ func FetchAll_MclientPasaran(client_company string) (helpers.Response, error) {
 		obj.PasaranTogel = nmpasarantogel
 		obj.PasaranPeriode = "#" + periodekerluaran + "-" + idpasarantogel
 		obj.PasaranTglKeluaran = tglkeluaran
-		obj.PasaranJamTutup = tglkeluaran + " " + jamtutup
-		obj.PasaranJamJadwal = tglkeluaran + " " + jamjadwal
-		obj.PasaranJamOpen = tglkeluaran + " " + jamopen
+		obj.Pasaranmarketclose = tglkeluaran + " " + jamtutup
+		obj.Pasaranmarketschedule = tglkeluaran + " " + jamjadwal
+		obj.Pasaranmarketopen = tglkeluaran + " " + jamopen
+		obj.Pasaranjamtutup = jamtutup
+		obj.Pasaranjamopen = jamopen
+		obj.Pasaranhari = pasaranhariini
 		obj.PasaranStatus = statuspasaran
 		arraobj = append(arraobj, obj)
 		msg = "Success"

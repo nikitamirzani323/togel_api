@@ -428,7 +428,7 @@ func Fetch_token(c *fiber.Ctx) error {
 		})
 	}
 }
-func FetchAll_pasaran(c *fiber.Ctx) error {
+func FetchAll_pasaran2(c *fiber.Ctx) error {
 	client := new(ClientInit)
 
 	if err := c.BodyParser(client); err != nil {
@@ -447,7 +447,7 @@ func FetchAll_pasaran(c *fiber.Ctx) error {
 	log.Println("MYSQL")
 	return c.JSON(result)
 }
-func FetchAll_pasaran2(c *fiber.Ctx) error {
+func FetchAll_pasaran(c *fiber.Ctx) error {
 	client := new(ClientInit)
 
 	if err := c.BodyParser(client); err != nil {
@@ -470,20 +470,29 @@ func FetchAll_pasaran2(c *fiber.Ctx) error {
 		pasaran_marketclose, _ := jsonparser.GetString(value, "pasaran_marketclose")
 		pasaran_marketschedule, _ := jsonparser.GetString(value, "pasaran_marketschedule")
 		pasaran_marketopen, _ := jsonparser.GetString(value, "pasaran_marketopen")
-		tgltutup, _ := goment.New(pasaran_marketclose)
-		tglopen, _ := goment.New(pasaran_marketopen)
+		pasaran_jamtutup, _ := jsonparser.GetString(value, "pasaran_jamtutup")
+		pasaran_jamopen, _ := jsonparser.GetString(value, "pasaran_jamopen")
+		pasaran_hari, _ := jsonparser.GetString(value, "pasaran_hari")
+
+		// tgltutup, _ := goment.New(pasaran_marketclose)
+		// tglopen, _ := goment.New(pasaran_marketopen)
 
 		taiskrg := tglnow.Format("YYYY-MM-DD HH:mm:ss")
-		jamtutup := tgltutup.Format("YYYY-MM-DD HH:mm:ss")
-		jamopen := tglopen.Format("YYYY-MM-DD HH:mm:ss")
+		jamtutup := tglnow.Format("YYYY-MM-DD") + " " + pasaran_jamtutup
+		jamopen := tglnow.Format("YYYY-MM-DD") + " " + pasaran_jamopen
 
-		if taiskrg >= jamtutup && taiskrg <= jamopen {
-			statuspasaran = "OFFLINE"
-		} else {
-			statuspasaran = "ONLINE"
-		}
 		if taiskrg >= jamtutup {
 			statuspasaran = "OFFLINE"
+		} else {
+			if pasaran_hari == "ONLINE" {
+				if taiskrg >= jamtutup && taiskrg <= jamopen {
+					statuspasaran = "OFFLINE"
+				} else {
+					statuspasaran = "ONLINE"
+				}
+			} else {
+				statuspasaran = "ONLINE"
+			}
 		}
 
 		obj.Pasaran_id = pasaran_id
@@ -508,10 +517,10 @@ func FetchAll_pasaran2(c *fiber.Ctx) error {
 			})
 		}
 		helpers.SetRedis(field_redis, result, 0)
-		log.Println("MYSQL")
+		log.Println("PASARAN MYSQL")
 		return c.JSON(result)
 	} else {
-		log.Println("cache")
+		log.Println("PASARAN cache")
 		return c.JSON(fiber.Map{
 			"status":  fiber.StatusOK,
 			"message": "Success",
@@ -561,13 +570,13 @@ func FetchAll_resultbypasaran(c *fiber.Ctx) error {
 			})
 		}
 
-		log.Println("mysql")
+		log.Println("RESulT mysql")
 		if result.Status == 200 {
 			helpers.SetRedis(field_redis, result, 0)
 		}
 		return c.JSON(result)
 	} else {
-		log.Println("cache")
+		log.Println("RESulT cache")
 		return c.JSON(fiber.Map{
 			"status":  fiber.StatusOK,
 			"message": "Success",
@@ -620,7 +629,7 @@ func FetchAll_result(c *fiber.Ctx) error {
 			})
 		}
 
-		log.Println("mysql")
+		log.Println("PASARAN mysql")
 		if result.Status == 200 {
 			helpers.SetRedis(field_redis, result, 0)
 		}
