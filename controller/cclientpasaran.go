@@ -2,6 +2,7 @@ package controller
 
 import (
 	"context"
+	"encoding/json"
 	"log"
 	"strconv"
 	"time"
@@ -299,6 +300,14 @@ type responseinvoiceidpermainan struct {
 	Bayar     int     `json:"bayar"`
 	Win       int     `json:"win"`
 }
+type settingcustom struct {
+	Status int         `json:"status"`
+	Record interface{} `json:"record"`
+}
+type settingcustom2 struct {
+	StartMaintenance string `json:"maintenance_start"`
+	EndMaintenance   string `json:"maintenance_end"`
+}
 
 var ctx = context.Background()
 
@@ -314,16 +323,28 @@ func Fetch_token(c *fiber.Ctx) error {
 		})
 	}
 
-	result, err := model.Fetch_Setting()
-	if err != nil {
-		c.Status(fiber.StatusBadRequest)
-		return c.JSON(fiber.Map{
-			"status":  fiber.StatusBadRequest,
-			"message": err.Error(),
-			"record":  nil,
-		})
-	}
+	field_redis := "LISTSETTING_MASTER"
+	tglnow, _ := goment.New()
+	website_status := "ONLINE"
+	website_message := ""
+	tglskrg := tglnow.Format("YYYY-MM-DD HH:mm:ss")
+	jamstart := ""
+	jamend := ""
+	resultredis, flag := helpers.GetRedis(field_redis)
+	jsonredis := []byte(resultredis)
+	record_RD, _, _, err := jsonparser.Get(jsonredis, "record")
+	log.Println(err)
+	jsonparser.ArrayEach(record_RD, func(value []byte, dataType jsonparser.ValueType, offset int, err error) {
+		maintenance_start, _ := jsonparser.GetString(value, "maintenance_start")
+		maintenance_end, _ := jsonparser.GetString(value, "maintenance_end")
+		jamstart = tglnow.Format("YYYY-MM-DD") + " " + maintenance_start
+		jamend = tglnow.Format("YYYY-MM-DD") + " " + maintenance_end
 
+	})
+	if tglskrg >= jamstart && tglskrg <= jamend {
+		website_status = "OFFLINE"
+		website_message = "START : " + jamstart + ", FINISH : " + jamend
+	}
 	member_username := ""
 	member_company := ""
 	member_saldo := 0
@@ -349,15 +370,63 @@ func Fetch_token(c *fiber.Ctx) error {
 		member_company = "NUKE"
 		member_saldo = 2000000
 	}
-	return c.JSON(fiber.Map{
-		"status":          fiber.StatusOK,
-		"token":           client.Token,
-		"website_status":  result.Website_status,
-		"website_message": result.Website_message,
-		"member_username": member_username,
-		"member_company":  member_company,
-		"member_credit":   member_saldo,
-	})
+	if !flag {
+		result, err := model.Fetch_Setting()
+		if err != nil {
+			c.Status(fiber.StatusBadRequest)
+			return c.JSON(fiber.Map{
+				"status":  fiber.StatusBadRequest,
+				"message": err.Error(),
+				"record":  nil,
+			})
+		}
+		var obj settingcustom
+		var obj2 settingcustom2
+		var arraobj2 []settingcustom2
+
+		dataresult, _ := json.Marshal(result)
+		status_rd, _ := jsonparser.GetInt(dataresult, "status")
+		record_RD, _, _, _ := jsonparser.Get(dataresult, "record")
+
+		log.Println("INIT MYSQL")
+		jsonparser.ArrayEach(record_RD, func(value []byte, dataType jsonparser.ValueType, offset int, err error) {
+			maintenance_start, _ := jsonparser.GetString(value, "maintenance_start")
+			maintenance_end, _ := jsonparser.GetString(value, "maintenance_end")
+			jamstart = tglnow.Format("YYYY-MM-DD") + " " + maintenance_start
+			jamend = tglnow.Format("YYYY-MM-DD") + " " + maintenance_end
+			obj2.StartMaintenance = maintenance_start
+			obj2.EndMaintenance = maintenance_end
+			arraobj2 = append(arraobj2, obj2)
+		})
+		obj.Status = int(status_rd)
+		obj.Record = arraobj2
+		helpers.SetRedis(field_redis, obj, 0)
+
+		if tglskrg >= jamstart && tglskrg <= jamend {
+			website_status = "OFFLINE"
+			website_message = "START : " + jamstart + ", FINISH : " + jamend
+		}
+		return c.JSON(fiber.Map{
+			"status":          fiber.StatusOK,
+			"token":           client.Token,
+			"website_status":  website_status,
+			"website_message": website_message,
+			"member_username": member_username,
+			"member_company":  member_company,
+			"member_credit":   member_saldo,
+		})
+	} else {
+		log.Println("INIT cache")
+		return c.JSON(fiber.Map{
+			"status":          fiber.StatusOK,
+			"token":           client.Token,
+			"website_status":  website_status,
+			"website_message": website_message,
+			"member_username": member_username,
+			"member_company":  member_company,
+			"member_credit":   member_saldo,
+		})
+	}
 }
 func FetchAll_pasaran(c *fiber.Ctx) error {
 	client := new(ClientInit)

@@ -9,12 +9,7 @@ type Response struct {
 	Record      interface{} `json:"record"`
 	Time        string      `json:"time"`
 }
-type Responsesetting struct {
-	Status          int    `json:"status"`
-	Website_status  string `json:"website_status"`
-	Website_message string `json:"website_message"`
-	Time            string `json:"time"`
-}
+
 type ResponseCustom struct {
 	Status      int         `json:"status"`
 	Message     string      `json:"message"`

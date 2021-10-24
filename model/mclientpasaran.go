@@ -18,6 +18,10 @@ import (
 	"github.com/nleeper/goment"
 )
 
+type setting struct {
+	StartMaintenance string `json:"maintenance_start"`
+	EndMaintenance   string `json:"maintenance_end"`
+}
 type Mclientpasaran struct {
 	PasaranId          string `json:"pasaran_id"`
 	PasaranTogel       string `json:"pasaran_togel"`
@@ -311,15 +315,14 @@ type MListsipperiodedetail struct {
 
 var mutex sync.RWMutex
 
-func Fetch_Setting() (helpers.Responsesetting, error) {
-	var res helpers.Responsesetting
+func Fetch_Setting() (helpers.Response, error) {
+	var obj setting
+	var arraobj []setting
+	var res helpers.Response
 
 	render_page := time.Now()
 	ctx := context.Background()
 	con := db.CreateCon()
-	tglnow, _ := goment.New()
-	website_status := "ONLINE"
-	website_message := ""
 	var startmaintenance string = ""
 	var endmaintenance string = ""
 	sql_select := `SELECT 
@@ -336,18 +339,13 @@ func Fetch_Setting() (helpers.Responsesetting, error) {
 		panic(e)
 	}
 
-	tglskrg := tglnow.Format("YYYY-MM-DD HH:mm:ss")
-	start := tglnow.Format("YYYY-MM-DD") + " " + startmaintenance
-	end := tglnow.Format("YYYY-MM-DD") + " " + endmaintenance
-
-	if tglskrg >= start && tglskrg <= end {
-		website_status = "OFFLINE"
-		website_message = "MAINTENANCE, START : " + start + ", FINISH : " + end
-	}
+	obj.StartMaintenance = startmaintenance
+	obj.EndMaintenance = endmaintenance
+	arraobj = append(arraobj, obj)
 
 	res.Status = fiber.StatusOK
-	res.Website_status = website_status
-	res.Website_message = website_message
+	res.Record = arraobj
+	res.Totalrecord = len(arraobj)
 	res.Time = time.Since(render_page).String()
 
 	return res, nil
