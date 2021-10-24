@@ -313,6 +313,17 @@ func Fetch_token(c *fiber.Ctx) error {
 			"record":  nil,
 		})
 	}
+
+	result, err := model.Fetch_Setting()
+	if err != nil {
+		c.Status(fiber.StatusBadRequest)
+		return c.JSON(fiber.Map{
+			"status":  fiber.StatusBadRequest,
+			"message": err.Error(),
+			"record":  nil,
+		})
+	}
+
 	member_username := ""
 	member_company := ""
 	member_saldo := 0
@@ -341,6 +352,8 @@ func Fetch_token(c *fiber.Ctx) error {
 	return c.JSON(fiber.Map{
 		"status":          fiber.StatusOK,
 		"token":           client.Token,
+		"website_status":  result.Website_status,
+		"website_message": result.Website_message,
 		"member_username": member_username,
 		"member_company":  member_company,
 		"member_credit":   member_saldo,
@@ -388,7 +401,6 @@ func FetchAll_pasaran2(c *fiber.Ctx) error {
 		pasaran_marketclose, _ := jsonparser.GetString(value, "pasaran_marketclose")
 		pasaran_marketschedule, _ := jsonparser.GetString(value, "pasaran_marketschedule")
 		pasaran_marketopen, _ := jsonparser.GetString(value, "pasaran_marketopen")
-		// pasaran_status, _ := jsonparser.GetString(value, "pasaran_status")
 		tgltutup, _ := goment.New(pasaran_marketclose)
 		tglopen, _ := goment.New(pasaran_marketopen)
 
