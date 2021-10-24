@@ -474,14 +474,15 @@ func FetchAll_pasaran(c *fiber.Ctx) error {
 		pasaran_jamopen, _ := jsonparser.GetString(value, "pasaran_jamopen")
 		pasaran_hari, _ := jsonparser.GetString(value, "pasaran_hari")
 
-		// tgltutup, _ := goment.New(pasaran_marketclose)
+		tgltutup, _ := goment.New(pasaran_marketclose)
+		jamtutup2 := tgltutup.Format("YYYY-MM-DD") + " " + pasaran_jamtutup
 		// tglopen, _ := goment.New(pasaran_marketopen)
 
 		taiskrg := tglnow.Format("YYYY-MM-DD HH:mm:ss")
 		jamtutup := tglnow.Format("YYYY-MM-DD") + " " + pasaran_jamtutup
 		jamopen := tglnow.Format("YYYY-MM-DD") + " " + pasaran_jamopen
 
-		if taiskrg >= jamtutup {
+		if taiskrg >= jamtutup2 {
 			statuspasaran = "OFFLINE"
 		} else {
 			if pasaran_hari == "ONLINE" {
