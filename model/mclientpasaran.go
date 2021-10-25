@@ -42,11 +42,12 @@ type MclientpasaranResult struct {
 	Result  string `json:"result"`
 }
 type MclientpasaranResultAll struct {
-	No      uint16 `json:"no"`
-	Date    string `json:"date"`
-	Periode string `json:"periode"`
-	Pasaran string `json:"pasaran"`
-	Result  string `json:"result"`
+	No           uint16 `json:"no"`
+	Date         string `json:"date"`
+	Periode      string `json:"periode"`
+	Pasaran      string `json:"pasaran"`
+	Pasaran_code string `json:"pasaran_code"`
+	Result       string `json:"result"`
 }
 type MclientpasaranCheckPasaran struct {
 	PasaranIdtansaction string `json:"pasaran_idtransaction"`
@@ -591,6 +592,7 @@ func FetchAll_MclientPasaranResultAll(client_company string) (helpers.Response, 
 		obj.No = norecord
 		obj.Date = tglkeluaran_db
 		obj.Pasaran = nmpasarantogel_db
+		obj.Pasaran_code = idpasarantogel_db
 		obj.Periode = idpasarantogel_db + "-" + periodekerluaran_db
 		obj.Result = keluarantogel_db
 		arraobj = append(arraobj, obj)

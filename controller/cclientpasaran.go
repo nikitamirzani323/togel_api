@@ -101,11 +101,12 @@ type responseredis struct {
 	Result  string `json:"result"`
 }
 type responseredisall struct {
-	No      int    `json:"no"`
-	Date    string `json:"date"`
-	Pasaran string `json:"pasaran"`
-	Periode string `json:"periode"`
-	Result  string `json:"result"`
+	No          int    `json:"no"`
+	Date        string `json:"date"`
+	Pasaran     string `json:"pasaran"`
+	Pasarancode string `json:"pasaran_code"`
+	Periode     string `json:"periode"`
+	Result      string `json:"result"`
 }
 type responseredisinit_432 struct {
 	Min_bet           int     `json:"min_bet"`
@@ -606,12 +607,14 @@ func FetchAll_result(c *fiber.Ctx) error {
 		no_RD, _ := jsonparser.GetInt(value, "no")
 		date_RD, _ := jsonparser.GetString(value, "date")
 		pasaran_RD, _ := jsonparser.GetString(value, "pasaran")
+		pasaran_code_RD, _ := jsonparser.GetString(value, "pasaran_code")
 		periode_RD, _ := jsonparser.GetString(value, "periode")
 		result_RD, _ := jsonparser.GetString(value, "result")
 
 		obj.No = int(no_RD)
 		obj.Date = date_RD
 		obj.Pasaran = pasaran_RD
+		obj.Pasarancode = pasaran_code_RD
 		obj.Periode = periode_RD
 		obj.Result = result_RD
 		arraobj = append(arraobj, obj)
