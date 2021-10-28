@@ -301,6 +301,18 @@ type responseinvoiceidpermainan struct {
 	Bayar     int     `json:"bayar"`
 	Win       int     `json:"win"`
 }
+type responseredislistinvoicebet struct {
+	Tanggal   string  `json:"tanggal"`
+	Permainan string  `json:"permainan"`
+	Periode   string  `json:"periode"`
+	Nomor     string  `json:"nomor"`
+	Bet       int     `json:"bet"`
+	Diskon    float32 `json:"diskon"`
+	Kei       float32 `json:"kei"`
+	Bayar     int     `json:"bayar"`
+	Win       int     `json:"win"`
+	Menang    int     `json:"menang"`
+}
 type settingcustom struct {
 	Status int         `json:"status"`
 	Record interface{} `json:"record"`
@@ -428,25 +440,6 @@ func Fetch_token(c *fiber.Ctx) error {
 			"member_credit":   member_saldo,
 		})
 	}
-}
-func FetchAll_pasaran2(c *fiber.Ctx) error {
-	client := new(ClientInit)
-
-	if err := c.BodyParser(client); err != nil {
-		return err
-	}
-	result, err := model.FetchAll_MclientPasaran(client.Client_Company)
-	if err != nil {
-		c.Status(fiber.StatusBadRequest)
-		return c.JSON(fiber.Map{
-			"status":  fiber.StatusBadRequest,
-			"message": err.Error(),
-			"record":  nil,
-		})
-	}
-	// helpers.SetRedis(field_redis, result, 0)
-	log.Println("MYSQL")
-	return c.JSON(result)
 }
 func FetchAll_pasaran(c *fiber.Ctx) error {
 	client := new(ClientInit)
@@ -1122,16 +1115,61 @@ func Fetch_listinvoicebet(c *fiber.Ctx) error {
 	if err := c.BodyParser(client); err != nil {
 		return err
 	}
-	result, err := model.Fetch_invoicebet(client.Client_Username, client.Client_Company, client.Pasaran_Code, client.Pasaran_Periode)
-	if err != nil {
-		c.Status(fiber.StatusBadRequest)
+	field_redis := "listinvoice_" + client.Client_Company + "_" + client.Pasaran_Code + "-" + client.Pasaran_Periode + "_" + client.Client_Username
+	render_page := time.Now()
+	var obj responseredislistinvoicebet
+	var arraobj []responseredislistinvoicebet
+	resultredis, flag := helpers.GetRedis(field_redis)
+	jsonredis := []byte(resultredis)
+	record_RD, _, _, _ := jsonparser.Get(jsonredis, "record")
+	jsonparser.ArrayEach(record_RD, func(value []byte, dataType jsonparser.ValueType, offset int, err error) {
+		tanggal, _ := jsonparser.GetString(value, "tanggal")
+		permainan, _ := jsonparser.GetString(value, "permainan")
+		periode, _ := jsonparser.GetString(value, "periode")
+		nomor, _ := jsonparser.GetString(value, "nomor")
+		bet, _ := jsonparser.GetInt(value, "bet")
+		diskon, _ := jsonparser.GetFloat(value, "diskon")
+		kei, _ := jsonparser.GetFloat(value, "kei")
+		bayar, _ := jsonparser.GetInt(value, "bayar")
+		win, _ := jsonparser.GetInt(value, "win")
+		menang, _ := jsonparser.GetInt(value, "menang")
+
+		obj.Tanggal = tanggal
+		obj.Permainan = permainan
+		obj.Periode = periode
+		obj.Nomor = nomor
+		obj.Bet = int(bet)
+		obj.Diskon = float32(diskon)
+		obj.Kei = float32(kei)
+		obj.Bayar = int(bayar)
+		obj.Win = int(win)
+		obj.Menang = int(menang)
+		arraobj = append(arraobj, obj)
+
+	})
+
+	if !flag {
+		result, err := model.Fetch_invoicebet(client.Client_Username, client.Client_Company, client.Pasaran_Code, client.Pasaran_Periode)
+		if err != nil {
+			c.Status(fiber.StatusBadRequest)
+			return c.JSON(fiber.Map{
+				"status":  fiber.StatusBadRequest,
+				"message": err.Error(),
+				"record":  nil,
+			})
+		}
+		helpers.SetRedis(field_redis, result, 30*time.Minute)
+		log.Println("LIST INVOICE MYSQL")
+		return c.JSON(result)
+	} else {
+		log.Println("LIST INVOICE cache")
 		return c.JSON(fiber.Map{
-			"status":  fiber.StatusBadRequest,
-			"message": err.Error(),
-			"record":  nil,
+			"status":  fiber.StatusOK,
+			"message": "Success",
+			"record":  arraobj,
+			"time":    time.Since(render_page).String(),
 		})
 	}
-	return c.JSON(result)
 }
 func Fetch_listinvoicebetid(c *fiber.Ctx) error {
 	client := new(ClientInvoicePasaranId)
