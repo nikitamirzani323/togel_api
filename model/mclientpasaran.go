@@ -452,19 +452,21 @@ func FetchAll_MclientPasaran(client_company string) (helpers.Response, error) {
 			}
 		}
 
-		obj.PasaranId = idpasarantogel
-		obj.PasaranTogel = nmpasarantogel
-		obj.PasaranPeriode = "#" + periodekerluaran + "-" + idpasarantogel
-		obj.PasaranTglKeluaran = tglkeluaran
-		obj.Pasaranmarketclose = tglkeluaran + " " + jamtutup
-		obj.Pasaranmarketschedule = tglkeluaran + " " + jamjadwal
-		obj.Pasaranmarketopen = tglkeluaran + " " + jamopen
-		obj.Pasaranjamtutup = jamtutup
-		obj.Pasaranjamopen = jamopen
-		obj.Pasaranhari = pasaranhariini
-		obj.PasaranStatus = statuspasaran
-		arraobj = append(arraobj, obj)
-		msg = "Success"
+		if periodekerluaran != "" {
+			obj.PasaranId = idpasarantogel
+			obj.PasaranTogel = nmpasarantogel
+			obj.PasaranPeriode = "#" + periodekerluaran + "-" + idpasarantogel
+			obj.PasaranTglKeluaran = tglkeluaran
+			obj.Pasaranmarketclose = tglkeluaran + " " + jamtutup
+			obj.Pasaranmarketschedule = tglkeluaran + " " + jamjadwal
+			obj.Pasaranmarketopen = tglkeluaran + " " + jamopen
+			obj.Pasaranjamtutup = jamtutup
+			obj.Pasaranjamopen = jamopen
+			obj.Pasaranhari = pasaranhariini
+			obj.PasaranStatus = statuspasaran
+			arraobj = append(arraobj, obj)
+			msg = "Success"
+		}
 	}
 
 	if len(arraobj) > 0 {
