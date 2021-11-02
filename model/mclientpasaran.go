@@ -467,6 +467,7 @@ func FetchAll_MclientPasaran(client_company string) (helpers.Response, error) {
 			arraobj = append(arraobj, obj)
 			msg = "Success"
 		}
+		periodekerluaran = ""
 	}
 
 	if len(arraobj) > 0 {
@@ -549,6 +550,7 @@ func FetchAll_MclientPasaranResultAll(client_company string) (helpers.Response, 
 	render_page := time.Now()
 	con := db.CreateCon()
 	ctx := context.Background()
+	flag := false
 	tbl_trx_keluaran, _, _ := Get_mappingdatabase(client_company)
 	sql_listpasarancompany := `SELECT 
 		idcomppasaran, idpasarantogel, nmpasarantogel
@@ -584,22 +586,24 @@ func FetchAll_MclientPasaranResultAll(client_company string) (helpers.Response, 
 		row := con.QueryRowContext(ctx, sqlkeluaran, idcomppasaran_db)
 		switch err := row.Scan(&tglkeluaran_db, &periodekerluaran_db, &keluarantogel_db); err {
 		case sql.ErrNoRows:
-			_ = false
+			flag = false
 		case nil:
-			_ = true
+			flag = true
 		default:
-			helpers.ErrorCheck(err)
+			flag = false
 		}
 
-		obj.No = norecord
-		obj.Date = tglkeluaran_db
-		obj.Pasaran = nmpasarantogel_db
-		obj.Pasaran_code = idpasarantogel_db
-		obj.Periode = idpasarantogel_db + "-" + periodekerluaran_db
-		obj.Result = keluarantogel_db
-		arraobj = append(arraobj, obj)
-		msg = "Success"
-		norecord = norecord + 1
+		if flag {
+			obj.No = norecord
+			obj.Date = tglkeluaran_db
+			obj.Pasaran = nmpasarantogel_db
+			obj.Pasaran_code = idpasarantogel_db
+			obj.Periode = idpasarantogel_db + "-" + periodekerluaran_db
+			obj.Result = keluarantogel_db
+			arraobj = append(arraobj, obj)
+			msg = "Success"
+			norecord = norecord + 1
+		}
 	}
 	if len(arraobj) > 0 {
 		res.Status = fiber.StatusOK
