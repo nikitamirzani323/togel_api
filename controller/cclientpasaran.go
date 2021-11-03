@@ -40,10 +40,11 @@ type ClientLimitPasaran struct {
 	Permainan       string `json:"permainan"`
 }
 type ClientInvoicePasaran struct {
-	Client_Username string `json:"client_username"`
-	Client_Company  string `json:"client_company"`
-	Pasaran_Code    string `json:"pasaran_code"`
-	Pasaran_Periode string `json:"pasaran_periode"`
+	Client_Idinvoice int    `json:"client_idinvoice"`
+	Client_Username  string `json:"client_username"`
+	Client_Company   string `json:"client_company"`
+	Pasaran_Code     string `json:"pasaran_code"`
+	Pasaran_Periode  string `json:"pasaran_periode"`
 }
 type ClientInvoicePasaranId struct {
 	Client_Idinvoice int    `json:"client_idinvoice"`
@@ -1115,7 +1116,7 @@ func Fetch_listinvoicebet(c *fiber.Ctx) error {
 	if err := c.BodyParser(client); err != nil {
 		return err
 	}
-	field_redis := "listinvoice_" + client.Client_Company + "_" + client.Pasaran_Code + "-" + client.Pasaran_Periode + "_" + client.Client_Username
+	field_redis := "listinvoice_" + client.Client_Company + "_" + strconv.Itoa(client.Client_Idinvoice) + "_" + client.Client_Username
 	render_page := time.Now()
 	var obj responseredislistinvoicebet
 	var arraobj []responseredislistinvoicebet
@@ -1346,5 +1347,8 @@ func SaveTogel(c *fiber.Ctx) error {
 			"record":  nil,
 		})
 	}
+	field_redis := "listinvoice_" + client.Client_Company + "_" + client.Idtrxkeluaran + "_" + client.Client_Username
+	val := helpers.DeleteRedis(field_redis)
+	log.Printf("DELETE REDIS INVOICE %d\n", val)
 	return c.JSON(result)
 }
