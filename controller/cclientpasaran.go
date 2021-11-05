@@ -5,6 +5,7 @@ import (
 	"encoding/json"
 	"log"
 	"strconv"
+	"strings"
 	"time"
 
 	"bitbucket.org/isbtotogroup/api_go/helpers"
@@ -357,7 +358,7 @@ func Fetch_token(c *fiber.Ctx) error {
 	})
 	if tglskrg >= jamstart && tglskrg <= jamend {
 		website_status = "OFFLINE"
-		website_message = "START : " + jamstart + ", FINISH : " + jamend
+		website_message = "MAINTENANCE START : " + jamstart + ", FINISH : " + jamend
 	}
 	member_username := ""
 	member_company := ""
@@ -448,7 +449,7 @@ func FetchAll_pasaran(c *fiber.Ctx) error {
 	if err := c.BodyParser(client); err != nil {
 		return err
 	}
-	field_redis := "listpasaran_" + client.Client_Company
+	field_redis := "listpasaran_" + strings.ToLower(client.Client_Company)
 	render_page := time.Now()
 	tglnow, _ := goment.New()
 	var obj responseredisfetch
@@ -532,7 +533,7 @@ func FetchAll_resultbypasaran(c *fiber.Ctx) error {
 		return err
 	}
 
-	field_redis := "listresult_" + client.Client_Company + "_" + client.Pasaran_Code
+	field_redis := "listresult_" + strings.ToLower(client.Client_Company) + "_" + strings.ToLower(client.Pasaran_Code)
 	var obj responseredis
 	var arraobj []responseredis
 	resultredis, flag := helpers.GetRedis(field_redis)
@@ -589,7 +590,7 @@ func FetchAll_result(c *fiber.Ctx) error {
 		return err
 	}
 
-	field_redis := "listresult_" + client.Client_Company
+	field_redis := "listresult_" + strings.ToLower(client.Client_Company)
 	var obj responseredisall
 	var arraobj []responseredisall
 	resultredis, flag := helpers.GetRedis(field_redis)
@@ -667,7 +668,7 @@ func Fetch_InitPasaran(c *fiber.Ctx) error {
 	if err := c.BodyParser(client); err != nil {
 		return err
 	}
-	field_redis := "config_" + client.Client_Company + "_" + client.Pasaran_Code + "_" + client.Permainan
+	field_redis := "config_" + strings.ToLower(client.Client_Company) + "_" + strings.ToLower(client.Pasaran_Code) + "_" + strings.ToLower(client.Permainan)
 	var obj_432 responseredisinit_432
 	var arraobj_432 []responseredisinit_432
 	var obj_colok responseredisinit_colok
@@ -1116,7 +1117,7 @@ func Fetch_listinvoicebet(c *fiber.Ctx) error {
 	if err := c.BodyParser(client); err != nil {
 		return err
 	}
-	field_redis := "listinvoice_" + client.Client_Company + "_" + strconv.Itoa(client.Client_Idinvoice) + "_" + client.Client_Username
+	field_redis := "listinvoice_" + strings.ToLower(client.Client_Company) + "_" + strconv.Itoa(client.Client_Idinvoice) + "_" + strings.ToLower(client.Client_Username)
 	render_page := time.Now()
 	var obj responseredislistinvoicebet
 	var arraobj []responseredislistinvoicebet
@@ -1177,7 +1178,7 @@ func Fetch_listinvoicebetid(c *fiber.Ctx) error {
 	if err := c.BodyParser(client); err != nil {
 		return err
 	}
-	field_redis := "listinvoice_" + strconv.Itoa(client.Client_Idinvoice) + "_" + client.Client_Company + "_" + client.Client_Username + "_" + client.Permainan
+	field_redis := "listinvoice_" + strconv.Itoa(client.Client_Idinvoice) + "_" + strings.ToLower(client.Client_Company) + "_" + strings.ToLower(client.Client_Username) + "_" + strings.ToLower(client.Permainan)
 	render_page := time.Now()
 	var obj responseinvoiceidpermainan
 	var arraobj []responseinvoiceidpermainan
@@ -1253,7 +1254,7 @@ func Fetch_slipperiodeall(c *fiber.Ctx) error {
 	if err := c.BodyParser(client); err != nil {
 		return err
 	}
-	field_redis := "listinvoiceall_" + client.Client_Company + "_" + client.Client_Username
+	field_redis := "listinvoiceall_" + strings.ToLower(client.Client_Company) + "_" + strings.ToLower(client.Client_Username)
 	render_page := time.Now()
 	var obj responseinvoiceall
 	var arraobj []responseinvoiceall
@@ -1347,7 +1348,7 @@ func SaveTogel(c *fiber.Ctx) error {
 			"record":  nil,
 		})
 	}
-	field_redis := "listinvoice_" + client.Client_Company + "_" + client.Idtrxkeluaran + "_" + client.Client_Username
+	field_redis := "listinvoice_" + strings.ToLower(client.Client_Company) + "_" + client.Idtrxkeluaran + "_" + strings.ToLower(client.Client_Username)
 	val := helpers.DeleteRedis(field_redis)
 	log.Printf("DELETE REDIS INVOICE %d\n", val)
 	return c.JSON(result)
