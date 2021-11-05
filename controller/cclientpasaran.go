@@ -1124,6 +1124,8 @@ func Fetch_listinvoicebet(c *fiber.Ctx) error {
 	resultredis, flag := helpers.GetRedis(field_redis)
 	jsonredis := []byte(resultredis)
 	record_RD, _, _, _ := jsonparser.Get(jsonredis, "record")
+	totalbet_RD, _ := jsonparser.GetInt(jsonredis, "totalrecord")
+	totalbayar_RD, _ := jsonparser.GetInt(jsonredis, "totalbayar")
 	jsonparser.ArrayEach(record_RD, func(value []byte, dataType jsonparser.ValueType, offset int, err error) {
 		tanggal, _ := jsonparser.GetString(value, "tanggal")
 		permainan, _ := jsonparser.GetString(value, "permainan")
@@ -1166,10 +1168,12 @@ func Fetch_listinvoicebet(c *fiber.Ctx) error {
 	} else {
 		log.Println("LIST INVOICE cache")
 		return c.JSON(fiber.Map{
-			"status":  fiber.StatusOK,
-			"message": "Success",
-			"record":  arraobj,
-			"time":    time.Since(render_page).String(),
+			"status":      fiber.StatusOK,
+			"message":     "Success",
+			"record":      arraobj,
+			"totalrecord": int(totalbet_RD),
+			"totalbayar":  int(totalbayar_RD),
+			"time":        time.Since(render_page).String(),
 		})
 	}
 }
