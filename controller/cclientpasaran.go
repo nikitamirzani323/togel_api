@@ -8,6 +8,7 @@ import (
 	"strings"
 	"time"
 
+	"bitbucket.org/isbtotogroup/api_go/entities"
 	"bitbucket.org/isbtotogroup/api_go/helpers"
 	"bitbucket.org/isbtotogroup/api_go/model"
 	"github.com/buger/jsonparser"
@@ -15,81 +16,6 @@ import (
 	"github.com/nleeper/goment"
 )
 
-type ClientToken struct {
-	Token    string `json:"token"`
-	Hostname string `json:"hostname"`
-}
-type ClientInit struct {
-	Client_Company string `json:"client_company"`
-	Hostname       string `json:"hostname"`
-}
-type ClientResult struct {
-	Client_Company string `json:"client_company"`
-	Pasaran_Code   string `json:"pasaran_code"`
-	Hostname       string `json:"hostname"`
-}
-type ClientResultAll struct {
-	Client_Company string `json:"client_company"`
-	Hostname       string `json:"hostname"`
-}
-type ClientConfPasaran struct {
-	Client_Company string `json:"client_company"`
-	Pasaran_Code   string `json:"pasaran_code"`
-	Permainan      string `json:"permainan"`
-	Hostname       string `json:"hostname"`
-}
-type ClientLimitPasaran struct {
-	Client_Username string `json:"client_username"`
-	Client_Company  string `json:"client_company"`
-	Pasaran_Code    string `json:"pasaran_code"`
-	Pasaran_Periode string `json:"pasaran_periode"`
-	Permainan       string `json:"permainan"`
-	Hostname        string `json:"hostname"`
-}
-type ClientInvoicePasaran struct {
-	Client_Idinvoice int    `json:"client_idinvoice"`
-	Client_Username  string `json:"client_username"`
-	Client_Company   string `json:"client_company"`
-	Pasaran_Code     string `json:"pasaran_code"`
-	Pasaran_Periode  string `json:"pasaran_periode"`
-	Hostname         string `json:"hostname"`
-}
-type ClientInvoicePasaranId struct {
-	Client_Idinvoice int    `json:"client_idinvoice"`
-	Client_Username  string `json:"client_username"`
-	Client_Company   string `json:"client_company"`
-	Permainan        string `json:"permainan"`
-	Hostname         string `json:"hostname"`
-}
-type ClientSlipPeriode struct {
-	Client_Username string `json:"client_username"`
-	Client_Company  string `json:"client_company"`
-	Pasaran_Code    string `json:"pasaran_code"`
-	Hostname        string `json:"hostname"`
-}
-type ClientSlipPeriodeAll struct {
-	Client_Username string `json:"client_username"`
-	Client_Company  string `json:"client_company"`
-	Hostname        string `json:"hostname"`
-}
-type ClientSlipPeriodeDetail struct {
-	Client_Username string `json:"client_username"`
-	Client_Company  string `json:"client_company"`
-	Idtrxkeluaran   string `json:"idtrxkeluaran"`
-	Hostname        string `json:"hostname"`
-}
-type ClientSaveTogel struct {
-	Client_Username string `json:"client_username"`
-	Client_Company  string `json:"client_company"`
-	Idtrxkeluaran   string `json:"idtrxkeluaran"`
-	Idcomppasaran   string `json:"idcomppasaran"`
-	Devicemember    string `json:"devicemember"`
-	Formipaddress   string `json:"formipaddress"`
-	Timezone        string `json:"timezone"`
-	Totalbayarbet   int    `json:"totalbayarbet"`
-	List4d          string `json:"list4d"`
-	Hostname        string `json:"hostname"`
-}
 type parsingjson struct {
 	Record []ytRecord `json:"record"`
 }
@@ -108,20 +34,7 @@ type responseredisfetch struct {
 	Pasaran_marketopen     string `json:"pasaran_marketopen"`
 	Pasaran_status         string `json:"pasaran_status"`
 }
-type responseredis struct {
-	No      int    `json:"no"`
-	Date    string `json:"date"`
-	Periode string `json:"periode"`
-	Result  string `json:"result"`
-}
-type responseredisall struct {
-	No          int    `json:"no"`
-	Date        string `json:"date"`
-	Pasaran     string `json:"pasaran"`
-	Pasarancode string `json:"pasaran_code"`
-	Periode     string `json:"periode"`
-	Result      string `json:"result"`
-}
+
 type responseredisinit_432 struct {
 	Min_bet           int     `json:"min_bet"`
 	Max4d_bet         int     `json:"max4d_bet"`
@@ -327,21 +240,18 @@ type responseredislistinvoicebet struct {
 	Win       int     `json:"win"`
 	Menang    int     `json:"menang"`
 }
-type settingcustom struct {
-	Status int         `json:"status"`
-	Record interface{} `json:"record"`
-}
-type settingcustom2 struct {
-	StartMaintenance string `json:"maintenance_start"`
-	EndMaintenance   string `json:"maintenance_end"`
-}
 
 var ctx = context.Background()
 
 const fielddomain_redis = "LISTDOMAIN"
+const fieldsetting_redis = "LISTSETTING_MASTER"
+const fieldallpasaran_redis = "listpasaran_"
+const fieldresult_redis = "listresult_"
+const fieldconfig_redis = "config_"
+const fieldinvoice_redis = "listinvoice_"
 
 func Fetch_token(c *fiber.Ctx) error {
-	client := new(ClientToken)
+	client := new(entities.Controller_clientToken)
 
 	if err := c.BodyParser(client); err != nil {
 		c.Status(fiber.StatusBadRequest)
@@ -351,8 +261,6 @@ func Fetch_token(c *fiber.Ctx) error {
 			"record":  nil,
 		})
 	}
-	log.Printf("Client : %s", client.Hostname)
-
 	flag_domain := _domainsecurity(client.Hostname)
 	if !flag_domain {
 		c.Status(fiber.StatusBadRequest)
@@ -363,14 +271,13 @@ func Fetch_token(c *fiber.Ctx) error {
 		})
 	}
 
-	field_redis := "LISTSETTING_MASTER"
 	tglnow, _ := goment.New()
 	website_status := "ONLINE"
 	website_message := ""
 	tglskrg := tglnow.Format("YYYY-MM-DD HH:mm:ss")
 	jamstart := ""
 	jamend := ""
-	resultredis, flag := helpers.GetRedis(field_redis)
+	resultredis, flag := helpers.GetRedis(fieldsetting_redis)
 	jsonredis := []byte(resultredis)
 	record_RD, _, _, err := jsonparser.Get(jsonredis, "record")
 	log.Println(err)
@@ -420,9 +327,9 @@ func Fetch_token(c *fiber.Ctx) error {
 				"record":  nil,
 			})
 		}
-		var obj settingcustom
-		var obj2 settingcustom2
-		var arraobj2 []settingcustom2
+		var obj entities.Controller_settingcustom
+		var obj2 entities.Model_setting
+		var arraobj2 []entities.Model_setting
 
 		dataresult, _ := json.Marshal(result)
 		status_rd, _ := jsonparser.GetInt(dataresult, "status")
@@ -440,7 +347,7 @@ func Fetch_token(c *fiber.Ctx) error {
 		})
 		obj.Status = int(status_rd)
 		obj.Record = arraobj2
-		helpers.SetRedis(field_redis, obj, 0)
+		helpers.SetRedis(fieldsetting_redis, obj, 24*time.Hour)
 
 		if tglskrg >= jamstart && tglskrg <= jamend {
 			website_status = "OFFLINE"
@@ -469,7 +376,7 @@ func Fetch_token(c *fiber.Ctx) error {
 	}
 }
 func FetchAll_pasaran(c *fiber.Ctx) error {
-	client := new(ClientInit)
+	client := new(entities.Controller_clientInit)
 
 	if err := c.BodyParser(client); err != nil {
 		return err
@@ -485,12 +392,11 @@ func FetchAll_pasaran(c *fiber.Ctx) error {
 		})
 	}
 
-	field_redis := "listpasaran_" + strings.ToLower(client.Client_Company)
 	render_page := time.Now()
 	tglnow, _ := goment.New()
 	var obj responseredisfetch
 	var arraobj []responseredisfetch
-	resultredis, flag := helpers.GetRedis(field_redis)
+	resultredis, flag := helpers.GetRedis(fieldallpasaran_redis + strings.ToLower(client.Client_Company))
 	jsonredis := []byte(resultredis)
 	record_RD, _, _, _ := jsonparser.Get(jsonredis, "record")
 	statuspasaran := "ONLINE"
@@ -549,7 +455,7 @@ func FetchAll_pasaran(c *fiber.Ctx) error {
 				"record":  nil,
 			})
 		}
-		helpers.SetRedis(field_redis, result, 0)
+		helpers.SetRedis(fieldallpasaran_redis+strings.ToLower(client.Client_Company), result, 0)
 		log.Println("PASARAN MYSQL")
 		return c.JSON(result)
 	} else {
@@ -563,7 +469,7 @@ func FetchAll_pasaran(c *fiber.Ctx) error {
 	}
 }
 func FetchAll_resultbypasaran(c *fiber.Ctx) error {
-	client := new(ClientResult)
+	client := new(entities.Controller_clientResult)
 	render_page := time.Now()
 	if err := c.BodyParser(client); err != nil {
 		return err
@@ -577,10 +483,9 @@ func FetchAll_resultbypasaran(c *fiber.Ctx) error {
 			"record":  nil,
 		})
 	}
-	field_redis := "listresult_" + strings.ToLower(client.Client_Company) + "_" + strings.ToLower(client.Pasaran_Code)
-	var obj responseredis
-	var arraobj []responseredis
-	resultredis, flag := helpers.GetRedis(field_redis)
+	var obj entities.Model_mclientpasaranResult
+	var arraobj []entities.Model_mclientpasaranResult
+	resultredis, flag := helpers.GetRedis(fieldresult_redis + strings.ToLower(client.Client_Company) + "_" + strings.ToLower(client.Pasaran_Code))
 	jsonredis := []byte(resultredis)
 	record_RD, _, _, _ := jsonparser.Get(jsonredis, "record")
 
@@ -613,7 +518,7 @@ func FetchAll_resultbypasaran(c *fiber.Ctx) error {
 
 		log.Println("RESulT mysql")
 		if result.Status == 200 {
-			helpers.SetRedis(field_redis, result, 0)
+			helpers.SetRedis(fieldresult_redis+strings.ToLower(client.Client_Company)+"_"+strings.ToLower(client.Pasaran_Code), result, 0)
 		}
 		return c.JSON(result)
 	} else {
@@ -628,7 +533,7 @@ func FetchAll_resultbypasaran(c *fiber.Ctx) error {
 	}
 }
 func FetchAll_result(c *fiber.Ctx) error {
-	client := new(ClientResultAll)
+	client := new(entities.Controller_clientResultAll)
 	render_page := time.Now()
 	if err := c.BodyParser(client); err != nil {
 		return err
@@ -642,10 +547,10 @@ func FetchAll_result(c *fiber.Ctx) error {
 			"record":  nil,
 		})
 	}
-	field_redis := "listresult_" + strings.ToLower(client.Client_Company)
-	var obj responseredisall
-	var arraobj []responseredisall
-	resultredis, flag := helpers.GetRedis(field_redis)
+
+	var obj entities.Model_mclientpasaranResultAll
+	var arraobj []entities.Model_mclientpasaranResultAll
+	resultredis, flag := helpers.GetRedis(fieldresult_redis + strings.ToLower(client.Client_Company))
 	jsonredis := []byte(resultredis)
 	record_RD, _, _, _ := jsonparser.Get(jsonredis, "record")
 
@@ -661,7 +566,7 @@ func FetchAll_result(c *fiber.Ctx) error {
 		obj.No = int(no_RD)
 		obj.Date = date_RD
 		obj.Pasaran = pasaran_RD
-		obj.Pasarancode = pasaran_code_RD
+		obj.Pasaran_code = pasaran_code_RD
 		obj.Periode = periode_RD
 		obj.Result = result_RD
 		arraobj = append(arraobj, obj)
@@ -682,7 +587,7 @@ func FetchAll_result(c *fiber.Ctx) error {
 
 		log.Println("PASARAN mysql")
 		if result.Status == 200 {
-			helpers.SetRedis(field_redis, result, 0)
+			helpers.SetRedis(fieldresult_redis+strings.ToLower(client.Client_Company), result, 0)
 		}
 		return c.JSON(result)
 	} else {
@@ -697,7 +602,7 @@ func FetchAll_result(c *fiber.Ctx) error {
 	}
 }
 func Fetch_CheckPasaran(c *fiber.Ctx) error {
-	client := new(ClientResult)
+	client := new(entities.Controller_clientResult)
 
 	if err := c.BodyParser(client); err != nil {
 		return err
@@ -715,7 +620,7 @@ func Fetch_CheckPasaran(c *fiber.Ctx) error {
 	return c.JSON(result)
 }
 func Fetch_InitPasaran(c *fiber.Ctx) error {
-	client := new(ClientConfPasaran)
+	client := new(entities.Controller_clientConfPasaran)
 	render_page := time.Now()
 	if err := c.BodyParser(client); err != nil {
 		return err
@@ -729,7 +634,6 @@ func Fetch_InitPasaran(c *fiber.Ctx) error {
 			"record":  nil,
 		})
 	}
-	field_redis := "config_" + strings.ToLower(client.Client_Company) + "_" + strings.ToLower(client.Pasaran_Code) + "_" + strings.ToLower(client.Permainan)
 	var obj_432 responseredisinit_432
 	var arraobj_432 []responseredisinit_432
 	var obj_colok responseredisinit_colok
@@ -742,7 +646,7 @@ func Fetch_InitPasaran(c *fiber.Ctx) error {
 	var arraobj_dasar []responseredisinit_dasar
 	var obj_shio responseredisinit_shio
 	var arraobj_shio []responseredisinit_shio
-	resultredis, flag := helpers.GetRedis(field_redis)
+	resultredis, flag := helpers.GetRedis(fieldconfig_redis + strings.ToLower(client.Client_Company) + "_" + strings.ToLower(client.Pasaran_Code) + "_" + strings.ToLower(client.Permainan))
 	jsonredis := []byte(resultredis)
 	record_RD, _, _, _ := jsonparser.Get(jsonredis, "record")
 	jsonparser.ArrayEach(record_RD, func(value []byte, dataType jsonparser.ValueType, offset int, err error) {
@@ -1098,7 +1002,7 @@ func Fetch_InitPasaran(c *fiber.Ctx) error {
 
 		log.Println("mysql")
 		if result.Status == 200 {
-			helpers.SetRedis(field_redis, result, 0)
+			helpers.SetRedis(fieldconfig_redis+strings.ToLower(client.Client_Company)+"_"+strings.ToLower(client.Pasaran_Code)+"_"+strings.ToLower(client.Permainan), result, 0)
 		}
 		return c.JSON(result)
 	} else {
@@ -1156,7 +1060,7 @@ func Fetch_InitPasaran(c *fiber.Ctx) error {
 	}
 }
 func Fetch_LimitPasaran432(c *fiber.Ctx) error {
-	client := new(ClientLimitPasaran)
+	client := new(entities.Controller_clientLimitPasaran)
 	if err := c.BodyParser(client); err != nil {
 		return err
 	}
@@ -1182,7 +1086,7 @@ func Fetch_LimitPasaran432(c *fiber.Ctx) error {
 	return c.JSON(result)
 }
 func Fetch_listinvoicebet(c *fiber.Ctx) error {
-	client := new(ClientInvoicePasaran)
+	client := new(entities.Controller_clientInvoicePasaran)
 	if err := c.BodyParser(client); err != nil {
 		return err
 	}
@@ -1195,11 +1099,10 @@ func Fetch_listinvoicebet(c *fiber.Ctx) error {
 			"record":  nil,
 		})
 	}
-	field_redis := "listinvoice_" + strings.ToLower(client.Client_Company) + "_" + strconv.Itoa(client.Client_Idinvoice) + "_" + strings.ToLower(client.Client_Username)
 	render_page := time.Now()
 	var obj responseredislistinvoicebet
 	var arraobj []responseredislistinvoicebet
-	resultredis, flag := helpers.GetRedis(field_redis)
+	resultredis, flag := helpers.GetRedis(fieldinvoice_redis + strings.ToLower(client.Client_Company) + "_" + strconv.Itoa(client.Client_Idinvoice) + "_" + strings.ToLower(client.Client_Username))
 	jsonredis := []byte(resultredis)
 	record_RD, _, _, _ := jsonparser.Get(jsonredis, "record")
 	totalbet_RD, _ := jsonparser.GetInt(jsonredis, "totalrecord")
@@ -1240,7 +1143,7 @@ func Fetch_listinvoicebet(c *fiber.Ctx) error {
 				"record":  nil,
 			})
 		}
-		helpers.SetRedis(field_redis, result, 30*time.Minute)
+		helpers.SetRedis(fieldinvoice_redis+strings.ToLower(client.Client_Company)+"_"+strconv.Itoa(client.Client_Idinvoice)+"_"+strings.ToLower(client.Client_Username), result, 30*time.Minute)
 		log.Println("LIST INVOICE MYSQL")
 		return c.JSON(result)
 	} else {
@@ -1256,7 +1159,7 @@ func Fetch_listinvoicebet(c *fiber.Ctx) error {
 	}
 }
 func Fetch_listinvoicebetid(c *fiber.Ctx) error {
-	client := new(ClientInvoicePasaranId)
+	client := new(entities.Controller_clientInvoicePasaranId)
 	if err := c.BodyParser(client); err != nil {
 		return err
 	}
@@ -1269,11 +1172,10 @@ func Fetch_listinvoicebetid(c *fiber.Ctx) error {
 			"record":  nil,
 		})
 	}
-	field_redis := "listinvoice_" + strconv.Itoa(client.Client_Idinvoice) + "_" + strings.ToLower(client.Client_Company) + "_" + strings.ToLower(client.Client_Username) + "_" + strings.ToLower(client.Permainan)
 	render_page := time.Now()
 	var obj responseinvoiceidpermainan
 	var arraobj []responseinvoiceidpermainan
-	resultredis, flag := helpers.GetRedis(field_redis)
+	resultredis, flag := helpers.GetRedis(fieldinvoice_redis + strconv.Itoa(client.Client_Idinvoice) + "_" + strings.ToLower(client.Client_Company) + "_" + strings.ToLower(client.Client_Username) + "_" + strings.ToLower(client.Permainan))
 	jsonredis := []byte(resultredis)
 	record_RD, _, _, _ := jsonparser.Get(jsonredis, "record")
 	jsonparser.ArrayEach(record_RD, func(value []byte, dataType jsonparser.ValueType, offset int, err error) {
@@ -1311,7 +1213,7 @@ func Fetch_listinvoicebetid(c *fiber.Ctx) error {
 				"record":  nil,
 			})
 		}
-		helpers.SetRedis(field_redis, result, 5*time.Minute)
+		helpers.SetRedis(fieldinvoice_redis+strconv.Itoa(client.Client_Idinvoice)+"_"+strings.ToLower(client.Client_Company)+"_"+strings.ToLower(client.Client_Username)+"_"+strings.ToLower(client.Permainan), result, 5*time.Minute)
 		log.Println("MYSQL")
 		return c.JSON(result)
 	} else {
@@ -1325,7 +1227,7 @@ func Fetch_listinvoicebetid(c *fiber.Ctx) error {
 	}
 }
 func Fetch_slipperiode(c *fiber.Ctx) error {
-	client := new(ClientSlipPeriode)
+	client := new(entities.Controller_clientSlipPeriode)
 	if err := c.BodyParser(client); err != nil {
 		return err
 	}
@@ -1350,7 +1252,7 @@ func Fetch_slipperiode(c *fiber.Ctx) error {
 	return c.JSON(result)
 }
 func Fetch_slipperiodeall(c *fiber.Ctx) error {
-	client := new(ClientSlipPeriodeAll)
+	client := new(entities.Controller_clientSlipPeriodeAll)
 	if err := c.BodyParser(client); err != nil {
 		return err
 	}
@@ -1424,7 +1326,7 @@ func Fetch_slipperiodeall(c *fiber.Ctx) error {
 
 }
 func Fetch_slipperiodedetail(c *fiber.Ctx) error {
-	client := new(ClientSlipPeriodeDetail)
+	client := new(entities.Controller_clientSlipPeriodeDetail)
 	if err := c.BodyParser(client); err != nil {
 		return err
 	}
@@ -1449,7 +1351,7 @@ func Fetch_slipperiodedetail(c *fiber.Ctx) error {
 	return c.JSON(result)
 }
 func SaveTogel(c *fiber.Ctx) error {
-	client := new(ClientSaveTogel)
+	client := new(entities.Controller_clientSaveTogel)
 	if err := c.BodyParser(client); err != nil {
 		panic(err.Error())
 	}

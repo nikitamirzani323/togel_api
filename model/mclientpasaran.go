@@ -12,319 +12,18 @@ import (
 
 	"bitbucket.org/isbtotogroup/api_go/config"
 	"bitbucket.org/isbtotogroup/api_go/db"
+	"bitbucket.org/isbtotogroup/api_go/entities"
 	"bitbucket.org/isbtotogroup/api_go/helpers"
 	"github.com/buger/jsonparser"
 	"github.com/gofiber/fiber/v2"
 	"github.com/nleeper/goment"
 )
 
-type setting struct {
-	StartMaintenance string `json:"maintenance_start"`
-	EndMaintenance   string `json:"maintenance_end"`
-}
-type domain struct {
-	Domain_name string `json:"domain_name"`
-}
-type Mclientpasaran struct {
-	PasaranId             string `json:"pasaran_id"`
-	PasaranTogel          string `json:"pasaran_togel"`
-	PasaranPeriode        string `json:"pasaran_periode"`
-	PasaranTglKeluaran    string `json:"pasaran_tglkeluaran"`
-	Pasaranmarketclose    string `json:"pasaran_marketclose"`
-	Pasaranmarketschedule string `json:"pasaran_marketschedule"`
-	Pasaranmarketopen     string `json:"pasaran_marketopen"`
-	Pasaranjamtutup       string `json:"pasaran_jamtutup"`
-	Pasaranjamopen        string `json:"pasaran_jamopen"`
-	Pasaranhari           string `json:"pasaran_hari"`
-	PasaranStatus         string `json:"pasaran_status"`
-}
-type MclientpasaranResult struct {
-	No      uint16 `json:"no"`
-	Date    string `json:"date"`
-	Periode string `json:"periode"`
-	Result  string `json:"result"`
-}
-type MclientpasaranResultAll struct {
-	No           uint16 `json:"no"`
-	Date         string `json:"date"`
-	Periode      string `json:"periode"`
-	Pasaran      string `json:"pasaran"`
-	Pasaran_code string `json:"pasaran_code"`
-	Result       string `json:"result"`
-}
-type MclientpasaranCheckPasaran struct {
-	PasaranIdtansaction string `json:"pasaran_idtransaction"`
-	PasaranName         string `json:"pasaran_name"`
-	PasaranPeriode      string `json:"pasaran_periode"`
-	PasaranIdcomp       string `json:"pasaran_idcomp"`
-	PasaranStatus       string `json:"pasaran_status"`
-}
-type Mpasarantogel432 struct {
-	Min_bet           float32 `json:"min_bet"`
-	Max4d_bet         float32 `json:"max4d_bet"`
-	Max3d_bet         float32 `json:"max3d_bet"`
-	Max2d_bet         float32 `json:"max2d_bet"`
-	Max2dd_bet        float32 `json:"max2dd_bet"`
-	Max2dt_bet        float32 `json:"max2dt_bet"`
-	Disc4d_bet        float32 `json:"disc4d_bet"`
-	Disc3d_bet        float32 `json:"disc3d_bet"`
-	Disc2d_bet        float32 `json:"disc2d_bet"`
-	Disc2dd_bet       float32 `json:"disc2dd_bet"`
-	Disc2dt_bet       float32 `json:"disc2dt_bet"`
-	Win4d_bet         float32 `json:"win4d_bet"`
-	Win3d_bet         float32 `json:"win3d_bet"`
-	Win2d_bet         float32 `json:"win2d_bet"`
-	Win2dd_bet        float32 `json:"win2dd_bet"`
-	Win2dt_bet        float32 `json:"win2dt_bet"`
-	Limittotal4d_bet  float32 `json:"limittotal4d_bet"`
-	Limittotal3d_bet  float32 `json:"limittotal3d_bet"`
-	Limittotal2d_bet  float32 `json:"limittotal2d_bet"`
-	Limittotal2dd_bet float32 `json:"limittotal2dd_bet"`
-	Limittotal2dt_bet float32 `json:"limittotal2dt_bet"`
-	Limitline_4d      uint32  `json:"limitline_4d"`
-	Limitline_3d      uint32  `json:"limitline_3d"`
-	Limitline_2d      uint32  `json:"limitline_2d"`
-	Limitline_2dd     uint32  `json:"limitline_2dd"`
-	Limitline_2dt     uint32  `json:"limitline_2dt"`
-	Bbfs              uint8   `json:"bbfs"`
-}
-type MpasarantogelColok struct {
-	Min_bet_colokbebas        float32 `json:"min_bet_colokbebas"`
-	Max_bet_colokbebas        float32 `json:"max_bet_colokbebas"`
-	Disc_bet_colokbebas       float32 `json:"disc_bet_colokbebas"`
-	Win_bet_colokbebas        float32 `json:"win_bet_colokbebas"`
-	Limittotal_bet_colokbebas float32 `json:"limittotal_bet_colokbebas"`
-	Min_bet_colokmacau        float32 `json:"min_bet_colokmacau"`
-	Max_bet_colokmacau        float32 `json:"max_bet_colokmacau"`
-	Disc_bet_colokmacau       float32 `json:"disc_bet_colokmacau"`
-	Win_bet_colokmacau        float32 `json:"win_bet_colokmacau"`
-	Win3_bet_colokmacau       float32 `json:"win3_bet_colokmacau"`
-	Win4_bet_colokmacau       float32 `json:"win4_bet_colokmacau"`
-	Limittotal_bet_colokmacau float32 `json:"limittotal_bet_colokmacau"`
-	Min_bet_coloknaga         float32 `json:"min_bet_coloknaga"`
-	Max_bet_coloknaga         float32 `json:"max_bet_coloknaga"`
-	Disc_bet_coloknaga        float32 `json:"disc_bet_coloknaga"`
-	Win_bet_coloknaga         float32 `json:"win_bet_coloknaga"`
-	Win4_bet_coloknaga        float32 `json:"win4_bet_coloknaga"`
-	Limittotal_bet_coloknaga  float32 `json:"limittotal_bet_coloknaga"`
-	Min_bet_colokjitu         float32 `json:"min_bet_colokjitu"`
-	Max_bet_colokjitu         float32 `json:"max_bet_colokjitu"`
-	Disc_bet_colokjitu        float32 `json:"disc_bet_colokjitu"`
-	Winas_bet_colokjitu       float32 `json:"winas_bet_colokjitu"`
-	Winkop_bet_colokjitu      float32 `json:"winkop_bet_colokjitu"`
-	Winkepala_bet_colokjitu   float32 `json:"winkepala_bet_colokjitu"`
-	Winekor_bet_colokjitu     float32 `json:"winekor_bet_colokjitu"`
-	Limittotal_bet_colokjitu  float32 `json:"limittotal_bet_colokjitu"`
-}
-type Mpasarantogel5050 struct {
-	Min_bet_5050umum                       float32 `json:"min_bet_5050umum"`
-	Max_bet_5050umum                       float32 `json:"max_bet_5050umum"`
-	Keibesar_bet_5050umum                  float32 `json:"keibesar_bet_5050umum"`
-	Keikecil_bet_5050umum                  float32 `json:"keikecil_bet_5050umum"`
-	Keigenap_bet_5050umum                  float32 `json:"keigenap_bet_5050umum"`
-	Keiganjil_bet_5050umum                 float32 `json:"keiganjil_bet_5050umum"`
-	Keitengah_bet_5050umum                 float32 `json:"keitengah_bet_5050umum"`
-	Keitepi_bet_5050umum                   float32 `json:"keitepi_bet_5050umum"`
-	Discbesar_bet_5050umum                 float32 `json:"discbesar_bet_5050umum"`
-	Disckecil_bet_5050umum                 float32 `json:"disckecil_bet_5050umum"`
-	Discgenap_bet_5050umum                 float32 `json:"discgenap_bet_5050umum"`
-	Discganjil_bet_5050umum                float32 `json:"discganjil_bet_5050umum"`
-	Disctengah_bet_5050umum                float32 `json:"disctengah_bet_5050umum"`
-	Disctepi_bet_5050umum                  float32 `json:"disctepi_bet_5050umum"`
-	Limittotal_bet_5050umum                float32 `json:"limittotal_bet_5050umum"`
-	Min_bet_5050special                    float32 `json:"min_bet_5050special"`
-	Max_bet_5050special                    float32 `json:"max_bet_5050special"`
-	Keiasganjil_bet_5050special            float32 `json:"keiasganjil_bet_5050special"`
-	Keiasgenap_bet_5050special             float32 `json:"keiasgenap_bet_5050special"`
-	Keiasbesar_bet_5050special             float32 `json:"keiasbesar_bet_5050special"`
-	Keiaskecil_bet_5050special             float32 `json:"keiaskecil_bet_5050special"`
-	Keikopganjil_bet_5050special           float32 `json:"keikopganjil_bet_5050special"`
-	Keikopgenap_bet_5050special            float32 `json:"keikopgenap_bet_5050special"`
-	Keikopbesar_bet_5050special            float32 `json:"keikopbesar_bet_5050special"`
-	Keikopkecil_bet_5050special            float32 `json:"keikopkecil_bet_5050special"`
-	Keikepalaganjil_bet_5050special        float32 `json:"keikepalaganjil_bet_5050special"`
-	Keikepalagenap_bet_5050special         float32 `json:"keikepalagenap_bet_5050special"`
-	Keikepalabesar_bet_5050special         float32 `json:"keikepalabesar_bet_5050special"`
-	Keikepalakecil_bet_5050special         float32 `json:"keikepalakecil_bet_5050special"`
-	Keiekorganjil_bet_5050special          float32 `json:"keiekorganjil_bet_5050special"`
-	Keiekorgenap_bet_5050special           float32 `json:"keiekorgenap_bet_5050special"`
-	Keiekorbesar_bet_5050special           float32 `json:"keiekorbesar_bet_5050special"`
-	Keiekorkecil_bet_5050special           float32 `json:"keiekorkecil_bet_5050special"`
-	Discasganjil_bet_5050special           float32 `json:"discasganjil_bet_5050special"`
-	Discasgenap_bet_5050special            float32 `json:"discasgenap_bet_5050special"`
-	Discasbesar_bet_5050special            float32 `json:"discasbesar_bet_5050special"`
-	Discaskecil_bet_5050special            float32 `json:"discaskecil_bet_5050special"`
-	Disckopganjil_bet_5050special          float32 `json:"disckopganjil_bet_5050special"`
-	Disckopgenap_bet_5050special           float32 `json:"disckopgenap_bet_5050special"`
-	Disckopbesar_bet_5050special           float32 `json:"disckopbesar_bet_5050special"`
-	Disckopkecil_bet_5050special           float32 `json:"disckopkecil_bet_5050special"`
-	Disckepalaganjil_bet_5050special       float32 `json:"disckepalaganjil_bet_5050special"`
-	Disckepalagenap_bet_5050special        float32 `json:"disckepalagenap_bet_5050special"`
-	Disckepalabesar_bet_5050special        float32 `json:"disckepalabesar_bet_5050special"`
-	Disckepalakecil_bet_5050special        float32 `json:"disckepalakecil_bet_5050special"`
-	Discekorganjil_bet_5050special         float32 `json:"discekorganjil_bet_5050special"`
-	Discekorgenap_bet_5050special          float32 `json:"discekorgenap_bet_5050special"`
-	Discekorbesar_bet_5050special          float32 `json:"discekorbesar_bet_5050special"`
-	Discekorkecil_bet_5050special          float32 `json:"discekorkecil_bet_5050special"`
-	Limittotal_bet_5050special             float32 `json:"limittotal_bet_5050special"`
-	Min_bet_5050kombinasi                  float32 `json:"min_bet_5050kombinasi"`
-	Max_bet_5050kombinasi                  float32 `json:"max_bet_5050kombinasi"`
-	Kei_belakangmono_bet_5050kombinasi     float32 `json:"kei_belakangmono_bet_5050kombinasi"`
-	Kei_belakangstereo_bet_5050kombinasi   float32 `json:"kei_belakangstereo_bet_5050kombinasi"`
-	Kei_belakangkembang_bet_5050kombinasi  float32 `json:"kei_belakangkembang_bet_5050kombinasi"`
-	Kei_belakangkempis_bet_5050kombinasi   float32 `json:"kei_belakangkempis_bet_5050kombinasi"`
-	Kei_belakangkembar_bet_5050kombinasi   float32 `json:"kei_belakangkembar_bet_5050kombinasi"`
-	Kei_tengahmono_bet_5050kombinasi       float32 `json:"kei_tengahmono_bet_5050kombinasi"`
-	Kei_tengahstereo_bet_5050kombinasi     float32 `json:"kei_tengahstereo_bet_5050kombinasi"`
-	Kei_tengahkembang_bet_5050kombinasi    float32 `json:"kei_tengahkembang_bet_5050kombinasi"`
-	Kei_tengahkempis_bet_5050kombinasi     float32 `json:"kei_tengahkempis_bet_5050kombinasi"`
-	Kei_tengahkembar_bet_5050kombinasi     float32 `json:"kei_tengahkembar_bet_5050kombinasi"`
-	Kei_depanmono_bet_5050kombinasi        float32 `json:"kei_depanmono_bet_5050kombinasi"`
-	Kei_depanstereo_bet_5050kombinasi      float32 `json:"kei_depanstereo_bet_5050kombinasi"`
-	Kei_depankembang_bet_5050kombinasi     float32 `json:"kei_depankembang_bet_5050kombinasi"`
-	Kei_depankempis_bet_5050kombinasi      float32 `json:"kei_depankempis_bet_5050kombinasi"`
-	Kei_depankembar_bet_5050kombinasi      float32 `json:"kei_depankembar_bet_5050kombinasi"`
-	Disc_belakangmono_bet_5050kombinasi    float32 `json:"disc_belakangmono_bet_5050kombinasi"`
-	Disc_belakangstereo_bet_5050kombinasi  float32 `json:"disc_belakangstereo_bet_5050kombinasi"`
-	Disc_belakangkembang_bet_5050kombinasi float32 `json:"disc_belakangkembang_bet_5050kombinasi"`
-	Disc_belakangkempis_bet_5050kombinasi  float32 `json:"disc_belakangkempis_bet_5050kombinasi"`
-	Disc_belakangkembar_bet_5050kombinasi  float32 `json:"disc_belakangkembar_bet_5050kombinasi"`
-	Disc_tengahmono_bet_5050kombinasi      float32 `json:"disc_tengahmono_bet_5050kombinasi"`
-	Disc_tengahstereo_bet_5050kombinasi    float32 `json:"disc_tengahstereo_bet_5050kombinasi"`
-	Disc_tengahkembang_bet_5050kombinasi   float32 `json:"disc_tengahkembang_bet_5050kombinasi"`
-	Disc_tengahkempis_bet_5050kombinasi    float32 `json:"disc_tengahkempis_bet_5050kombinasi"`
-	Disc_tengahkembar_bet_5050kombinasi    float32 `json:"disc_tengahkembar_bet_5050kombinasi"`
-	Disc_depanmono_bet_5050kombinasi       float32 `json:"disc_depanmono_bet_5050kombinasi"`
-	Disc_depanstereo_bet_5050kombinasi     float32 `json:"disc_depanstereo_bet_5050kombinasi"`
-	Disc_depankembang_bet_5050kombinasi    float32 `json:"disc_depankembang_bet_5050kombinasi"`
-	Disc_depankempis_bet_5050kombinasi     float32 `json:"disc_depankempis_bet_5050kombinasi"`
-	Disc_depankembar_bet_5050kombinasi     float32 `json:"disc_depankembar_bet_5050kombinasi"`
-	Limittotal_bet_5050kombinasi           float32 `json:"limittotal_bet_5050kombinasi"`
-}
-type MpasarantogelMacauKombinasi struct {
-	Min_bet     float32 `json:"min_bet"`
-	Max_bet     float32 `json:"max_bet"`
-	Win_bet     float32 `json:"win_bet"`
-	Diskon_bet  float32 `json:"diskon_bet"`
-	Limit_total float32 `json:"limit_total"`
-}
-type MpasarantogelDasar struct {
-	Min_bet         float32 `json:"min_bet"`
-	Max_bet         float32 `json:"max_bet"`
-	Kei_besar_bet   float32 `json:"kei_besar_bet"`
-	Kei_kecil_bet   float32 `json:"kei_kecil_bet"`
-	Kei_genap_bet   float32 `json:"kei_genap_bet"`
-	Kei_ganjil_bet  float32 `json:"kei_ganjil_bet"`
-	Disc_besar_bet  float32 `json:"disc_besar_bet"`
-	Disc_kecil_bet  float32 `json:"disc_kecil_bet"`
-	Disc_genap_bet  float32 `json:"disc_genap_bet"`
-	Disc_ganjil_bet float32 `json:"disc_ganjil_bet"`
-	Limit_total     float32 `json:"limit_total"`
-}
-type MpasarantogelShio struct {
-	Min_bet     float32 `json:"min_bet"`
-	Max_bet     float32 `json:"max_bet"`
-	Win_bet     float32 `json:"win_bet"`
-	Diskon_bet  float32 `json:"diskon_bet"`
-	Limit_total float32 `json:"limit_total"`
-}
-type MpasaranLimit struct {
-	Total_4d  int `json:"total_4d"`
-	Total_3d  int `json:"total_3d"`
-	Total_2d  int `json:"total_2d"`
-	Total_2dd int `json:"total_2dd"`
-	Total_2dt int `json:"total_2dt"`
-}
-type MListinvoicebet struct {
-	Tanggal   string  `json:"tanggal"`
-	Permainan string  `json:"permainan"`
-	Periode   string  `json:"periode"`
-	Nomor     string  `json:"nomor"`
-	Bet       int     `json:"bet"`
-	Diskon    float32 `json:"diskon"`
-	Kei       float32 `json:"kei"`
-	Bayar     int     `json:"bayar"`
-	Win       int     `json:"win"`
-	Menang    int     `json:"menang"`
-}
-type MListinvoicebetid struct {
-	No        int     `json:"no"`
-	Status    string  `json:"status"`
-	Permainan string  `json:"permainan"`
-	Nomor     string  `json:"nomor"`
-	Bet       int     `json:"bet"`
-	Diskon    float32 `json:"diskon"`
-	Kei       float32 `json:"kei"`
-	Bayar     int     `json:"bayar"`
-	Win       int     `json:"win"`
-}
-type MGroupinvoicebetPermainan struct {
-	Permainan string `json:"permainan"`
-}
-type MListsipperiode struct {
-	Tanggal         string `json:"tglkeluaran"`
-	Idinvoice       string `json:"idinvoice"`
-	Periode         string `json:"periode"`
-	Totalbet        int    `json:"totalbet"`
-	Totalbayar      int    `json:"totalbayar"`
-	Totalwin        int    `json:"totalwin"`
-	Totallose       int    `json:"totallose"`
-	Status          string `json:"status"`
-	Color_lost      string `json:"color_lost"`
-	Background      string `json:"background"`
-	Color_totallose string `json:"color_totallose"`
-}
-type MListsipperiodeall struct {
-	Tanggal         string `json:"tglkeluaran"`
-	Idinvoice       string `json:"idinvoice"`
-	Pasaran         string `json:"pasaran"`
-	Periode         string `json:"periode"`
-	Totalbet        int    `json:"totalbet"`
-	Totalbayar      int    `json:"totalbayar"`
-	Totalwin        int    `json:"totalwin"`
-	Totallose       int    `json:"totallose"`
-	Status          string `json:"status"`
-	Color_lost      string `json:"color_lost"`
-	Background      string `json:"background"`
-	Color_totallose string `json:"color_totallose"`
-}
-type MListsipperiodedetail struct {
-	Total4d_bayar             int `json:"total4d_bayar"`
-	Total3d_bayar             int `json:"total3d_bayar"`
-	Total2d_bayar             int `json:"total2d_bayar"`
-	Totalcolokbebas_bayar     int `json:"totalcolokbebas_bayar"`
-	Totalcolokmacau_bayar     int `json:"totalcolokmacau_bayar"`
-	Totalcoloknaga_bayar      int `json:"totalcoloknaga_bayar"`
-	Totalcolokjitu_bayar      int `json:"totalcolokjitu_bayar"`
-	Total5050umum_bayar       int `json:"total5050umum_bayar"`
-	Total5050special_bayar    int `json:"total5050special_bayar"`
-	Total5050kombinasi_bayar  int `json:"total5050kombinasi_bayar"`
-	Totalmacaukombinasi_bayar int `json:"totalmacaukombinasi_bayar"`
-	Totaldasar_bayar          int `json:"totaldasar_bayar"`
-	Totalshio_bayar           int `json:"totalshio_bayar"`
-	Totalwin_4d               int `json:"totalwin_4d"`
-	Totalwin_3d               int `json:"totalwin_3d"`
-	Totalwin_2d               int `json:"totalwin_2d"`
-	Totalwin_colokbebas       int `json:"totalwin_colokbebas"`
-	Totalwin_colokmacau       int `json:"totalwin_colokmacau"`
-	Totalwin_coloknaga        int `json:"totalwin_coloknaga"`
-	Totalwin_colokjitu        int `json:"totalwin_colokjitu"`
-	Totalwin_5050umum         int `json:"totalwin_5050umum"`
-	Totalwin_5050special      int `json:"totalwin_5050special"`
-	Totalwin_5050kombinasi    int `json:"totalwin_5050kombinasi"`
-	Totalwin_macaukombinasi   int `json:"totalwin_macaukombinasi"`
-	Totalwin_dasar            int `json:"totalwin_dasar"`
-	Totalwin_shio             int `json:"totalwin_shio"`
-	Subtotal_bayar            int `json:"subtotal_bayar"`
-	Subtotal_winner           int `json:"subtotal_winner"`
-	Total_winlose             int `json:"total_winlose"`
-}
-
 var mutex sync.RWMutex
 
 func Fetch_Setting() (helpers.Response, error) {
-	var obj setting
-	var arraobj []setting
+	var obj entities.Model_setting
+	var arraobj []entities.Model_setting
 	var res helpers.Response
 
 	render_page := time.Now()
@@ -382,8 +81,8 @@ func Get_Domain(nmdomain string) (bool, string) {
 	return flag, nmdomain_db
 }
 func FetchAll_MclientPasaran(client_company string) (helpers.Response, error) {
-	var obj Mclientpasaran
-	var arraobj []Mclientpasaran
+	var obj entities.Model_mclientpasaran
+	var arraobj []entities.Model_mclientpasaran
 	var res helpers.Response
 	var myDays = []string{"minggu", "senin", "selasa", "rabu", "kamis", "jumat", "sabtu"}
 	statuspasaran := "OFFLINE"
@@ -515,8 +214,8 @@ func FetchAll_MclientPasaran(client_company string) (helpers.Response, error) {
 	return res, nil
 }
 func FetchAll_MclientPasaranResult(client_company, pasaran_code string) (helpers.Response, error) {
-	var obj MclientpasaranResult
-	var arraobj []MclientpasaranResult
+	var obj entities.Model_mclientpasaranResult
+	var arraobj []entities.Model_mclientpasaranResult
 	var res helpers.Response
 	msg := "Error"
 	render_page := time.Now()
@@ -536,8 +235,9 @@ func FetchAll_MclientPasaranResult(client_company, pasaran_code string) (helpers
 	rowresult, err := con.QueryContext(ctx, sqlresult, client_company, pasaran_code)
 	defer rowresult.Close()
 	helpers.ErrorCheck(err)
-	var norecord uint16 = 1
+	norecord := 0
 	for rowresult.Next() {
+		norecord = norecord + 1
 		var (
 			keluaranperiode                             string
 			datekeluaran, keluarantogel, idpasarantogel string
@@ -552,7 +252,6 @@ func FetchAll_MclientPasaranResult(client_company, pasaran_code string) (helpers
 		obj.Result = keluarantogel
 		arraobj = append(arraobj, obj)
 		msg = "Success"
-		norecord = norecord + 1
 	}
 	if len(arraobj) > 0 {
 		res.Status = fiber.StatusOK
@@ -571,8 +270,8 @@ func FetchAll_MclientPasaranResult(client_company, pasaran_code string) (helpers
 	return res, nil
 }
 func FetchAll_MclientPasaranResultAll(client_company string) (helpers.Response, error) {
-	var obj MclientpasaranResultAll
-	var arraobj []MclientpasaranResultAll
+	var obj entities.Model_mclientpasaranResultAll
+	var arraobj []entities.Model_mclientpasaranResultAll
 	var res helpers.Response
 	msg := "Error"
 	render_page := time.Now()
@@ -591,8 +290,9 @@ func FetchAll_MclientPasaranResultAll(client_company string) (helpers.Response, 
 	rowresult, err := con.QueryContext(ctx, sql_listpasarancompany, client_company)
 	defer rowresult.Close()
 	helpers.ErrorCheck(err)
-	var norecord uint16 = 1
+	norecord := 0
 	for rowresult.Next() {
+		norecord = norecord + 1
 		var (
 			idcomppasaran_db                                      int
 			idpasarantogel_db, nmpasarantogel_db                  string
@@ -630,7 +330,6 @@ func FetchAll_MclientPasaranResultAll(client_company string) (helpers.Response, 
 			obj.Result = keluarantogel_db
 			arraobj = append(arraobj, obj)
 			msg = "Success"
-			norecord = norecord + 1
 		}
 	}
 	if len(arraobj) > 0 {
@@ -650,8 +349,8 @@ func FetchAll_MclientPasaranResultAll(client_company string) (helpers.Response, 
 	return res, nil
 }
 func CheckPasaran(client_company, pasaran_code string) (helpers.Response, error) {
-	var obj MclientpasaranCheckPasaran
-	var arraobj []MclientpasaranCheckPasaran
+	var obj entities.Model_mclientpasaranCheckPasaran
+	var arraobj []entities.Model_mclientpasaranCheckPasaran
 	var res helpers.Response
 	var myDays = []string{"minggu", "senin", "selasa", "rabu", "kamis", "jumat", "sabtu"}
 	statuspasaran := "ONLINE"
@@ -714,11 +413,6 @@ func CheckPasaran(client_company, pasaran_code string) (helpers.Response, error)
 			taiskrg := tglnow.Format("YYYY-MM-DD HH:mm:ss")
 			jamtutup := tglnow.Format("YYYY-MM-DD") + " " + jamtutup
 			jamopen := tglnow.Format("YYYY-MM-DD") + " " + jamopen
-			tutup, _ := goment.New(jamtutup)
-			open, _ := goment.New(jamopen)
-			nowconvert := tglnow.Format("x")
-			tutupconvert := tutup.Format("x")
-			openconvert := open.Format("x")
 
 			// intNow, _ := strconv.Atoi(nowconvert)
 			// intTutup, _ := strconv.Atoi(tutupconvert)
@@ -734,7 +428,7 @@ func CheckPasaran(client_company, pasaran_code string) (helpers.Response, error)
 				statuspasaran = "ONLINE"
 			}
 			// log.Println(idpasarantogel + " - " + tglnow.Format("YYYY-MM-DD HH:mm:ss") + " - " + jamtutup + " - " + jamopen + " - " + statuspasaran)
-			log.Println(nowconvert + " - " + tutupconvert + " - " + openconvert + " - " + statuspasaran)
+			// log.Println(nowconvert + " - " + tutupconvert + " - " + openconvert + " - " + statuspasaran)
 		}
 
 		obj.PasaranIdtansaction = idtrxkeluaran
@@ -762,7 +456,6 @@ func CheckPasaran(client_company, pasaran_code string) (helpers.Response, error)
 	return res, nil
 }
 func FetchAll_MinitPasaran(client_company, pasaran_code, permainan string) (helpers.Response, error) {
-
 	var res helpers.Response
 	msg := "Error"
 	con := db.CreateCon()
@@ -771,8 +464,8 @@ func FetchAll_MinitPasaran(client_company, pasaran_code, permainan string) (help
 
 	switch permainan {
 	case "4-3-2":
-		var obj Mpasarantogel432
-		var arraobj []Mpasarantogel432
+		var obj entities.Model_mpasarantogel432
+		var arraobj []entities.Model_mpasarantogel432
 		sqlresult := `SELECT 
 			1_minbet as min_bet, 
 			1_maxbet4d as max4d_bet, 1_maxbet3d as max3d_bet, 
@@ -857,8 +550,8 @@ func FetchAll_MinitPasaran(client_company, pasaran_code, permainan string) (help
 			res.Time = time.Since(render_page).String()
 		}
 	case "colok":
-		var obj MpasarantogelColok
-		var arraobj []MpasarantogelColok
+		var obj entities.Model_mpasarantogelColok
+		var arraobj []entities.Model_mpasarantogelColok
 		sqlresult := `SELECT
 			2_minbet as min_bet_colokbebas,
 			2_maxbet as max_bet_colokbebas,
@@ -949,8 +642,8 @@ func FetchAll_MinitPasaran(client_company, pasaran_code, permainan string) (help
 			res.Time = time.Since(render_page).String()
 		}
 	case "5050":
-		var obj Mpasarantogel5050
-		var arraobj []Mpasarantogel5050
+		var obj entities.Model_pasarantogel5050
+		var arraobj []entities.Model_pasarantogel5050
 		sqlresult := `SELECT
 			6_minbet as min_bet_5050umum,
 			6_maxbet as max_bet_5050umum,
@@ -1190,8 +883,8 @@ func FetchAll_MinitPasaran(client_company, pasaran_code, permainan string) (help
 			res.Time = time.Since(render_page).String()
 		}
 	case "macaukombinasi":
-		var obj MpasarantogelMacauKombinasi
-		var arraobj []MpasarantogelMacauKombinasi
+		var obj entities.Model_pasarantogelMacauKombinasi
+		var arraobj []entities.Model_pasarantogelMacauKombinasi
 		sqlresult := `SELECT 
 		9_minbet as min_bet, 
 		9_maxbet as max_bet, 
@@ -1236,8 +929,8 @@ func FetchAll_MinitPasaran(client_company, pasaran_code, permainan string) (help
 			res.Time = time.Since(render_page).String()
 		}
 	case "dasar":
-		var obj MpasarantogelDasar
-		var arraobj []MpasarantogelDasar
+		var obj entities.Model_mpasarantogelDasar
+		var arraobj []entities.Model_mpasarantogelDasar
 		sqlresult := `SELECT 
 		10_minbet as min_bet, 
 		10_maxbet as max_bet, 
@@ -1298,18 +991,18 @@ func FetchAll_MinitPasaran(client_company, pasaran_code, permainan string) (help
 			res.Time = time.Since(render_page).String()
 		}
 	case "shio":
-		var obj MpasarantogelShio
-		var arraobj []MpasarantogelShio
+		var obj entities.Model_mpasarantogelShio
+		var arraobj []entities.Model_mpasarantogelShio
 		sqlresult := `SELECT 
-		11_minbet as min_bet, 
-		11_maxbet as max_bet, 
-		11_win as win_bet, 
-		11_disc as diskon_bet, 
-		11_limittotal as limit_total 
-		FROM ` + config.DB_tbl_mst_company_game_pasaran + `  
-		WHERE idcompany = ? 
-		AND idpasarantogel = ?
-	`
+			11_minbet as min_bet, 
+			11_maxbet as max_bet, 
+			11_win as win_bet, 
+			11_disc as diskon_bet, 
+			11_limittotal as limit_total 
+			FROM ` + config.DB_tbl_mst_company_game_pasaran + `  
+			WHERE idcompany = ? 
+			AND idpasarantogel = ?
+		`
 		rowresult, err := con.QueryContext(ctx, sqlresult, client_company, pasaran_code)
 		defer rowresult.Close()
 
@@ -1348,7 +1041,7 @@ func FetchAll_MinitPasaran(client_company, pasaran_code, permainan string) (help
 	return res, nil
 }
 func Fetch_LimitTransaksiPasaran432(client_username, client_company, pasaran_code, pasaran_periode, tipe_game string) (helpers.Response, error) {
-	var obj MpasaranLimit
+	var obj entities.Model_mpasaranLimit
 	var res helpers.Response
 	con := db.CreateCon()
 	ctx := context.Background()
@@ -1409,10 +1102,10 @@ func Fetch_LimitTransaksiPasaran432(client_username, client_company, pasaran_cod
 	return res, nil
 }
 func Fetch_invoicebet(client_username, client_company, pasaran_code, pasaran_periode string) (helpers.ResponseCustom, error) {
-	var obj MListinvoicebet
-	var arraobj []MListinvoicebet
-	var objgroup MGroupinvoicebetPermainan
-	var arraobjgroup []MGroupinvoicebetPermainan
+	var obj entities.Model_mlistinvoicebet
+	var arraobj []entities.Model_mlistinvoicebet
+	var objgroup entities.Model_mgroupinvoicebetPermainan
+	var arraobjgroup []entities.Model_mgroupinvoicebetPermainan
 	var res helpers.ResponseCustom
 	var totalbayar int = 0
 
@@ -1510,8 +1203,8 @@ func Fetch_invoicebet(client_username, client_company, pasaran_code, pasaran_per
 	return res, nil
 }
 func Fetch_invoicebetbyid(idtrxkeluaran int, client_username, client_company, typegame string) (helpers.Response, error) {
-	var obj MListinvoicebetid
-	var arraobj []MListinvoicebetid
+	var obj entities.Model_mlistinvoicebetid
+	var arraobj []entities.Model_mlistinvoicebetid
 	var res helpers.Response
 	flag_2dd := false
 	flag_2dt := false
@@ -1624,8 +1317,8 @@ func Fetch_invoicebetbyid(idtrxkeluaran int, client_username, client_company, ty
 	return res, nil
 }
 func Fetch_invoiceperiode(client_username, client_company, pasaran_code string) (helpers.Response, error) {
-	var obj MListsipperiode
-	var arraobj []MListsipperiode
+	var obj entities.Model_mlistsipperiode
+	var arraobj []entities.Model_mlistsipperiode
 	var res helpers.Response
 
 	msg := "Error"
@@ -1757,8 +1450,8 @@ func Fetch_invoiceperiode(client_username, client_company, pasaran_code string) 
 	return res, nil
 }
 func Fetch_invoiceperiodeall(client_username, client_company string) (helpers.Response, error) {
-	var obj MListsipperiodeall
-	var arraobj []MListsipperiodeall
+	var obj entities.Model_mlistsipperiodeall
+	var arraobj []entities.Model_mlistsipperiodeall
 	var res helpers.Response
 
 	msg := "Error"
@@ -1891,7 +1584,7 @@ func Fetch_invoiceperiodeall(client_username, client_company string) (helpers.Re
 	return res, nil
 }
 func Fetch_invoiceperiodedetail(client_username, client_company, idtrxkeluaran string) (helpers.Response, error) {
-	var obj MListsipperiodedetail
+	var obj entities.Model_mlistsipperiodedetail
 	var res helpers.Response
 
 	msg := "Error"
