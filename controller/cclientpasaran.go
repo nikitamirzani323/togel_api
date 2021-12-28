@@ -249,6 +249,7 @@ const fieldallpasaran_redis = "listpasaran_"
 const fieldresult_redis = "listresult_"
 const fieldconfig_redis = "config_"
 const fieldinvoice_redis = "listinvoice_"
+const fieldlimit_redis = "limitpasaran_"
 
 func Fetch_token(c *fiber.Ctx) error {
 	client := new(entities.Controller_clientToken)
@@ -455,7 +456,7 @@ func FetchAll_pasaran(c *fiber.Ctx) error {
 				"record":  nil,
 			})
 		}
-		helpers.SetRedis(fieldallpasaran_redis+strings.ToLower(client.Client_Company), result, 0)
+		helpers.SetRedis(fieldallpasaran_redis+strings.ToLower(client.Client_Company), result, 24*time.Hour)
 		log.Println("PASARAN MYSQL")
 		return c.JSON(result)
 	} else {
@@ -518,7 +519,7 @@ func FetchAll_resultbypasaran(c *fiber.Ctx) error {
 
 		log.Println("RESulT mysql")
 		if result.Status == 200 {
-			helpers.SetRedis(fieldresult_redis+strings.ToLower(client.Client_Company)+"_"+strings.ToLower(client.Pasaran_Code), result, 0)
+			helpers.SetRedis(fieldresult_redis+strings.ToLower(client.Client_Company)+"_"+strings.ToLower(client.Pasaran_Code), result, 24*time.Hour)
 		}
 		return c.JSON(result)
 	} else {
@@ -587,7 +588,7 @@ func FetchAll_result(c *fiber.Ctx) error {
 
 		log.Println("PASARAN mysql")
 		if result.Status == 200 {
-			helpers.SetRedis(fieldresult_redis+strings.ToLower(client.Client_Company), result, 0)
+			helpers.SetRedis(fieldresult_redis+strings.ToLower(client.Client_Company), result, 24*time.Hour)
 		}
 		return c.JSON(result)
 	} else {
@@ -1002,7 +1003,7 @@ func Fetch_InitPasaran(c *fiber.Ctx) error {
 
 		log.Println("mysql")
 		if result.Status == 200 {
-			helpers.SetRedis(fieldconfig_redis+strings.ToLower(client.Client_Company)+"_"+strings.ToLower(client.Pasaran_Code)+"_"+strings.ToLower(client.Permainan), result, 0)
+			helpers.SetRedis(fieldconfig_redis+strings.ToLower(client.Client_Company)+"_"+strings.ToLower(client.Pasaran_Code)+"_"+strings.ToLower(client.Permainan), result, 24*time.Hour)
 		}
 		return c.JSON(result)
 	} else {
@@ -1073,17 +1074,57 @@ func Fetch_LimitPasaran432(c *fiber.Ctx) error {
 			"record":  nil,
 		})
 	}
-	result, err := model.Fetch_LimitTransaksiPasaran432(client.Client_Username, client.Client_Company, client.Pasaran_Code, client.Pasaran_Periode, client.Permainan)
+	render_page := time.Now()
+	var obj entities.Model_mpasaranLimit
+	resultredis, flag := helpers.GetRedis(
+		fieldlimit_redis + strings.ToLower(client.Client_Company) + "_" +
+			strings.ToLower(client.Client_Username) + "_" +
+			strings.ToLower(client.Pasaran_Code) + "_" +
+			strings.ToLower(client.Pasaran_Periode) + "_" +
+			strings.ToLower(client.Permainan))
+	jsonredis := []byte(resultredis)
+	record_RD, _, _, _ := jsonparser.Get(jsonredis, "record")
 
-	if err != nil {
-		c.Status(fiber.StatusBadRequest)
+	total_4d, _ := jsonparser.GetInt(record_RD, "total_4d")
+	total_3d, _ := jsonparser.GetInt(record_RD, "total_3d")
+	total_2d, _ := jsonparser.GetInt(record_RD, "total_2d")
+	total_2dd, _ := jsonparser.GetInt(record_RD, "total_2dd")
+	total_2dt, _ := jsonparser.GetInt(record_RD, "total_2dt")
+
+	obj.Total_4d = int(total_4d)
+	obj.Total_3d = int(total_3d)
+	obj.Total_2d = int(total_2d)
+	obj.Total_2dd = int(total_2dd)
+	obj.Total_2dt = int(total_2dt)
+
+	if !flag {
+		result, err := model.Fetch_LimitTransaksiPasaran432(client.Client_Username, client.Client_Company, client.Pasaran_Code, client.Pasaran_Periode, client.Permainan)
+		if err != nil {
+			c.Status(fiber.StatusBadRequest)
+			return c.JSON(fiber.Map{
+				"status":  fiber.StatusBadRequest,
+				"message": err.Error(),
+				"record":  nil,
+			})
+		}
+		helpers.SetRedis(
+			fieldlimit_redis+strings.ToLower(client.Client_Company)+"_"+
+				strings.ToLower(client.Client_Username)+"_"+
+				strings.ToLower(client.Pasaran_Code)+"_"+
+				strings.ToLower(client.Pasaran_Periode)+"_"+
+				strings.ToLower(client.Permainan), result, 30*time.Minute)
+		log.Println("LIMIT MYSQL")
+		return c.JSON(result)
+	} else {
+		log.Println("LIMIT cache")
 		return c.JSON(fiber.Map{
-			"status":  fiber.StatusBadRequest,
-			"message": err.Error(),
-			"record":  nil,
+			"status":  fiber.StatusOK,
+			"message": "Success",
+			"record":  obj,
+			"time":    time.Since(render_page).String(),
 		})
 	}
-	return c.JSON(result)
+
 }
 func Fetch_listinvoicebet(c *fiber.Ctx) error {
 	client := new(entities.Controller_clientInvoicePasaran)
@@ -1379,6 +1420,12 @@ func SaveTogel(c *fiber.Ctx) error {
 	field_redis := "listinvoice_" + strings.ToLower(client.Client_Company) + "_" + client.Idtrxkeluaran + "_" + strings.ToLower(client.Client_Username)
 	val := helpers.DeleteRedis(field_redis)
 	log.Printf("DELETE REDIS INVOICE %d\n", val)
+	val_limit := helpers.DeleteRedis(
+		fieldlimit_redis + strings.ToLower(client.Client_Company) + "_" +
+			strings.ToLower(client.Client_Username) + "_" +
+			strings.ToLower(client.Pasarancode) + "_" +
+			strings.ToLower(client.Pasaranperiode) + "_4-3-2")
+	log.Printf("DELETE REDIS LIMIT %d\n", val_limit)
 
 	//AGEN
 	val_agen := helpers.DeleteRedis("LISTPERIODE_AGENT_" + strings.ToLower(client.Client_Company) + "_INVOICE_" + client.Idtrxkeluaran)
@@ -1423,6 +1470,7 @@ func SaveTogel(c *fiber.Ctx) error {
 	log.Printf("DELETE REDIS AGEN PERIODE LIST BET ALL %d\n", val_agenall)
 	log.Printf("DELETE REDIS AGEN PERIODE LIST BET WINNER %d\n", val_agenwinner)
 	log.Printf("DELETE REDIS AGEN PERIODE LIST BET CANCEL %d\n", val_agencancel)
+
 	return c.JSON(result)
 }
 func _domainsecurity(nmdomain string) bool {
