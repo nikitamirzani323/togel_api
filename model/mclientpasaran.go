@@ -378,6 +378,7 @@ func FetchAll_MclientPasaran(client_company string) (helpers.Response, error) {
 		WHERE statuspasaranactive = 'Y' 
 		AND idcompany = ?
 	`
+
 	rowspasaran, err := con.QueryContext(ctx, sqlpasaran, client_company)
 	defer rowspasaran.Close()
 	helpers.ErrorCheck(err)

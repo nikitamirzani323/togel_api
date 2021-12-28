@@ -377,12 +377,12 @@ func Fetch_token(c *fiber.Ctx) error {
 		member_company = "MMD"
 		member_saldo = 200000
 	case "1234567890":
-		member_username = "developerisb"
-		member_company = "ISB"
+		member_username = "antonnukue"
+		member_company = "NUK"
 		member_saldo = 1000000
-	case "0987654321`":
+	case "0987654321":
 		member_username = "developernuke"
-		member_company = "NUKE"
+		member_company = "NUK"
 		member_saldo = 2000000
 	}
 	if !flag {
