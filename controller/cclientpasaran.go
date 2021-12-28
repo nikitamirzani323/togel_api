@@ -16,22 +16,27 @@ import (
 )
 
 type ClientToken struct {
-	Token string `json:"token"`
+	Token    string `json:"token"`
+	Hostname string `json:"hostname"`
 }
 type ClientInit struct {
 	Client_Company string `json:"client_company"`
+	Hostname       string `json:"hostname"`
 }
 type ClientResult struct {
 	Client_Company string `json:"client_company"`
 	Pasaran_Code   string `json:"pasaran_code"`
+	Hostname       string `json:"hostname"`
 }
 type ClientResultAll struct {
 	Client_Company string `json:"client_company"`
+	Hostname       string `json:"hostname"`
 }
 type ClientConfPasaran struct {
 	Client_Company string `json:"client_company"`
 	Pasaran_Code   string `json:"pasaran_code"`
 	Permainan      string `json:"permainan"`
+	Hostname       string `json:"hostname"`
 }
 type ClientLimitPasaran struct {
 	Client_Username string `json:"client_username"`
@@ -39,6 +44,7 @@ type ClientLimitPasaran struct {
 	Pasaran_Code    string `json:"pasaran_code"`
 	Pasaran_Periode string `json:"pasaran_periode"`
 	Permainan       string `json:"permainan"`
+	Hostname        string `json:"hostname"`
 }
 type ClientInvoicePasaran struct {
 	Client_Idinvoice int    `json:"client_idinvoice"`
@@ -46,26 +52,31 @@ type ClientInvoicePasaran struct {
 	Client_Company   string `json:"client_company"`
 	Pasaran_Code     string `json:"pasaran_code"`
 	Pasaran_Periode  string `json:"pasaran_periode"`
+	Hostname         string `json:"hostname"`
 }
 type ClientInvoicePasaranId struct {
 	Client_Idinvoice int    `json:"client_idinvoice"`
 	Client_Username  string `json:"client_username"`
 	Client_Company   string `json:"client_company"`
 	Permainan        string `json:"permainan"`
+	Hostname         string `json:"hostname"`
 }
 type ClientSlipPeriode struct {
 	Client_Username string `json:"client_username"`
 	Client_Company  string `json:"client_company"`
 	Pasaran_Code    string `json:"pasaran_code"`
+	Hostname        string `json:"hostname"`
 }
 type ClientSlipPeriodeAll struct {
 	Client_Username string `json:"client_username"`
 	Client_Company  string `json:"client_company"`
+	Hostname        string `json:"hostname"`
 }
 type ClientSlipPeriodeDetail struct {
 	Client_Username string `json:"client_username"`
 	Client_Company  string `json:"client_company"`
 	Idtrxkeluaran   string `json:"idtrxkeluaran"`
+	Hostname        string `json:"hostname"`
 }
 type ClientSaveTogel struct {
 	Client_Username string `json:"client_username"`
@@ -77,6 +88,7 @@ type ClientSaveTogel struct {
 	Timezone        string `json:"timezone"`
 	Totalbayarbet   int    `json:"totalbayarbet"`
 	List4d          string `json:"list4d"`
+	Hostname        string `json:"hostname"`
 }
 type parsingjson struct {
 	Record []ytRecord `json:"record"`
@@ -326,6 +338,8 @@ type settingcustom2 struct {
 
 var ctx = context.Background()
 
+const fielddomain_redis = "LISTDOMAIN"
+
 func Fetch_token(c *fiber.Ctx) error {
 	client := new(ClientToken)
 
@@ -334,6 +348,17 @@ func Fetch_token(c *fiber.Ctx) error {
 		return c.JSON(fiber.Map{
 			"status":  fiber.StatusBadRequest,
 			"message": err.Error(),
+			"record":  nil,
+		})
+	}
+	log.Printf("Client : %s", client.Hostname)
+
+	flag_domain := _domainsecurity(client.Hostname)
+	if !flag_domain {
+		c.Status(fiber.StatusBadRequest)
+		return c.JSON(fiber.Map{
+			"status":  fiber.StatusBadRequest,
+			"message": "NOT REGISTER",
 			"record":  nil,
 		})
 	}
@@ -449,6 +474,17 @@ func FetchAll_pasaran(c *fiber.Ctx) error {
 	if err := c.BodyParser(client); err != nil {
 		return err
 	}
+
+	flag_domain := _domainsecurity(client.Hostname)
+	if !flag_domain {
+		c.Status(fiber.StatusBadRequest)
+		return c.JSON(fiber.Map{
+			"status":  fiber.StatusBadRequest,
+			"message": "NOT REGISTER",
+			"record":  nil,
+		})
+	}
+
 	field_redis := "listpasaran_" + strings.ToLower(client.Client_Company)
 	render_page := time.Now()
 	tglnow, _ := goment.New()
@@ -532,7 +568,15 @@ func FetchAll_resultbypasaran(c *fiber.Ctx) error {
 	if err := c.BodyParser(client); err != nil {
 		return err
 	}
-
+	flag_domain := _domainsecurity(client.Hostname)
+	if !flag_domain {
+		c.Status(fiber.StatusBadRequest)
+		return c.JSON(fiber.Map{
+			"status":  fiber.StatusBadRequest,
+			"message": "NOT REGISTER",
+			"record":  nil,
+		})
+	}
 	field_redis := "listresult_" + strings.ToLower(client.Client_Company) + "_" + strings.ToLower(client.Pasaran_Code)
 	var obj responseredis
 	var arraobj []responseredis
@@ -589,7 +633,15 @@ func FetchAll_result(c *fiber.Ctx) error {
 	if err := c.BodyParser(client); err != nil {
 		return err
 	}
-
+	flag_domain := _domainsecurity(client.Hostname)
+	if !flag_domain {
+		c.Status(fiber.StatusBadRequest)
+		return c.JSON(fiber.Map{
+			"status":  fiber.StatusBadRequest,
+			"message": "NOT REGISTER",
+			"record":  nil,
+		})
+	}
 	field_redis := "listresult_" + strings.ToLower(client.Client_Company)
 	var obj responseredisall
 	var arraobj []responseredisall
@@ -667,6 +719,15 @@ func Fetch_InitPasaran(c *fiber.Ctx) error {
 	render_page := time.Now()
 	if err := c.BodyParser(client); err != nil {
 		return err
+	}
+	flag_domain := _domainsecurity(client.Hostname)
+	if !flag_domain {
+		c.Status(fiber.StatusBadRequest)
+		return c.JSON(fiber.Map{
+			"status":  fiber.StatusBadRequest,
+			"message": "NOT REGISTER",
+			"record":  nil,
+		})
 	}
 	field_redis := "config_" + strings.ToLower(client.Client_Company) + "_" + strings.ToLower(client.Pasaran_Code) + "_" + strings.ToLower(client.Permainan)
 	var obj_432 responseredisinit_432
@@ -1099,7 +1160,15 @@ func Fetch_LimitPasaran432(c *fiber.Ctx) error {
 	if err := c.BodyParser(client); err != nil {
 		return err
 	}
-
+	flag_domain := _domainsecurity(client.Hostname)
+	if !flag_domain {
+		c.Status(fiber.StatusBadRequest)
+		return c.JSON(fiber.Map{
+			"status":  fiber.StatusBadRequest,
+			"message": "NOT REGISTER",
+			"record":  nil,
+		})
+	}
 	result, err := model.Fetch_LimitTransaksiPasaran432(client.Client_Username, client.Client_Company, client.Pasaran_Code, client.Pasaran_Periode, client.Permainan)
 
 	if err != nil {
@@ -1116,6 +1185,15 @@ func Fetch_listinvoicebet(c *fiber.Ctx) error {
 	client := new(ClientInvoicePasaran)
 	if err := c.BodyParser(client); err != nil {
 		return err
+	}
+	flag_domain := _domainsecurity(client.Hostname)
+	if !flag_domain {
+		c.Status(fiber.StatusBadRequest)
+		return c.JSON(fiber.Map{
+			"status":  fiber.StatusBadRequest,
+			"message": "NOT REGISTER",
+			"record":  nil,
+		})
 	}
 	field_redis := "listinvoice_" + strings.ToLower(client.Client_Company) + "_" + strconv.Itoa(client.Client_Idinvoice) + "_" + strings.ToLower(client.Client_Username)
 	render_page := time.Now()
@@ -1182,6 +1260,15 @@ func Fetch_listinvoicebetid(c *fiber.Ctx) error {
 	if err := c.BodyParser(client); err != nil {
 		return err
 	}
+	flag_domain := _domainsecurity(client.Hostname)
+	if !flag_domain {
+		c.Status(fiber.StatusBadRequest)
+		return c.JSON(fiber.Map{
+			"status":  fiber.StatusBadRequest,
+			"message": "NOT REGISTER",
+			"record":  nil,
+		})
+	}
 	field_redis := "listinvoice_" + strconv.Itoa(client.Client_Idinvoice) + "_" + strings.ToLower(client.Client_Company) + "_" + strings.ToLower(client.Client_Username) + "_" + strings.ToLower(client.Permainan)
 	render_page := time.Now()
 	var obj responseinvoiceidpermainan
@@ -1242,6 +1329,15 @@ func Fetch_slipperiode(c *fiber.Ctx) error {
 	if err := c.BodyParser(client); err != nil {
 		return err
 	}
+	flag_domain := _domainsecurity(client.Hostname)
+	if !flag_domain {
+		c.Status(fiber.StatusBadRequest)
+		return c.JSON(fiber.Map{
+			"status":  fiber.StatusBadRequest,
+			"message": "NOT REGISTER",
+			"record":  nil,
+		})
+	}
 	result, err := model.Fetch_invoiceperiode(client.Client_Username, client.Client_Company, client.Pasaran_Code)
 	if err != nil {
 		c.Status(fiber.StatusBadRequest)
@@ -1257,6 +1353,15 @@ func Fetch_slipperiodeall(c *fiber.Ctx) error {
 	client := new(ClientSlipPeriodeAll)
 	if err := c.BodyParser(client); err != nil {
 		return err
+	}
+	flag_domain := _domainsecurity(client.Hostname)
+	if !flag_domain {
+		c.Status(fiber.StatusBadRequest)
+		return c.JSON(fiber.Map{
+			"status":  fiber.StatusBadRequest,
+			"message": "NOT REGISTER",
+			"record":  nil,
+		})
 	}
 	field_redis := "listinvoiceall_" + strings.ToLower(client.Client_Company) + "_" + strings.ToLower(client.Client_Username)
 	render_page := time.Now()
@@ -1323,6 +1428,15 @@ func Fetch_slipperiodedetail(c *fiber.Ctx) error {
 	if err := c.BodyParser(client); err != nil {
 		return err
 	}
+	flag_domain := _domainsecurity(client.Hostname)
+	if !flag_domain {
+		c.Status(fiber.StatusBadRequest)
+		return c.JSON(fiber.Map{
+			"status":  fiber.StatusBadRequest,
+			"message": "NOT REGISTER",
+			"record":  nil,
+		})
+	}
 	result, err := model.Fetch_invoiceperiodedetail(client.Client_Username, client.Client_Company, client.Idtrxkeluaran)
 	if err != nil {
 		c.Status(fiber.StatusBadRequest)
@@ -1339,7 +1453,15 @@ func SaveTogel(c *fiber.Ctx) error {
 	if err := c.BodyParser(client); err != nil {
 		panic(err.Error())
 	}
-
+	flag_domain := _domainsecurity(client.Hostname)
+	if !flag_domain {
+		c.Status(fiber.StatusBadRequest)
+		return c.JSON(fiber.Map{
+			"status":  fiber.StatusBadRequest,
+			"message": "NOT REGISTER",
+			"record":  nil,
+		})
+	}
 	result, err := model.Savetransaksi(
 		client.Client_Username,
 		client.Client_Company, client.Idtrxkeluaran, client.Idcomppasaran, client.Devicemember, client.Formipaddress, client.Timezone, client.Totalbayarbet, client.List4d)
@@ -1400,4 +1522,34 @@ func SaveTogel(c *fiber.Ctx) error {
 	log.Printf("DELETE REDIS AGEN PERIODE LIST BET WINNER %d\n", val_agenwinner)
 	log.Printf("DELETE REDIS AGEN PERIODE LIST BET CANCEL %d\n", val_agencancel)
 	return c.JSON(result)
+}
+func _domainsecurity(nmdomain string) bool {
+	log.Printf("Domain Client : %s", nmdomain)
+	resultredis, flag_domain := helpers.GetRedis(fielddomain_redis)
+	log.Printf("Domain Client : %s", nmdomain)
+	log.Printf("Domain Redis : %s", resultredis)
+	flag := false
+	if len(nmdomain) > 0 {
+		if !flag_domain {
+			flag_client, nmdomain := model.Get_Domain(nmdomain)
+			if flag_client {
+				tempdata := fiber.Map{
+					"domain": nmdomain,
+				}
+				log.Println("DOMAIN MYSQL")
+				helpers.SetRedis(fielddomain_redis, tempdata, 24*time.Hour)
+				flag = true
+			}
+		} else {
+			jsonredis_domain := []byte(resultredis)
+
+			domain_redis, _ := jsonparser.GetString(jsonredis_domain, "domain")
+			if domain_redis == nmdomain {
+				flag = true
+				log.Println("DOMAIN CACHE")
+			}
+
+		}
+	}
+	return flag
 }

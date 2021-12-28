@@ -22,6 +22,9 @@ type setting struct {
 	StartMaintenance string `json:"maintenance_start"`
 	EndMaintenance   string `json:"maintenance_end"`
 }
+type domain struct {
+	Domain_name string `json:"domain_name"`
+}
 type Mclientpasaran struct {
 	PasaranId             string `json:"pasaran_id"`
 	PasaranTogel          string `json:"pasaran_togel"`
@@ -353,6 +356,30 @@ func Fetch_Setting() (helpers.Response, error) {
 	res.Time = time.Since(render_page).String()
 
 	return res, nil
+}
+func Get_Domain(nmdomain string) (bool, string) {
+	ctx := context.Background()
+	con := db.CreateCon()
+	flag := false
+	var nmdomain_db string = ""
+	sql_select := `SELECT 
+		nmdomain    
+		FROM ` + config.DB_tbl_mst_domain + `  
+		WHERE tipedomain = 'FRONTEND'
+		AND statusdomain ='RUNNING'  
+		AND nmdomain =?  
+	`
+	row := con.QueryRowContext(ctx, sql_select, nmdomain)
+	switch e := row.Scan(&nmdomain_db); e {
+	case sql.ErrNoRows:
+		flag = false
+	case nil:
+		flag = true
+	default:
+		flag = false
+	}
+
+	return flag, nmdomain_db
 }
 func FetchAll_MclientPasaran(client_company string) (helpers.Response, error) {
 	var obj Mclientpasaran
