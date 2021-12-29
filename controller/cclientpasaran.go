@@ -1124,7 +1124,6 @@ func Fetch_LimitPasaran432(c *fiber.Ctx) error {
 			"time":    time.Since(render_page).String(),
 		})
 	}
-
 }
 func Fetch_listinvoicebet(c *fiber.Ctx) error {
 	client := new(entities.Controller_clientInvoicePasaran)
@@ -1258,7 +1257,7 @@ func Fetch_listinvoicebetid(c *fiber.Ctx) error {
 		log.Println("MYSQL")
 		return c.JSON(result)
 	} else {
-		log.Println("cache")
+		log.Println("CACHE")
 		return c.JSON(fiber.Map{
 			"status":  fiber.StatusOK,
 			"message": "Success",
@@ -1364,7 +1363,6 @@ func Fetch_slipperiodeall(c *fiber.Ctx) error {
 			"time":    time.Since(render_page).String(),
 		})
 	}
-
 }
 func Fetch_slipperiodedetail(c *fiber.Ctx) error {
 	client := new(entities.Controller_clientSlipPeriodeDetail)
