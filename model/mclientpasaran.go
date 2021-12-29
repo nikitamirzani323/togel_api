@@ -138,7 +138,7 @@ func FetchAll_MclientPasaran(client_company string) (helpers.Response, error) {
 		case nil:
 			flag = true
 		default:
-			helpers.ErrorCheck(err)
+			flag = false
 		}
 		if flag {
 			jamtutupdoc, _ := goment.New(tglkeluaran)
@@ -152,18 +152,13 @@ func FetchAll_MclientPasaran(client_company string) (helpers.Response, error) {
 			`
 
 			errpasaranonline := con.QueryRowContext(ctx, sqlpasaranonline, idcomppasaran, client_company, daynowhari).Scan(&haripasaran)
-			jamtutupdoc2 := jamtutupdoc.Format("YYYY-MM-DD")
-			taiskrg2 := tglnow.Format("YYYY-MM-DD")
+			jamtutupdoc2 := jamtutupdoc.Format("YYYY-MM-DD") + " " + jamtutup
+			taiskrg2 := tglnow.Format("YYYY-MM-DD HH:mm:ss")
 			if errpasaranonline != sql.ErrNoRows {
 				pasaranhariini = "ONLINE"
 				taiskrg := tglnow.Format("YYYY-MM-DD HH:mm:ss")
 				jamtutup := tglnow.Format("YYYY-MM-DD") + " " + jamtutup
 				jamopen := tglnow.Format("YYYY-MM-DD") + " " + jamopen
-				tutup, _ := goment.New(jamtutup)
-				open, _ := goment.New(jamopen)
-				nowconvert := tglnow.Format("x")
-				tutupconvert := tutup.Format("x")
-				openconvert := open.Format("x")
 
 				if taiskrg >= jamtutup && taiskrg <= jamopen {
 					statuspasaran = "OFFLINE"
@@ -171,12 +166,14 @@ func FetchAll_MclientPasaran(client_company string) (helpers.Response, error) {
 					statuspasaran = "ONLINE"
 				}
 				// log.Println(idpasarantogel + " - " + tglnow.Format("YYYY-MM-DD HH:mm:ss") + " - " + jamtutup + " - " + jamopen + " - " + statuspasaran)
-				log.Println(idpasarantogel + " - " + nowconvert + " - " + tutupconvert + " - " + openconvert + " - " + statuspasaran)
 
 			}
 			if taiskrg2 > jamtutupdoc2 {
 				statuspasaran = "OFFLINE"
 			}
+			tempcode := periodekerluaran + "-" + idpasarantogel
+			log.Printf("tai skrg %s > jamtutp %s", taiskrg2, jamtutupdoc2)
+			log.Printf("%s - %s - %s", nmpasarantogel, tempcode, statuspasaran)
 		}
 
 		if periodekerluaran != "" {
