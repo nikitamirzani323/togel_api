@@ -1037,7 +1037,7 @@ func FetchAll_MinitPasaran(client_company, pasaran_code, permainan string) (help
 
 	return res, nil
 }
-func Fetch_LimitTransaksiPasaran432(client_username, client_company, pasaran_code, pasaran_periode, tipe_game string) (helpers.Response, error) {
+func Fetch_LimitTransaksiPasaran432(client_username, client_company, tipe_game string, invoice int) (helpers.Response, error) {
 	var obj entities.Model_mpasaranLimit
 	var res helpers.Response
 	con := db.CreateCon()
@@ -1056,10 +1056,9 @@ func Fetch_LimitTransaksiPasaran432(client_username, client_company, pasaran_cod
 		FROM ` + view_client + `  
 		WHERE idcompany = ? 
 		AND username = ?
-		AND keluaranperiode = ?
-		AND idpasarantogel = ?
+		AND idtrxkeluaran = ?
 	`
-	row, err := con.QueryContext(ctx, sql, client_company, client_username, pasaran_periode, pasaran_code)
+	row, err := con.QueryContext(ctx, sql, client_company, client_username, invoice)
 	defer row.Close()
 
 	helpers.ErrorCheck(err)
@@ -1098,7 +1097,7 @@ func Fetch_LimitTransaksiPasaran432(client_username, client_company, pasaran_cod
 	res.Time = time.Since(render_page).String()
 	return res, nil
 }
-func Fetch_invoicebet(client_username, client_company, pasaran_code, pasaran_periode string) (helpers.ResponseCustom, error) {
+func Fetch_invoicebet(client_username, client_company string, invoice int) (helpers.ResponseCustom, error) {
 	var obj entities.Model_mlistinvoicebet
 	var arraobj []entities.Model_mlistinvoicebet
 	var objgroup entities.Model_mgroupinvoicebetPermainan
@@ -1118,11 +1117,10 @@ func Fetch_invoicebet(client_username, client_company, pasaran_code, pasaran_per
 		FROM ` + view_client_invoice + `  
 		WHERE idcompany = ? 
 		AND username = ?
-		AND keluaranperiode = ?
-		AND idpasarantogel = ?
+		AND idtrxkeluaran = ?
 		ORDER BY datetimedetail DESC
 	`
-	row, err := con.QueryContext(ctx, sql, client_company, client_username, pasaran_periode, pasaran_code)
+	row, err := con.QueryContext(ctx, sql, client_company, client_username, invoice)
 	defer row.Close()
 
 	helpers.ErrorCheck(err)
@@ -1167,11 +1165,10 @@ func Fetch_invoicebet(client_username, client_company, pasaran_code, pasaran_per
 		FROM ` + view_client_invoice + ` 
 		WHERE idcompany = ?
 		AND username = ?
-		AND keluaranperiode = ?
-		AND idpasarantogel = ?
+		AND idtrxkeluaran = ?
 		GROUP BY typegame
 	`
-	rowgrouppermainan, err := con.QueryContext(ctx, sqlgrouppermainan, client_company, client_username, pasaran_periode, pasaran_code)
+	rowgrouppermainan, err := con.QueryContext(ctx, sqlgrouppermainan, client_company, client_username, invoice)
 	defer rowgrouppermainan.Close()
 
 	helpers.ErrorCheck(err)

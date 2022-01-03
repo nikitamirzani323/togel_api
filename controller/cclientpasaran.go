@@ -1098,7 +1098,7 @@ func Fetch_LimitPasaran432(c *fiber.Ctx) error {
 	obj.Total_2dt = int(total_2dt)
 
 	if !flag {
-		result, err := model.Fetch_LimitTransaksiPasaran432(client.Client_Username, client.Client_Company, client.Pasaran_Code, client.Pasaran_Periode, client.Permainan)
+		result, err := model.Fetch_LimitTransaksiPasaran432(client.Client_Username, client.Client_Company, client.Permainan, client.Client_Idinvoice)
 		if err != nil {
 			c.Status(fiber.StatusBadRequest)
 			return c.JSON(fiber.Map{
@@ -1174,7 +1174,7 @@ func Fetch_listinvoicebet(c *fiber.Ctx) error {
 	})
 
 	if !flag {
-		result, err := model.Fetch_invoicebet(client.Client_Username, client.Client_Company, client.Pasaran_Code, client.Pasaran_Periode)
+		result, err := model.Fetch_invoicebet(client.Client_Username, client.Client_Company, client.Client_Idinvoice)
 		if err != nil {
 			c.Status(fiber.StatusBadRequest)
 			return c.JSON(fiber.Map{

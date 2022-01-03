@@ -327,12 +327,13 @@ type Controller_clientConfPasaran struct {
 	Hostname       string `json:"hostname"`
 }
 type Controller_clientLimitPasaran struct {
-	Client_Username string `json:"client_username"`
-	Client_Company  string `json:"client_company"`
-	Pasaran_Code    string `json:"pasaran_code"`
-	Pasaran_Periode string `json:"pasaran_periode"`
-	Permainan       string `json:"permainan"`
-	Hostname        string `json:"hostname"`
+	Client_Idinvoice int    `json:"client_idinvoice"`
+	Client_Username  string `json:"client_username"`
+	Client_Company   string `json:"client_company"`
+	Pasaran_Code     string `json:"pasaran_code"`
+	Pasaran_Periode  string `json:"pasaran_periode"`
+	Permainan        string `json:"permainan"`
+	Hostname         string `json:"hostname"`
 }
 type Controller_clientInvoicePasaran struct {
 	Client_Idinvoice int    `json:"client_idinvoice"`
