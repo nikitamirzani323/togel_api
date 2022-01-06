@@ -17,7 +17,11 @@ func main() {
 
 	// Listen from a different goroutine
 	go func() {
-		if err := app.Listen(":7071"); err != nil {
+		port := os.Getenv("PORT")
+		if port == "" {
+			port = "7071"
+		}
+		if err := app.Listen(":" + port); err != nil {
 			log.Panic(err)
 		}
 	}()
