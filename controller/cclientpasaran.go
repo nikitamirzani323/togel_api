@@ -425,10 +425,14 @@ func FetchAll_pasaran(c *fiber.Ctx) error {
 			statuspasaran = "OFFLINE"
 		} else {
 			if pasaran_hari == "ONLINE" {
-				if taiskrg >= jamtutup && taiskrg <= jamopen {
-					statuspasaran = "OFFLINE"
-				} else {
+				if taiskrg <= jamtutup2 {
 					statuspasaran = "ONLINE"
+				} else {
+					if taiskrg >= jamtutup && taiskrg <= jamopen {
+						statuspasaran = "OFFLINE"
+					} else {
+						statuspasaran = "ONLINE"
+					}
 				}
 			} else {
 				statuspasaran = "ONLINE"
