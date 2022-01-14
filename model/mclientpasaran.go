@@ -1865,6 +1865,7 @@ func Savetransaksi(client_username, client_company, idtrxkeluaran, idcomppasaran
 	pasaran_code := ""
 	limit_togel4d := 0
 	limit_togel3d := 0
+	limit_togel3dd := 0
 	limit_togel2d := 0
 	limit_togel2dd := 0
 	limit_togel2dt := 0
@@ -1886,7 +1887,7 @@ func Savetransaksi(client_username, client_company, idtrxkeluaran, idcomppasaran
 
 	sql_select := `SELECT 
 		idpasarantogel, 
-		limit_togel_4d, limit_togel_3d, limit_togel_2d, limit_togel_2dd, limit_togel_2dt, 
+		limit_togel_4d, limit_togel_3d, limit_togel_3dd, limit_togel_2d, limit_togel_2dd, limit_togel_2dt, 
 		limit_togel_colokbebas, limit_togel_colokmacau, limit_togel_coloknaga, limit_togel_colokjitu, 
 		limit_togel_5050umum, limit_togel_5050special, limit_togel_5050kombinasi, limit_togel_kombinasi, 
 		limit_togel_dasar, limit_togel_shio
@@ -1901,15 +1902,15 @@ func Savetransaksi(client_username, client_company, idtrxkeluaran, idcomppasaran
 	for row.Next() {
 		nolimit = nolimit + 1
 		var (
-			idpasarantogel_db                                                                                           string
-			limit_togel_4d_db, limit_togel_3d_db, limit_togel_2d_db, limit_togel_2dd_db, limit_togel_2dt_db             float32
-			limit_togel_colokbebas_db, limit_togel_colokmacau_db, limit_togel_coloknaga_db, limit_togel_colokjitu_db    float32
-			limit_togel_5050umum_db, limit_togel_5050special_db, limit_togel_5050kombinasi_db, limit_togel_kombinasi_db float32
-			limit_togel_dasar_db, limit_togel_shio_db                                                                   float32
+			idpasarantogel_db                                                                                                   string
+			limit_togel_4d_db, limit_togel_3d_db, limit_togel_3dd_db, limit_togel_2d_db, limit_togel_2dd_db, limit_togel_2dt_db float32
+			limit_togel_colokbebas_db, limit_togel_colokmacau_db, limit_togel_coloknaga_db, limit_togel_colokjitu_db            float32
+			limit_togel_5050umum_db, limit_togel_5050special_db, limit_togel_5050kombinasi_db, limit_togel_kombinasi_db         float32
+			limit_togel_dasar_db, limit_togel_shio_db                                                                           float32
 		)
 		err = row.Scan(
 			&idpasarantogel_db,
-			&limit_togel_4d_db, &limit_togel_3d_db, &limit_togel_2d_db, &limit_togel_2dd_db, &limit_togel_2dt_db,
+			&limit_togel_4d_db, &limit_togel_3d_db, &limit_togel_3dd_db, &limit_togel_2d_db, &limit_togel_2dd_db, &limit_togel_2dt_db,
 			&limit_togel_colokbebas_db, &limit_togel_colokmacau_db, &limit_togel_coloknaga_db, &limit_togel_colokjitu_db,
 			&limit_togel_5050umum_db, &limit_togel_5050special_db, &limit_togel_5050kombinasi_db, &limit_togel_kombinasi_db,
 			&limit_togel_dasar_db, &limit_togel_shio_db)
@@ -1918,6 +1919,7 @@ func Savetransaksi(client_username, client_company, idtrxkeluaran, idcomppasaran
 		pasaran_code = idpasarantogel_db
 		limit_togel4d = int(limit_togel_4d_db)
 		limit_togel3d = int(limit_togel_3d_db)
+		limit_togel3dd = int(limit_togel_3dd_db)
 		limit_togel2d = int(limit_togel_2d_db)
 		limit_togel2dd = int(limit_togel_2dd_db)
 		limit_togel2dt = int(limit_togel_2dt_db)
@@ -1984,6 +1986,9 @@ func Savetransaksi(client_username, client_company, idtrxkeluaran, idcomppasaran
 			case "3D":
 				permainan = "4D/3D/2D"
 				limit_global_togel = limit_togel3d
+			case "3DD":
+				permainan = "4D/3D/2D"
+				limit_global_togel = limit_togel3dd
 			case "2D":
 				permainan = "4D/3D/2D"
 				limit_global_togel = limit_togel2d
