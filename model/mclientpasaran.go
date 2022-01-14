@@ -465,16 +465,16 @@ func FetchAll_MinitPasaran(client_company, pasaran_code, permainan string) (help
 		var arraobj []entities.Model_mpasarantogel432
 		sqlresult := `SELECT 
 			1_minbet as min_bet, 
-			1_maxbet4d as max4d_bet, 1_maxbet3d as max3d_bet, 
+			1_maxbet4d as max4d_bet, 1_maxbet3d as max3d_bet,  1_maxbet3dd as max3dd_bet,
 			1_maxbet2d as max2d_bet, 1_maxbet2dd as max2dd_bet, 1_maxbet2dt as max2dt_bet, 
-			1_disc4d as disc4d_bet, 1_disc3d as disc3d_bet, 1_disc2d as disc2d_bet, 
-			1_disc2dd as disc2dd_bet, 1_disc2dt as disc2dt_bet, 
-			1_win4d as win4d_bet, 1_win3d as win3d_bet, 1_win2d as win2d_bet, 
-			1_win2dd as win2dd_bet, 1_win2dt as win2dt_bet, 
-			1_limittotal4d as limittotal4d_bet, 1_limittotal3d as limittotal3d_bet, 
+			1_disc4d as disc4d_bet, 1_disc3d as disc3d_bet, 1_disc3dd as disc3dd_bet, 
+			1_disc2d as disc2d_bet, 1_disc2dd as disc2dd_bet, 1_disc2dt as disc2dt_bet, 
+			1_win4d as win4d_bet, 1_win3d as win3d_bet, 1_win3dd as win3dd_bet, 
+			1_win2d as win2d_bet, 1_win2dd as win2dd_bet, 1_win2dt as win2dt_bet, 
+			1_limittotal4d as limittotal4d_bet, 1_limittotal3d as limittotal3d_bet, 1_limittotal3dd as limittotal3dd_bet, 
 			1_limittotal2d as limittotal2d_bet, 1_limittotal2dd as limittotal2dd_bet, 
 			1_limittotal2dt as limittotal2dt_bet, 
-			limitline_4d, limitline_3d, limitline_2d, limitline_2dd, limitline_2dt, bbfs 
+			limitline_4d, limitline_3d, limitline_3dd, limitline_2d, limitline_2dd, limitline_2dt, bbfs 
 			FROM ` + config.DB_tbl_mst_company_game_pasaran + `  
 			WHERE idcompany = ? 
 			AND idpasarantogel = ?
@@ -485,45 +485,50 @@ func FetchAll_MinitPasaran(client_company, pasaran_code, permainan string) (help
 
 		for rowresult.Next() {
 			var (
-				min_bet, max4d_bet, max3d_bet, max2d_bet, max2dd_bet, max2dt_bet                           float32
-				disc4d_bet, disc3d_bet, disc2d_bet, disc2dd_bet, disc2dt_bet                               float32
-				win4d_bet, win3d_bet, win2d_bet, win2dd_bet, win2dt_bet                                    float32
-				limittotal4d_bet, limittotal3d_bet, limittotal2d_bet, limittotal2dd_bet, limittotal2dt_bet float32
-				limitline_4d, limitline_3d, limitline_2d, limitline_2dd, limitline_2dt                     uint32
-				bbfs                                                                                       uint8
+				min_bet, max4d_bet, max3d_bet, max3dd_bet, max2d_bet, max2dd_bet, max2dt_bet                                  float32
+				disc4d_bet, disc3d_bet, disc3dd_bet, disc2d_bet, disc2dd_bet, disc2dt_bet                                     float32
+				win4d_bet, win3d_bet, win3dd_bet, win2d_bet, win2dd_bet, win2dt_bet                                           float32
+				limittotal4d_bet, limittotal3d_bet, limittotal3dd_bet, limittotal2d_bet, limittotal2dd_bet, limittotal2dt_bet float32
+				limitline_4d, limitline_3d, limitline_3dd, limitline_2d, limitline_2dd, limitline_2dt                         uint32
+				bbfs                                                                                                          uint8
 			)
 
 			err = rowresult.Scan(
-				&min_bet, &max4d_bet, &max3d_bet, &max2d_bet, &max2dd_bet, &max2dt_bet,
-				&disc4d_bet, &disc3d_bet, &disc2d_bet, &disc2dd_bet, &disc2dt_bet,
-				&win4d_bet, &win3d_bet, &win2d_bet, &win2dd_bet, &win2dt_bet,
-				&limittotal4d_bet, &limittotal3d_bet, &limittotal2d_bet, &limittotal2dd_bet, &limittotal2dt_bet,
-				&limitline_4d, &limitline_3d, &limitline_2d, &limitline_2dd, &limitline_2dt,
+				&min_bet, &max4d_bet, &max3d_bet, &max3dd_bet, &max2d_bet, &max2dd_bet, &max2dt_bet,
+				&disc4d_bet, &disc3d_bet, &disc3dd_bet, &disc2d_bet, &disc2dd_bet, &disc2dt_bet,
+				&win4d_bet, &win3d_bet, &win3dd_bet, &win2d_bet, &win2dd_bet, &win2dt_bet,
+				&limittotal4d_bet, &limittotal3d_bet, &limittotal3dd_bet, &limittotal2d_bet, &limittotal2dd_bet, &limittotal2dt_bet,
+				&limitline_4d, &limitline_3d, &limitline_3dd, &limitline_2d, &limitline_2dd, &limitline_2dt,
 				&bbfs)
 			helpers.ErrorCheck(err)
 			obj.Min_bet = min_bet
 			obj.Max4d_bet = max4d_bet
 			obj.Max3d_bet = max3d_bet
+			obj.Max3dd_bet = max3dd_bet
 			obj.Max2d_bet = max2d_bet
 			obj.Max2dd_bet = max2dd_bet
 			obj.Max2dt_bet = max2dt_bet
 			obj.Disc4d_bet = disc4d_bet
 			obj.Disc3d_bet = disc3d_bet
+			obj.Disc3dd_bet = disc3dd_bet
 			obj.Disc2d_bet = disc2d_bet
 			obj.Disc2dd_bet = disc2dd_bet
 			obj.Disc2dt_bet = disc2dt_bet
 			obj.Win4d_bet = win4d_bet
 			obj.Win3d_bet = win3d_bet
+			obj.Win3dd_bet = win3dd_bet
 			obj.Win2d_bet = win2d_bet
 			obj.Win2dd_bet = win2dd_bet
 			obj.Win2dt_bet = win2dt_bet
 			obj.Limittotal4d_bet = limittotal4d_bet
 			obj.Limittotal3d_bet = limittotal3d_bet
+			obj.Limittotal3dd_bet = limittotal3dd_bet
 			obj.Limittotal2d_bet = limittotal2d_bet
 			obj.Limittotal2dd_bet = limittotal2dd_bet
 			obj.Limittotal2dt_bet = limittotal2dt_bet
 			obj.Limitline_4d = limitline_4d
 			obj.Limitline_3d = limitline_3d
+			obj.Limitline_3dd = limitline_3dd
 			obj.Limitline_2d = limitline_2d
 			obj.Limitline_2dd = limitline_2dd
 			obj.Limitline_2dt = limitline_2dt
@@ -1045,6 +1050,7 @@ func Fetch_LimitTransaksiPasaran432(client_username, client_company, tipe_game s
 	render_page := time.Now()
 	total4d := 0
 	total3d := 0
+	total3dd := 0
 	total2d := 0
 	total2dd := 0
 	total2dt := 0
@@ -1075,6 +1081,9 @@ func Fetch_LimitTransaksiPasaran432(client_username, client_company, tipe_game s
 			if typegame == "3D" {
 				total3d = total3d + 1
 			}
+			if typegame == "3DD" {
+				total3dd = total3dd + 1
+			}
 			if typegame == "2D" {
 				total2d = total2d + 1
 			}
@@ -1088,6 +1097,7 @@ func Fetch_LimitTransaksiPasaran432(client_username, client_company, tipe_game s
 	}
 	obj.Total_4d = total4d
 	obj.Total_3d = total3d
+	obj.Total_3dd = total3dd
 	obj.Total_2d = total2d
 	obj.Total_2dd = total2dd
 	obj.Total_2dt = total2dt

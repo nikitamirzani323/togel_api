@@ -42,26 +42,31 @@ type Model_mpasarantogel432 struct {
 	Min_bet           float32 `json:"min_bet"`
 	Max4d_bet         float32 `json:"max4d_bet"`
 	Max3d_bet         float32 `json:"max3d_bet"`
+	Max3dd_bet        float32 `json:"max3dd_bet"`
 	Max2d_bet         float32 `json:"max2d_bet"`
 	Max2dd_bet        float32 `json:"max2dd_bet"`
 	Max2dt_bet        float32 `json:"max2dt_bet"`
 	Disc4d_bet        float32 `json:"disc4d_bet"`
 	Disc3d_bet        float32 `json:"disc3d_bet"`
+	Disc3dd_bet       float32 `json:"disc3dd_bet"`
 	Disc2d_bet        float32 `json:"disc2d_bet"`
 	Disc2dd_bet       float32 `json:"disc2dd_bet"`
 	Disc2dt_bet       float32 `json:"disc2dt_bet"`
 	Win4d_bet         float32 `json:"win4d_bet"`
 	Win3d_bet         float32 `json:"win3d_bet"`
+	Win3dd_bet        float32 `json:"win3dd_bet"`
 	Win2d_bet         float32 `json:"win2d_bet"`
 	Win2dd_bet        float32 `json:"win2dd_bet"`
 	Win2dt_bet        float32 `json:"win2dt_bet"`
 	Limittotal4d_bet  float32 `json:"limittotal4d_bet"`
 	Limittotal3d_bet  float32 `json:"limittotal3d_bet"`
+	Limittotal3dd_bet float32 `json:"limittotal3dd_bet"`
 	Limittotal2d_bet  float32 `json:"limittotal2d_bet"`
 	Limittotal2dd_bet float32 `json:"limittotal2dd_bet"`
 	Limittotal2dt_bet float32 `json:"limittotal2dt_bet"`
 	Limitline_4d      uint32  `json:"limitline_4d"`
 	Limitline_3d      uint32  `json:"limitline_3d"`
+	Limitline_3dd     uint32  `json:"limitline_3dd"`
 	Limitline_2d      uint32  `json:"limitline_2d"`
 	Limitline_2dd     uint32  `json:"limitline_2dd"`
 	Limitline_2dt     uint32  `json:"limitline_2dt"`
@@ -210,6 +215,7 @@ type Model_mpasarantogelShio struct {
 type Model_mpasaranLimit struct {
 	Total_4d  int `json:"total_4d"`
 	Total_3d  int `json:"total_3d"`
+	Total_3dd int `json:"total_3dd"`
 	Total_2d  int `json:"total_2d"`
 	Total_2dd int `json:"total_2dd"`
 	Total_2dt int `json:"total_2dt"`
