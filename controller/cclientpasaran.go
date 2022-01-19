@@ -36,38 +36,44 @@ type responseredisfetch struct {
 }
 
 type responseredisinit_432 struct {
-	Min_bet           int     `json:"min_bet"`
-	Max4d_bet         int     `json:"max4d_bet"`
-	Max3d_bet         int     `json:"max3d_bet"`
-	Max3dd_bet        int     `json:"max3dd_bet"`
-	Max2d_bet         int     `json:"max2d_bet"`
-	Max2dd_bet        int     `json:"max2dd_bet"`
-	Max2dt_bet        int     `json:"max2dt_bet"`
-	Disc4d_bet        float32 `json:"disc4d_bet"`
-	Disc3d_bet        float32 `json:"disc3d_bet"`
-	Disc3dd_bet       float32 `json:"disc3dd_bet"`
-	Disc2d_bet        float32 `json:"disc2d_bet"`
-	Disc2dd_bet       float32 `json:"disc2dd_bet"`
-	Disc2dt_bet       float32 `json:"disc2dt_bet"`
-	Win4d_bet         int     `json:"win4d_bet"`
-	Win3d_bet         int     `json:"win3d_bet"`
-	Win3dd_bet        int     `json:"win3dd_bet"`
-	Win2d_bet         int     `json:"win2d_bet"`
-	Win2dd_bet        int     `json:"win2dd_bet"`
-	Win2dt_bet        int     `json:"win2dt_bet"`
-	Bbfs              int     `json:"bbfs"`
-	Limitline_4d      int     `json:"limitline_4d"`
-	Limitline_3d      int     `json:"limitline_3d"`
-	Limitline_3dd     int     `json:"limitline_3dd"`
-	Limitline_2d      int     `json:"limitline_2d"`
-	Limitline_2dd     int     `json:"limitline_2dd"`
-	Limitline_2dt     int     `json:"limitline_2dt"`
-	Limittotal4d_bet  int     `json:"limittotal4d_bet"`
-	Limittotal3d_bet  int     `json:"limittotal3d_bet"`
-	Limittotal3dd_bet int     `json:"limittotal3dd_bet"`
-	Limittotal2d_bet  int     `json:"limittotal2d_bet"`
-	Limittotal2dd_bet int     `json:"limittotal2dd_bet"`
-	Limittotal2dt_bet int     `json:"limittotal2dt_bet"`
+	Min_bet            int     `json:"min_bet"`
+	Max4d_bet          int     `json:"max4d_bet"`
+	Max3d_bet          int     `json:"max3d_bet"`
+	Max3dd_bet         int     `json:"max3dd_bet"`
+	Max2d_bet          int     `json:"max2d_bet"`
+	Max2dd_bet         int     `json:"max2dd_bet"`
+	Max2dt_bet         int     `json:"max2dt_bet"`
+	Disc4d_bet         float32 `json:"disc4d_bet"`
+	Disc3d_bet         float32 `json:"disc3d_bet"`
+	Disc3dd_bet        float32 `json:"disc3dd_bet"`
+	Disc2d_bet         float32 `json:"disc2d_bet"`
+	Disc2dd_bet        float32 `json:"disc2dd_bet"`
+	Disc2dt_bet        float32 `json:"disc2dt_bet"`
+	Win4d_bet          int     `json:"win4d_bet"`
+	Win3d_bet          int     `json:"win3d_bet"`
+	Win3dd_bet         int     `json:"win3dd_bet"`
+	Win2d_bet          int     `json:"win2d_bet"`
+	Win2dd_bet         int     `json:"win2dd_bet"`
+	Win2dt_bet         int     `json:"win2dt_bet"`
+	Win4dnodiskon_bet  int     `json:"win4dnodiskon_bet"`
+	Win3dnodiskon_bet  int     `json:"win3dnodiskon_bet"`
+	Win3ddnodiskon_bet int     `json:"win3ddnodiskon_bet"`
+	Win2dnodiskon_bet  int     `json:"win2dnodiskon_bet"`
+	Win2ddnodiskon_bet int     `json:"win2ddnodiskon_bet"`
+	Win2dtnodiskon_bet int     `json:"win2dtnodiskon_bet"`
+	Bbfs               int     `json:"bbfs"`
+	Limitline_4d       int     `json:"limitline_4d"`
+	Limitline_3d       int     `json:"limitline_3d"`
+	Limitline_3dd      int     `json:"limitline_3dd"`
+	Limitline_2d       int     `json:"limitline_2d"`
+	Limitline_2dd      int     `json:"limitline_2dd"`
+	Limitline_2dt      int     `json:"limitline_2dt"`
+	Limittotal4d_bet   int     `json:"limittotal4d_bet"`
+	Limittotal3d_bet   int     `json:"limittotal3d_bet"`
+	Limittotal3dd_bet  int     `json:"limittotal3dd_bet"`
+	Limittotal2d_bet   int     `json:"limittotal2d_bet"`
+	Limittotal2dd_bet  int     `json:"limittotal2dd_bet"`
+	Limittotal2dt_bet  int     `json:"limittotal2dt_bet"`
 }
 type responseredisinit_colok struct {
 	Min_bet_colokbebas        int     `json:"min_bet_colokbebas"`
@@ -677,6 +683,12 @@ func Fetch_InitPasaran(c *fiber.Ctx) error {
 			win2d_RD, _ := jsonparser.GetInt(value, "win2d_bet")
 			win2dd_RD, _ := jsonparser.GetInt(value, "win2dd_bet")
 			win2dt_RD, _ := jsonparser.GetInt(value, "win2dt_bet")
+			win4dnodiskon_RD, _ := jsonparser.GetInt(value, "win4dnodiskon_bet")
+			win3dnodiskon_RD, _ := jsonparser.GetInt(value, "win3dnodiskon_bet")
+			win3ddnodiskon_RD, _ := jsonparser.GetInt(value, "win3ddnodiskon_bet")
+			win2dnodiskon_RD, _ := jsonparser.GetInt(value, "win2dnodiskon_bet")
+			win2ddnodiskon_RD, _ := jsonparser.GetInt(value, "win2ddnodiskon_bet")
+			win2dtnodiskon_RD, _ := jsonparser.GetInt(value, "win2dtnodiskon_bet")
 			limitline_4d_RD, _ := jsonparser.GetInt(value, "limitline_4d")
 			limitline_3d_RD, _ := jsonparser.GetInt(value, "limitline_3d")
 			limitline_3dd_RD, _ := jsonparser.GetInt(value, "limitline_3dd")
@@ -710,6 +722,12 @@ func Fetch_InitPasaran(c *fiber.Ctx) error {
 			obj_432.Win2d_bet = int(win2d_RD)
 			obj_432.Win2dd_bet = int(win2dd_RD)
 			obj_432.Win2dt_bet = int(win2dt_RD)
+			obj_432.Win4dnodiskon_bet = int(win4dnodiskon_RD)
+			obj_432.Win3dnodiskon_bet = int(win3dnodiskon_RD)
+			obj_432.Win3ddnodiskon_bet = int(win3ddnodiskon_RD)
+			obj_432.Win2dnodiskon_bet = int(win2dnodiskon_RD)
+			obj_432.Win2ddnodiskon_bet = int(win2ddnodiskon_RD)
+			obj_432.Win2dtnodiskon_bet = int(win2dtnodiskon_RD)
 			obj_432.Limitline_4d = int(limitline_4d_RD)
 			obj_432.Limitline_3d = int(limitline_3d_RD)
 			obj_432.Limitline_3dd = int(limitline_3dd_RD)

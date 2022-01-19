@@ -471,6 +471,8 @@ func FetchAll_MinitPasaran(client_company, pasaran_code, permainan string) (help
 			1_disc2d as disc2d_bet, 1_disc2dd as disc2dd_bet, 1_disc2dt as disc2dt_bet, 
 			1_win4d as win4d_bet, 1_win3d as win3d_bet, 1_win3dd as win3dd_bet, 
 			1_win2d as win2d_bet, 1_win2dd as win2dd_bet, 1_win2dt as win2dt_bet, 
+			1_win4dnodisc as win4dnodiskon_bet, 1_win3dnodisc as win3dnodiskon_bet, 1_win3ddnodisc as win3ddnodiskon_bet, 
+			1_win2dnodisc as win2dnodiskon_bet, 1_win2ddnodisc as win2ddnodiskon_bet, 1_win2dtnodisc as win2dtnodiskon_bet, 
 			1_limittotal4d as limittotal4d_bet, 1_limittotal3d as limittotal3d_bet, 1_limittotal3dd as limittotal3dd_bet, 
 			1_limittotal2d as limittotal2d_bet, 1_limittotal2dd as limittotal2dd_bet, 
 			1_limittotal2dt as limittotal2dt_bet, 
@@ -485,18 +487,20 @@ func FetchAll_MinitPasaran(client_company, pasaran_code, permainan string) (help
 
 		for rowresult.Next() {
 			var (
-				min_bet, max4d_bet, max3d_bet, max3dd_bet, max2d_bet, max2dd_bet, max2dt_bet                                  float32
-				disc4d_bet, disc3d_bet, disc3dd_bet, disc2d_bet, disc2dd_bet, disc2dt_bet                                     float32
-				win4d_bet, win3d_bet, win3dd_bet, win2d_bet, win2dd_bet, win2dt_bet                                           float32
-				limittotal4d_bet, limittotal3d_bet, limittotal3dd_bet, limittotal2d_bet, limittotal2dd_bet, limittotal2dt_bet float32
-				limitline_4d, limitline_3d, limitline_3dd, limitline_2d, limitline_2dd, limitline_2dt                         uint32
-				bbfs                                                                                                          uint8
+				min_bet, max4d_bet, max3d_bet, max3dd_bet, max2d_bet, max2dd_bet, max2dt_bet                                        float32
+				disc4d_bet, disc3d_bet, disc3dd_bet, disc2d_bet, disc2dd_bet, disc2dt_bet                                           float32
+				win4d_bet, win3d_bet, win3dd_bet, win2d_bet, win2dd_bet, win2dt_bet                                                 float32
+				win4dnodiskon_bet, win3dnodiskon_bet, win3ddnodiskon_bet, win2dnodiskon_bet, win2ddnodiskon_bet, win2dtnodiskon_bet float32
+				limittotal4d_bet, limittotal3d_bet, limittotal3dd_bet, limittotal2d_bet, limittotal2dd_bet, limittotal2dt_bet       float32
+				limitline_4d, limitline_3d, limitline_3dd, limitline_2d, limitline_2dd, limitline_2dt                               uint32
+				bbfs                                                                                                                uint8
 			)
 
 			err = rowresult.Scan(
 				&min_bet, &max4d_bet, &max3d_bet, &max3dd_bet, &max2d_bet, &max2dd_bet, &max2dt_bet,
 				&disc4d_bet, &disc3d_bet, &disc3dd_bet, &disc2d_bet, &disc2dd_bet, &disc2dt_bet,
 				&win4d_bet, &win3d_bet, &win3dd_bet, &win2d_bet, &win2dd_bet, &win2dt_bet,
+				&win4dnodiskon_bet, &win3dnodiskon_bet, &win3ddnodiskon_bet, &win2dnodiskon_bet, &win2ddnodiskon_bet, &win2dtnodiskon_bet,
 				&limittotal4d_bet, &limittotal3d_bet, &limittotal3dd_bet, &limittotal2d_bet, &limittotal2dd_bet, &limittotal2dt_bet,
 				&limitline_4d, &limitline_3d, &limitline_3dd, &limitline_2d, &limitline_2dd, &limitline_2dt,
 				&bbfs)
@@ -520,6 +524,12 @@ func FetchAll_MinitPasaran(client_company, pasaran_code, permainan string) (help
 			obj.Win2d_bet = win2d_bet
 			obj.Win2dd_bet = win2dd_bet
 			obj.Win2dt_bet = win2dt_bet
+			obj.Win4dnodiskon_bet = win4dnodiskon_bet
+			obj.Win3dnodiskon_bet = win3dnodiskon_bet
+			obj.Win3ddnodiskon_bet = win3ddnodiskon_bet
+			obj.Win2dnodiskon_bet = win2dnodiskon_bet
+			obj.Win2ddnodiskon_bet = win2ddnodiskon_bet
+			obj.Win2dtnodiskon_bet = win2dtnodiskon_bet
 			obj.Limittotal4d_bet = limittotal4d_bet
 			obj.Limittotal3d_bet = limittotal3d_bet
 			obj.Limittotal3dd_bet = limittotal3dd_bet
@@ -1836,6 +1846,7 @@ type datajobs struct {
 	Username                 string
 	Typegame                 string
 	Nomortogel               string
+	Posisitogel              string
 	Bet                      string
 	Diskon                   string
 	Win                      string
@@ -1975,6 +1986,7 @@ func Savetransaksi(client_username, client_company, idtrxkeluaran, idcomppasaran
 			mutex.Lock()
 			nomor_DD, _, _, _ := jsonparser.Get(value, "nomor")
 			permainan_DD, _, _, _ := jsonparser.Get(value, "permainan")
+			tipetoto_DD, _, _, _ := jsonparser.Get(value, "tipetoto")
 			bet_DD, _, _, _ := jsonparser.Get(value, "bet")
 			diskonpercen_DD, _, _, _ := jsonparser.Get(value, "diskonpercen")
 			kei_percen_DD, _, _, _ := jsonparser.Get(value, "kei_percen")
@@ -2080,6 +2092,7 @@ func Savetransaksi(client_username, client_company, idtrxkeluaran, idcomppasaran
 					Username:                 client_username,
 					Typegame:                 string(permainan_DD),
 					Nomortogel:               string(nomor_DD),
+					Posisitogel:              string(tipetoto_DD),
 					Bet:                      string(bet_DD),
 					Diskon:                   string(diskonpercen_DD),
 					Win:                      string(win_DD),
@@ -2143,12 +2156,12 @@ func _doJobInsert(fieldtable string, jobs <-chan datajobs, results chan<- datare
 					INSERT INTO ` + fieldtable + ` 
 					(
 						idtrxkeluarandetail, idtrxkeluaran, datetimedetail,
-						ipaddress, idcompany, username, typegame, nomortogel, bet,
+						ipaddress, idcompany, username, typegame, nomortogel,posisitogel, bet,
 						diskon, win, kei, browsertogel, devicetogel, statuskeluarandetail, 
 						createkeluarandetail, createdatekeluarandetail
 					) values (
 						?, ?, ?, 
-						?, ?, ?, ?, ?, ?, 
+						?, ?, ?, ?, ?, ?,?, 
 						?, ?, ?, ?, ?, ?,
 						?, ?
 					)
@@ -2166,6 +2179,7 @@ func _doJobInsert(fieldtable string, jobs <-chan datajobs, results chan<- datare
 					capture.Username,
 					capture.Typegame,
 					capture.Nomortogel,
+					capture.Posisitogel,
 					capture.Bet,
 					capture.Diskon,
 					capture.Win,
