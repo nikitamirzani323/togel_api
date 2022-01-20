@@ -64,6 +64,18 @@ type Model_mpasarantogel432 struct {
 	Win2dnodiskon_bet  float32 `json:"win2dnodiskon_bet"`
 	Win2ddnodiskon_bet float32 `json:"win2ddnodiskon_bet"`
 	Win2dtnodiskon_bet float32 `json:"win2dtnodiskon_bet"`
+	Win4dbb_kena_bet   float32 `json:"win4dbb_kena_bet"`
+	Win3dbb_kena_bet   float32 `json:"win3dbb_kena_bet"`
+	Win3ddbb_kena_bet  float32 `json:"win3ddbb_kena_bet"`
+	Win2dbb_kena_bet   float32 `json:"win2dbb_kena_bet"`
+	Win2ddbb_kena_bet  float32 `json:"win2ddbb_kena_bet"`
+	Win2dtbb_kena_bet  float32 `json:"win2dtbb_kena_bet"`
+	Win4dbb_bet        float32 `json:"win4dbb_bet"`
+	Win3dbb_bet        float32 `json:"win3dbb_bet"`
+	Win3ddbb_bet       float32 `json:"win3ddbb_bet"`
+	Win2dbb_bet        float32 `json:"win2dbb_bet"`
+	Win2ddbb_bet       float32 `json:"win2ddbb_bet"`
+	Win2dtbb_bet       float32 `json:"win2dtbb_bet"`
 	Limittotal4d_bet   float32 `json:"limittotal4d_bet"`
 	Limittotal3d_bet   float32 `json:"limittotal3d_bet"`
 	Limittotal3dd_bet  float32 `json:"limittotal3dd_bet"`

@@ -61,6 +61,18 @@ type responseredisinit_432 struct {
 	Win2dnodiskon_bet  int     `json:"win2dnodiskon_bet"`
 	Win2ddnodiskon_bet int     `json:"win2ddnodiskon_bet"`
 	Win2dtnodiskon_bet int     `json:"win2dtnodiskon_bet"`
+	Win4dbb_kena_bet   int     `json:"win4dbb_kena_bet"`
+	Win3dbb_kena_bet   int     `json:"win3dbb_kena_bet"`
+	Win3ddbb_kena_bet  int     `json:"win3ddbb_kena_bet"`
+	Win2dbb_kena_bet   int     `json:"win2dbb_kena_bet"`
+	Win2ddbb_kena_bet  int     `json:"win2ddbb_kena_bet"`
+	Win2dtbb_kena_bet  int     `json:"win2dtbb_kena_bet"`
+	Win4dbb_bet        int     `json:"win4dbb_bet"`
+	Win3dbb_bet        int     `json:"win3dbb_bet"`
+	Win3ddbb_bet       int     `json:"win3ddbb_bet"`
+	Win2dbb_bet        int     `json:"win2dbb_bet"`
+	Win2ddbb_bet       int     `json:"win2ddbb_bet"`
+	Win2dtbb_bet       int     `json:"win2dtbb_bet"`
 	Bbfs               int     `json:"bbfs"`
 	Limitline_4d       int     `json:"limitline_4d"`
 	Limitline_3d       int     `json:"limitline_3d"`
@@ -689,6 +701,18 @@ func Fetch_InitPasaran(c *fiber.Ctx) error {
 			win2dnodiskon_RD, _ := jsonparser.GetInt(value, "win2dnodiskon_bet")
 			win2ddnodiskon_RD, _ := jsonparser.GetInt(value, "win2ddnodiskon_bet")
 			win2dtnodiskon_RD, _ := jsonparser.GetInt(value, "win2dtnodiskon_bet")
+			win4dbb_kena_bet_RD, _ := jsonparser.GetInt(value, "win4dbb_kena_bet")
+			win3dbb_kena_bet_RD, _ := jsonparser.GetInt(value, "win3dbb_kena_bet")
+			win3ddbb_kena_bet_RD, _ := jsonparser.GetInt(value, "win3ddbb_kena_bet")
+			win2dbb_kena_bet_RD, _ := jsonparser.GetInt(value, "win2dbb_kena_bet")
+			win2ddbb_kena_bet_RD, _ := jsonparser.GetInt(value, "win2ddbb_kena_bet")
+			win2dtbb_kena_bet_RD, _ := jsonparser.GetInt(value, "win2dtbb_kena_bet")
+			win4dbb_bet_RD, _ := jsonparser.GetInt(value, "win4dbb_bet")
+			win3dbb_bet_RD, _ := jsonparser.GetInt(value, "win3dbb_bet")
+			win3ddbb_bet_RD, _ := jsonparser.GetInt(value, "win3ddbb_bet")
+			win2dbb_bet_RD, _ := jsonparser.GetInt(value, "win2dbb_bet")
+			win2ddbb_bet_RD, _ := jsonparser.GetInt(value, "win2ddbb_bet")
+			win2dtbb_bet_RD, _ := jsonparser.GetInt(value, "win2dtbb_bet")
 			limitline_4d_RD, _ := jsonparser.GetInt(value, "limitline_4d")
 			limitline_3d_RD, _ := jsonparser.GetInt(value, "limitline_3d")
 			limitline_3dd_RD, _ := jsonparser.GetInt(value, "limitline_3dd")
@@ -728,6 +752,18 @@ func Fetch_InitPasaran(c *fiber.Ctx) error {
 			obj_432.Win2dnodiskon_bet = int(win2dnodiskon_RD)
 			obj_432.Win2ddnodiskon_bet = int(win2ddnodiskon_RD)
 			obj_432.Win2dtnodiskon_bet = int(win2dtnodiskon_RD)
+			obj_432.Win4dbb_kena_bet = int(win4dbb_kena_bet_RD)
+			obj_432.Win3dbb_kena_bet = int(win3dbb_kena_bet_RD)
+			obj_432.Win3ddbb_kena_bet = int(win3ddbb_kena_bet_RD)
+			obj_432.Win2dbb_kena_bet = int(win2dbb_kena_bet_RD)
+			obj_432.Win2ddbb_kena_bet = int(win2ddbb_kena_bet_RD)
+			obj_432.Win2dtbb_kena_bet = int(win2dtbb_kena_bet_RD)
+			obj_432.Win4dbb_bet = int(win4dbb_bet_RD)
+			obj_432.Win3dbb_bet = int(win3dbb_bet_RD)
+			obj_432.Win3ddbb_bet = int(win3ddbb_bet_RD)
+			obj_432.Win2dbb_bet = int(win2dbb_bet_RD)
+			obj_432.Win2ddbb_bet = int(win2ddbb_bet_RD)
+			obj_432.Win2dtbb_bet = int(win2dtbb_bet_RD)
 			obj_432.Limitline_4d = int(limitline_4d_RD)
 			obj_432.Limitline_3d = int(limitline_3d_RD)
 			obj_432.Limitline_3dd = int(limitline_3dd_RD)

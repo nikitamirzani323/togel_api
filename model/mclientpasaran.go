@@ -473,6 +473,10 @@ func FetchAll_MinitPasaran(client_company, pasaran_code, permainan string) (help
 			1_win2d as win2d_bet, 1_win2dd as win2dd_bet, 1_win2dt as win2dt_bet, 
 			1_win4dnodisc as win4dnodiskon_bet, 1_win3dnodisc as win3dnodiskon_bet, 1_win3ddnodisc as win3ddnodiskon_bet, 
 			1_win2dnodisc as win2dnodiskon_bet, 1_win2ddnodisc as win2ddnodiskon_bet, 1_win2dtnodisc as win2dtnodiskon_bet, 
+			1_win4dbb_kena as win4dbb_kena_bet, 1_win3dbb_kena as win3dbb_kena_bet, 1_win3ddbb_kena as win3ddbb_kena_bet, 
+			1_win2dbb_kena as win2dbb_kena_bet, 1_win2ddbb_kena as win2ddbb_kena_bet, 1_win2dtbb_kena as win2dtbb_kena_bet,
+			1_win4dbb as win4dbb_bet, 1_win3dbb as win3dbb_bet, 1_win3ddbb as win3ddbb_bet, 
+			1_win2dbb as win2dbb_bet, 1_win2ddbb as win2ddbb_bet, 1_win2dtbb as win2dtbb_bet,
 			1_limittotal4d as limittotal4d_bet, 1_limittotal3d as limittotal3d_bet, 1_limittotal3dd as limittotal3dd_bet, 
 			1_limittotal2d as limittotal2d_bet, 1_limittotal2dd as limittotal2dd_bet, 
 			1_limittotal2dt as limittotal2dt_bet, 
@@ -491,6 +495,8 @@ func FetchAll_MinitPasaran(client_company, pasaran_code, permainan string) (help
 				disc4d_bet, disc3d_bet, disc3dd_bet, disc2d_bet, disc2dd_bet, disc2dt_bet                                           float32
 				win4d_bet, win3d_bet, win3dd_bet, win2d_bet, win2dd_bet, win2dt_bet                                                 float32
 				win4dnodiskon_bet, win3dnodiskon_bet, win3ddnodiskon_bet, win2dnodiskon_bet, win2ddnodiskon_bet, win2dtnodiskon_bet float32
+				win4dbb_kena_bet, win3dbb_kena_bet, win3ddbb_kena_bet, win2dbb_kena_bet, win2ddbb_kena_bet, win2dtbb_kena_bet       float32
+				win4dbb_bet, win3dbb_bet, win3ddbb_bet, win2dbb_bet, win2ddbb_bet, win2dtbb_bet                                     float32
 				limittotal4d_bet, limittotal3d_bet, limittotal3dd_bet, limittotal2d_bet, limittotal2dd_bet, limittotal2dt_bet       float32
 				limitline_4d, limitline_3d, limitline_3dd, limitline_2d, limitline_2dd, limitline_2dt                               uint32
 				bbfs                                                                                                                uint8
@@ -501,6 +507,8 @@ func FetchAll_MinitPasaran(client_company, pasaran_code, permainan string) (help
 				&disc4d_bet, &disc3d_bet, &disc3dd_bet, &disc2d_bet, &disc2dd_bet, &disc2dt_bet,
 				&win4d_bet, &win3d_bet, &win3dd_bet, &win2d_bet, &win2dd_bet, &win2dt_bet,
 				&win4dnodiskon_bet, &win3dnodiskon_bet, &win3ddnodiskon_bet, &win2dnodiskon_bet, &win2ddnodiskon_bet, &win2dtnodiskon_bet,
+				&win4dbb_kena_bet, &win3dbb_kena_bet, &win3ddbb_kena_bet, &win2dbb_kena_bet, &win2ddbb_kena_bet, &win2dtbb_kena_bet,
+				&win4dbb_bet, &win3dbb_bet, &win3ddbb_bet, &win2dbb_bet, &win2ddbb_bet, &win2dtbb_bet,
 				&limittotal4d_bet, &limittotal3d_bet, &limittotal3dd_bet, &limittotal2d_bet, &limittotal2dd_bet, &limittotal2dt_bet,
 				&limitline_4d, &limitline_3d, &limitline_3dd, &limitline_2d, &limitline_2dd, &limitline_2dt,
 				&bbfs)
@@ -530,6 +538,18 @@ func FetchAll_MinitPasaran(client_company, pasaran_code, permainan string) (help
 			obj.Win2dnodiskon_bet = win2dnodiskon_bet
 			obj.Win2ddnodiskon_bet = win2ddnodiskon_bet
 			obj.Win2dtnodiskon_bet = win2dtnodiskon_bet
+			obj.Win4dbb_kena_bet = win4dbb_kena_bet
+			obj.Win3dbb_kena_bet = win3dbb_kena_bet
+			obj.Win3ddbb_kena_bet = win3ddbb_kena_bet
+			obj.Win2dbb_kena_bet = win2dbb_kena_bet
+			obj.Win2ddbb_kena_bet = win2ddbb_kena_bet
+			obj.Win2dtbb_kena_bet = win2dtbb_kena_bet
+			obj.Win4dbb_bet = win4dbb_bet
+			obj.Win3dbb_bet = win3dbb_bet
+			obj.Win3ddbb_bet = win3ddbb_bet
+			obj.Win2dbb_bet = win2dbb_bet
+			obj.Win2ddbb_bet = win2ddbb_bet
+			obj.Win2dtbb_bet = win2dtbb_bet
 			obj.Limittotal4d_bet = limittotal4d_bet
 			obj.Limittotal3d_bet = limittotal3d_bet
 			obj.Limittotal3dd_bet = limittotal3dd_bet
