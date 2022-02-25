@@ -1152,7 +1152,7 @@ func Fetch_invoicebet(client_username, client_company string, invoice int) (help
 	_, _, view_client_invoice := Get_mappingdatabase(client_company)
 
 	sql := `SELECT 
-		datetimedetail, username, typegame, nomortogel, idpasarantogel, bet, 
+		datetimedetail, username, posisitogel, typegame, nomortogel, idpasarantogel, bet, 
 		diskon, win, kei, statuskeluarandetail, keluaranperiode
 		FROM ` + view_client_invoice + `  
 		WHERE idcompany = ? 
@@ -1168,12 +1168,12 @@ func Fetch_invoicebet(client_username, client_company string, invoice int) (help
 	for row.Next() {
 		nobet = nobet + 1
 		var (
-			datetimedetail, username, typegame, nomortogel, idpasarantogel string
-			bet, diskon, win, kei                                          float32
-			statuskeluarandetail, keluaranperiode                          string
+			datetimedetail, username, posisitogel, typegame, nomortogel, idpasarantogel string
+			bet, diskon, win, kei                                                       float32
+			statuskeluarandetail, keluaranperiode                                       string
 		)
 		err = row.Scan(
-			&datetimedetail, &username, &typegame, &nomortogel,
+			&datetimedetail, &username, &posisitogel, &typegame, &nomortogel,
 			&idpasarantogel, &bet, &diskon, &win, &kei, &statuskeluarandetail,
 			&keluaranperiode)
 
@@ -1188,6 +1188,7 @@ func Fetch_invoicebet(client_username, client_company string, invoice int) (help
 
 		obj.Tanggal = datetimedetail
 		obj.Permainan = typegame
+		obj.Tipe = posisitogel
 		obj.Periode = idpasarantogel + "-" + keluaranperiode
 		obj.Nomor = nomortogel
 		obj.Bet = int(bet)
@@ -1249,7 +1250,7 @@ func Fetch_invoicebetbyid(idtrxkeluaran int, client_username, client_company, ty
 	_, _, view_client_invoice := Get_mappingdatabase(client_company)
 
 	sql_select := `SELECT 
-		nomortogel, typegame, bet, diskon, kei,winhasil, statuskeluarandetail 
+		posisitogel, nomortogel, typegame, bet, diskon, kei,winhasil, statuskeluarandetail 
 		FROM ` + view_client_invoice + `  
 		WHERE idtrxkeluaran = ? 
 		AND idcompany = ? 
@@ -1264,12 +1265,12 @@ func Fetch_invoicebetbyid(idtrxkeluaran int, client_username, client_company, ty
 	nobet := 0
 	for row.Next() {
 		var (
-			nomortogel_db, typegame_db, statuskeluarandetail_db string
-			bet_db, diskon_db, kei_db                           float32
-			winhasil_db                                         int
+			posisitogel_db, nomortogel_db, typegame_db, statuskeluarandetail_db string
+			bet_db, diskon_db, kei_db                                           float32
+			winhasil_db                                                         int
 		)
 		err = row.Scan(
-			&nomortogel_db, &typegame_db, &bet_db, &diskon_db,
+			&posisitogel_db, &nomortogel_db, &typegame_db, &bet_db, &diskon_db,
 			&kei_db, &winhasil_db, &statuskeluarandetail_db)
 		helpers.ErrorCheck(err)
 
@@ -1283,6 +1284,7 @@ func Fetch_invoicebetbyid(idtrxkeluaran int, client_username, client_company, ty
 
 			obj.No = nobet
 			obj.Status = statuskeluarandetail_db
+			obj.Tipe = posisitogel_db
 			obj.Permainan = typegame_db
 			obj.Nomor = nomortogel_db
 			obj.Bet = int(bet_db)

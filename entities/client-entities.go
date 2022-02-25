@@ -240,6 +240,7 @@ type Model_mpasaranLimit struct {
 }
 type Model_mlistinvoicebet struct {
 	Tanggal   string  `json:"tanggal"`
+	Tipe      string  `json:"tipe"`
 	Permainan string  `json:"permainan"`
 	Periode   string  `json:"periode"`
 	Nomor     string  `json:"nomor"`
@@ -256,6 +257,7 @@ type Model_mgroupinvoicebetPermainan struct {
 type Model_mlistinvoicebetid struct {
 	No        int     `json:"no"`
 	Status    string  `json:"status"`
+	Tipe      string  `json:"tipe"`
 	Permainan string  `json:"permainan"`
 	Nomor     string  `json:"nomor"`
 	Bet       int     `json:"bet"`

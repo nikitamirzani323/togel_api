@@ -243,6 +243,7 @@ type responseinvoiceall struct {
 type responseinvoiceidpermainan struct {
 	No        int     `json:"no"`
 	Status    string  `json:"status"`
+	Tipe      string  `json:"tipe"`
 	Permainan string  `json:"permainan"`
 	Nomor     string  `json:"nomor"`
 	Bet       int     `json:"bet"`
@@ -253,6 +254,7 @@ type responseinvoiceidpermainan struct {
 }
 type responseredislistinvoicebet struct {
 	Tanggal   string  `json:"tanggal"`
+	Tipe      string  `json:"tipe"`
 	Permainan string  `json:"permainan"`
 	Periode   string  `json:"periode"`
 	Nomor     string  `json:"nomor"`
@@ -1220,6 +1222,7 @@ func Fetch_listinvoicebet(c *fiber.Ctx) error {
 	totalbayar_RD, _ := jsonparser.GetInt(jsonredis, "totalbayar")
 	jsonparser.ArrayEach(record_RD, func(value []byte, dataType jsonparser.ValueType, offset int, err error) {
 		tanggal, _ := jsonparser.GetString(value, "tanggal")
+		tipe, _ := jsonparser.GetString(value, "tipe")
 		permainan, _ := jsonparser.GetString(value, "permainan")
 		periode, _ := jsonparser.GetString(value, "periode")
 		nomor, _ := jsonparser.GetString(value, "nomor")
@@ -1231,6 +1234,7 @@ func Fetch_listinvoicebet(c *fiber.Ctx) error {
 		menang, _ := jsonparser.GetInt(value, "menang")
 
 		obj.Tanggal = tanggal
+		obj.Tipe = tipe
 		obj.Permainan = permainan
 		obj.Periode = periode
 		obj.Nomor = nomor
@@ -1292,6 +1296,7 @@ func Fetch_listinvoicebetid(c *fiber.Ctx) error {
 	jsonparser.ArrayEach(record_RD, func(value []byte, dataType jsonparser.ValueType, offset int, err error) {
 		no, _ := jsonparser.GetInt(value, "no")
 		status, _ := jsonparser.GetString(value, "status")
+		tipe, _ := jsonparser.GetString(value, "tipe")
 		permainan, _ := jsonparser.GetString(value, "permainan")
 		nomor, _ := jsonparser.GetString(value, "nomor")
 		bet, _ := jsonparser.GetInt(value, "bet")
@@ -1302,6 +1307,7 @@ func Fetch_listinvoicebetid(c *fiber.Ctx) error {
 
 		obj.No = int(no)
 		obj.Status = status
+		obj.Tipe = tipe
 		obj.Permainan = permainan
 		obj.Nomor = nomor
 		obj.Bet = int(bet)
