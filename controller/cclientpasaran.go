@@ -102,6 +102,7 @@ type responseredisinit_colok struct {
 	Disc_bet_colokjitu        float32 `json:"disc_bet_colokjitu"`
 	Win_bet_colokbebas        float32 `json:"win_bet_colokbebas"`
 	Win_bet_colokmacau        float32 `json:"win_bet_colokmacau"`
+	Win_bet_coloknaga         float32 `json:"win_bet_coloknaga"`
 	Win3_bet_colokmacau       float32 `json:"win3_bet_colokmacau"`
 	Win4_bet_colokmacau       float32 `json:"win4_bet_colokmacau"`
 	Win4_bet_coloknaga        float32 `json:"win4_bet_coloknaga"`
@@ -796,6 +797,7 @@ func Fetch_InitPasaran(c *fiber.Ctx) error {
 			Disc_bet_colokjitu_RD, _ := jsonparser.GetFloat(value, "disc_bet_colokjitu")
 			Win_bet_colokbebas_RD, _ := jsonparser.GetFloat(value, "win_bet_colokbebas")
 			Win_bet_colokmacau_RD, _ := jsonparser.GetFloat(value, "win_bet_colokmacau")
+			Win_bet_coloknaga_RD, _ := jsonparser.GetFloat(value, "win_bet_coloknaga")
 			Win3_bet_colokmacau_RD, _ := jsonparser.GetFloat(value, "win3_bet_colokmacau")
 			Win4_bet_colokmacau_RD, _ := jsonparser.GetFloat(value, "win4_bet_colokmacau")
 			Win4_bet_coloknaga_RD, _ := jsonparser.GetFloat(value, "win4_bet_coloknaga")
@@ -822,6 +824,7 @@ func Fetch_InitPasaran(c *fiber.Ctx) error {
 			obj_colok.Disc_bet_colokjitu = float32(Disc_bet_colokjitu_RD)
 			obj_colok.Win_bet_colokbebas = float32(Win_bet_colokbebas_RD)
 			obj_colok.Win_bet_colokmacau = float32(Win_bet_colokmacau_RD)
+			obj_colok.Win_bet_coloknaga = float32(Win_bet_coloknaga_RD)
 			obj_colok.Win3_bet_colokmacau = float32(Win3_bet_colokmacau_RD)
 			obj_colok.Win4_bet_colokmacau = float32(Win4_bet_colokmacau_RD)
 			obj_colok.Win4_bet_coloknaga = float32(Win4_bet_coloknaga_RD)
