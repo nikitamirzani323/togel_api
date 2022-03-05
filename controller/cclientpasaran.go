@@ -1010,7 +1010,7 @@ func Fetch_InitPasaran(c *fiber.Ctx) error {
 			Min_bet_RD, _ := jsonparser.GetInt(value, "min_bet")
 			Max_bet_RD, _ := jsonparser.GetInt(value, "max_bet")
 			Diskon_bet_RD, _ := jsonparser.GetFloat(value, "diskon_bet")
-			Win_bet_RD, _ := jsonparser.GetFloat(value, "Win_bet")
+			Win_bet_RD, _ := jsonparser.GetFloat(value, "win_bet")
 			Limit_total_RD, _ := jsonparser.GetInt(value, "limit_total")
 
 			obj_macaukombinasi.Min_bet = int(Min_bet_RD)
