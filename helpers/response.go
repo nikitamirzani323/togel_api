@@ -9,7 +9,15 @@ type Response struct {
 	Record      interface{} `json:"record"`
 	Time        string      `json:"time"`
 }
-
+type ResponseSaveTransaksi struct {
+	Status       int         `json:"status"`
+	Message      string      `json:"message"`
+	Messageerror interface{} `json:"messageerror"`
+	Totalrecord  int         `json:"totalrecord"`
+	Totalbayar   int         `json:"totalbayar"`
+	Record       interface{} `json:"record"`
+	Time         string      `json:"time"`
+}
 type ResponseCustom struct {
 	Status      int         `json:"status"`
 	Message     string      `json:"message"`
