@@ -14,6 +14,8 @@ type Model_mclientpasaran struct {
 	Pasaranmarketopen     string `json:"pasaran_marketopen"`
 	Pasaranjamtutup       string `json:"pasaran_jamtutup"`
 	Pasaranjamopen        string `json:"pasaran_jamopen"`
+	Pasarannote           string `json:"pasaran_note"`
+	Pasaranurl            string `json:"pasaran_url"`
 	Pasaranhari           string `json:"pasaran_hari"`
 	PasaranStatus         string `json:"pasaran_status"`
 }

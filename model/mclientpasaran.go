@@ -100,7 +100,7 @@ func FetchAll_MclientPasaran(client_company string) (helpers.Response, error) {
 	tbl_trx_keluaran, _, _ := Get_mappingdatabase(client_company)
 
 	sqlpasaran := `SELECT 
-		idcomppasaran, idpasarantogel, nmpasarantogel, jamtutup, jamjadwal, jamopen   
+		idcomppasaran, idpasarantogel, nmpasarantogel, jamtutup, jamjadwal, jamopen ,pasarandiundi, pasaranurl    
 		FROM ` + config.DB_VIEW_CLIENT_VIEW_PASARAN + `  
 		WHERE statuspasaranactive = 'Y' 
 		AND idcompany = ?
@@ -114,12 +114,12 @@ func FetchAll_MclientPasaran(client_company string) (helpers.Response, error) {
 		pasaranhariini = "OFFLINE"
 		statuspasaran = "ONLINE"
 		var (
-			idcomppasaran                                                int
-			idpasarantogel, nmpasarantogel, jamtutup, jamjadwal, jamopen string
-			tglkeluaran, periodekerluaran, haripasaran                   string
+			idcomppasaran                                                                           int
+			idpasarantogel, nmpasarantogel, jamtutup, jamjadwal, jamopen, pasarandiundi, pasaranurl string
+			tglkeluaran, periodekerluaran, haripasaran                                              string
 		)
 
-		err = rowspasaran.Scan(&idcomppasaran, &idpasarantogel, &nmpasarantogel, &jamtutup, &jamjadwal, &jamopen)
+		err = rowspasaran.Scan(&idcomppasaran, &idpasarantogel, &nmpasarantogel, &jamtutup, &jamjadwal, &jamopen, &pasarandiundi, &pasaranurl)
 		if err != nil {
 			return res, err
 		}
@@ -187,6 +187,8 @@ func FetchAll_MclientPasaran(client_company string) (helpers.Response, error) {
 			obj.Pasaranmarketopen = tglkeluaran + " " + jamopen
 			obj.Pasaranjamtutup = jamtutup
 			obj.Pasaranjamopen = jamopen
+			obj.Pasarannote = pasarandiundi
+			obj.Pasaranurl = pasaranurl
 			obj.Pasaranhari = pasaranhariini
 			obj.PasaranStatus = statuspasaran
 			arraobj = append(arraobj, obj)

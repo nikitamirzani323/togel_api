@@ -32,6 +32,8 @@ type responseredisfetch struct {
 	Pasaran_marketclose    string `json:"pasaran_marketclose"`
 	Pasaran_marketschedule string `json:"pasaran_marketschedule"`
 	Pasaran_marketopen     string `json:"pasaran_marketopen"`
+	Pasaran_note           string `json:"pasaran_note"`
+	Pasaran_url            string `json:"pasaran_url"`
 	Pasaran_status         string `json:"pasaran_status"`
 }
 
@@ -438,6 +440,8 @@ func FetchAll_pasaran(c *fiber.Ctx) error {
 		pasaran_jamtutup, _ := jsonparser.GetString(value, "pasaran_jamtutup")
 		pasaran_jamopen, _ := jsonparser.GetString(value, "pasaran_jamopen")
 		pasaran_hari, _ := jsonparser.GetString(value, "pasaran_hari")
+		pasaran_note, _ := jsonparser.GetString(value, "pasaran_note")
+		pasaran_url, _ := jsonparser.GetString(value, "pasaran_url")
 
 		tgltutup, _ := goment.New(pasaran_marketclose)
 		jamtutup2 := tgltutup.Format("YYYY-MM-DD") + " " + pasaran_jamtutup
@@ -468,6 +472,8 @@ func FetchAll_pasaran(c *fiber.Ctx) error {
 		obj.Pasaran_marketclose = pasaran_marketclose
 		obj.Pasaran_marketschedule = pasaran_marketschedule
 		obj.Pasaran_marketopen = pasaran_marketopen
+		obj.Pasaran_note = pasaran_note
+		obj.Pasaran_url = pasaran_url
 		obj.Pasaran_status = statuspasaran
 		arraobj = append(arraobj, obj)
 
