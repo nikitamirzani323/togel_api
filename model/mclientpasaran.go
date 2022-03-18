@@ -1242,6 +1242,7 @@ func Fetch_invoicebetbyid(idtrxkeluaran int, client_username, client_company, ty
 	var obj entities.Model_mlistinvoicebetid
 	var arraobj []entities.Model_mlistinvoicebetid
 	var res helpers.Response
+	flag_3dd := false
 	flag_2dd := false
 	flag_2dt := false
 	msg := "Error"
@@ -1300,6 +1301,32 @@ func Fetch_invoicebetbyid(idtrxkeluaran int, client_username, client_company, ty
 			flag_2dd = true
 			flag_2dt = true
 		}
+		if typegame == "3D" {
+			flag_3dd = true
+		}
+		if flag_3dd {
+			if typegame_db == "3DD" {
+				nobet = nobet + 1
+				var diskon2 float32 = diskon_db * 100
+				var diskonbet int = int(bet_db * diskon_db)
+				var kei2 float32 = kei_db * 100
+				var keibet int = int(bet_db * kei_db)
+				var bayar int = int(bet_db) - int(diskonbet) - int(keibet)
+
+				obj.No = nobet
+				obj.Status = statuskeluarandetail_db
+				obj.Tipe = posisitogel_db
+				obj.Permainan = typegame_db
+				obj.Nomor = nomortogel_db
+				obj.Bet = int(bet_db)
+				obj.Diskon = diskon2
+				obj.Kei = kei2
+				obj.Bayar = bayar
+				obj.Win = int(winhasil_db)
+				arraobj = append(arraobj, obj)
+				msg = "Success"
+			}
+		}
 		if flag_2dd {
 			if typegame_db == "2DD" {
 				nobet = nobet + 1
@@ -1311,6 +1338,7 @@ func Fetch_invoicebetbyid(idtrxkeluaran int, client_username, client_company, ty
 
 				obj.No = nobet
 				obj.Status = statuskeluarandetail_db
+				obj.Tipe = posisitogel_db
 				obj.Permainan = typegame_db
 				obj.Nomor = nomortogel_db
 				obj.Bet = int(bet_db)
@@ -1333,6 +1361,7 @@ func Fetch_invoicebetbyid(idtrxkeluaran int, client_username, client_company, ty
 
 				obj.No = nobet
 				obj.Status = statuskeluarandetail_db
+				obj.Tipe = posisitogel_db
 				obj.Permainan = typegame_db
 				obj.Nomor = nomortogel_db
 				obj.Bet = int(bet_db)
