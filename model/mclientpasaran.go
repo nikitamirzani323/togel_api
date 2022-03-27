@@ -2232,9 +2232,19 @@ func Savetransaksi(client_username, client_company, idtrxkeluaran, idcomppasaran
 			log.Printf("PERMAINAN : %s", permainan)
 
 			if !flag_save { //VALID
-				log.Printf("Nomor : %s \nBet: %d \nDISC: %d - %.2f \nKEI: %d", nomor_DD, bet2, int(diskonvalue), diskon2, int(keivalue))
+
 				bayar := bet2 - int(diskonvalue) - int(keivalue)
 				totalbayar = totalbayar + int(bayar)
+
+				log.Printf("NOMOR : %s", nomor_DD)
+				log.Printf("BET : %d", bet2)
+				log.Printf("DISKON PERSEN : %.2f", diskon2)
+				log.Printf("DISKON AMOUNT : %d", int(diskonvalue))
+				log.Printf("KEI PERSEN : %.2f", kei2)
+				log.Printf("KEI AMOUNT : %d", int(keivalue))
+				log.Printf("BAYAR : %d", bayar)
+				log.Printf("TOTAL BAYAR : %d", totalbayar)
+
 				obj.Idtrxkeluaran = idtrxkeluaran
 				obj.Ipaddress = formipaddress
 				obj.Idcompany = client_company
