@@ -57,29 +57,42 @@ func Fetch_Setting() (helpers.Response, error) {
 
 	return res, nil
 }
-func Get_Domain(nmdomain string) (bool, string) {
+func Get_Domain() (helpers.Response, error) {
+	var obj entities.Model_domain
+	var arraobj []entities.Model_domain
+	var res helpers.Response
+	msg := "Data Not Found"
+	render_page := time.Now()
 	ctx := context.Background()
 	con := db.CreateCon()
-	flag := false
-	var nmdomain_db string = ""
 	sql_select := `SELECT 
 		nmdomain    
 		FROM ` + config.DB_tbl_mst_domain + `  
 		WHERE tipedomain = 'FRONTEND'
 		AND statusdomain ='RUNNING'  
-		AND nmdomain =?  
 	`
-	row := con.QueryRowContext(ctx, sql_select, nmdomain)
-	switch e := row.Scan(&nmdomain_db); e {
-	case sql.ErrNoRows:
-		flag = false
-	case nil:
-		flag = true
-	default:
-		flag = false
+	rowdomain, err := con.QueryContext(ctx, sql_select)
+	defer rowdomain.Close()
+	helpers.ErrorCheck(err)
+
+	for rowdomain.Next() {
+		var nmdomain_db string
+		err = rowdomain.Scan(&nmdomain_db)
+		if err != nil {
+			return res, err
+		}
+		obj.Domain = nmdomain_db
+		arraobj = append(arraobj, obj)
+		msg = "Success"
 	}
 
-	return flag, nmdomain_db
+	res.Status = fiber.StatusOK
+	res.Message = msg
+	res.Totalrecord = len(arraobj)
+	res.Record = arraobj
+	res.Time = time.Since(render_page).String()
+
+	return res, nil
 }
 func FetchAll_MclientPasaran(client_company string) (helpers.Response, error) {
 	var obj entities.Model_mclientpasaran

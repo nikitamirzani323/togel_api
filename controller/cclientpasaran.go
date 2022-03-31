@@ -319,7 +319,7 @@ func Fetch_token(c *fiber.Ctx) error {
 	})
 	if tglskrg >= jamstart && tglskrg <= jamend {
 		website_status = "OFFLINE"
-		website_message = "MAINTENANCE START : " + jamstart + ", FINISH : " + jamend
+		website_message = "MAINTENANCE<br>START : " + jamstart + "<br>FINISH : " + jamend
 	}
 	member_username := ""
 	member_company := ""
@@ -1560,29 +1560,26 @@ func SaveTogel(c *fiber.Ctx) error {
 func _domainsecurity(nmdomain string) bool {
 	log.Printf("Domain Client : %s", nmdomain)
 	resultredis, flag_domain := helpers.GetRedis(fielddomain_redis)
-	log.Printf("Domain Client : %s", nmdomain)
-	log.Printf("Domain Redis : %s", resultredis)
 	flag := false
 	if len(nmdomain) > 0 {
 		if !flag_domain {
-			flag_client, nmdomain := model.Get_Domain(nmdomain)
-			if flag_client {
-				tempdata := fiber.Map{
-					"domain": nmdomain,
-				}
-				log.Println("DOMAIN MYSQL")
-				helpers.SetRedis(fielddomain_redis, tempdata, 24*time.Hour)
-				flag = true
+			result, err := model.Get_Domain()
+			if err != nil {
+				flag = false
 			}
+			log.Println("DOMAIN MYSQL")
+			helpers.SetRedis(fielddomain_redis, result, 24*time.Hour)
+			flag = true
 		} else {
 			jsonredis_domain := []byte(resultredis)
-
-			domain_redis, _ := jsonparser.GetString(jsonredis_domain, "domain")
-			if domain_redis == nmdomain {
-				flag = true
-				log.Println("DOMAIN CACHE")
-			}
-
+			record_RD, _, _, _ := jsonparser.Get(jsonredis_domain, "record")
+			jsonparser.ArrayEach(record_RD, func(value []byte, dataType jsonparser.ValueType, offset int, err error) {
+				domain, _ := jsonparser.GetString(value, "domain")
+				if nmdomain == domain {
+					flag = true
+					log.Println("DOMAIN CACHE")
+				}
+			})
 		}
 	}
 	return flag

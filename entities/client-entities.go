@@ -4,6 +4,9 @@ type Model_setting struct {
 	StartMaintenance string `json:"maintenance_start"`
 	EndMaintenance   string `json:"maintenance_end"`
 }
+type Model_domain struct {
+	Domain string `json:"domain"`
+}
 type Model_mclientpasaran struct {
 	PasaranId             string `json:"pasaran_id"`
 	PasaranTogel          string `json:"pasaran_togel"`
