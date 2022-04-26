@@ -38,56 +38,74 @@ type responseredisfetch struct {
 }
 
 type responseredisinit_432 struct {
-	Min_bet            int     `json:"min_bet"`
-	Max4d_bet          int     `json:"max4d_bet"`
-	Max3d_bet          int     `json:"max3d_bet"`
-	Max3dd_bet         int     `json:"max3dd_bet"`
-	Max2d_bet          int     `json:"max2d_bet"`
-	Max2dd_bet         int     `json:"max2dd_bet"`
-	Max2dt_bet         int     `json:"max2dt_bet"`
-	Disc4d_bet         float32 `json:"disc4d_bet"`
-	Disc3d_bet         float32 `json:"disc3d_bet"`
-	Disc3dd_bet        float32 `json:"disc3dd_bet"`
-	Disc2d_bet         float32 `json:"disc2d_bet"`
-	Disc2dd_bet        float32 `json:"disc2dd_bet"`
-	Disc2dt_bet        float32 `json:"disc2dt_bet"`
-	Win4d_bet          int     `json:"win4d_bet"`
-	Win3d_bet          int     `json:"win3d_bet"`
-	Win3dd_bet         int     `json:"win3dd_bet"`
-	Win2d_bet          int     `json:"win2d_bet"`
-	Win2dd_bet         int     `json:"win2dd_bet"`
-	Win2dt_bet         int     `json:"win2dt_bet"`
-	Win4dnodiskon_bet  int     `json:"win4dnodiskon_bet"`
-	Win3dnodiskon_bet  int     `json:"win3dnodiskon_bet"`
-	Win3ddnodiskon_bet int     `json:"win3ddnodiskon_bet"`
-	Win2dnodiskon_bet  int     `json:"win2dnodiskon_bet"`
-	Win2ddnodiskon_bet int     `json:"win2ddnodiskon_bet"`
-	Win2dtnodiskon_bet int     `json:"win2dtnodiskon_bet"`
-	Win4dbb_kena_bet   int     `json:"win4dbb_kena_bet"`
-	Win3dbb_kena_bet   int     `json:"win3dbb_kena_bet"`
-	Win3ddbb_kena_bet  int     `json:"win3ddbb_kena_bet"`
-	Win2dbb_kena_bet   int     `json:"win2dbb_kena_bet"`
-	Win2ddbb_kena_bet  int     `json:"win2ddbb_kena_bet"`
-	Win2dtbb_kena_bet  int     `json:"win2dtbb_kena_bet"`
-	Win4dbb_bet        int     `json:"win4dbb_bet"`
-	Win3dbb_bet        int     `json:"win3dbb_bet"`
-	Win3ddbb_bet       int     `json:"win3ddbb_bet"`
-	Win2dbb_bet        int     `json:"win2dbb_bet"`
-	Win2ddbb_bet       int     `json:"win2ddbb_bet"`
-	Win2dtbb_bet       int     `json:"win2dtbb_bet"`
-	Bbfs               int     `json:"bbfs"`
-	Limitline_4d       int     `json:"limitline_4d"`
-	Limitline_3d       int     `json:"limitline_3d"`
-	Limitline_3dd      int     `json:"limitline_3dd"`
-	Limitline_2d       int     `json:"limitline_2d"`
-	Limitline_2dd      int     `json:"limitline_2dd"`
-	Limitline_2dt      int     `json:"limitline_2dt"`
-	Limittotal4d_bet   int     `json:"limittotal4d_bet"`
-	Limittotal3d_bet   int     `json:"limittotal3d_bet"`
-	Limittotal3dd_bet  int     `json:"limittotal3dd_bet"`
-	Limittotal2d_bet   int     `json:"limittotal2d_bet"`
-	Limittotal2dd_bet  int     `json:"limittotal2dd_bet"`
-	Limittotal2dt_bet  int     `json:"limittotal2dt_bet"`
+	Min_bet                  int     `json:"min_bet"`
+	Max4d_bet                int     `json:"max4d_bet"`
+	Max3d_bet                int     `json:"max3d_bet"`
+	Max3dd_bet               int     `json:"max3dd_bet"`
+	Max2d_bet                int     `json:"max2d_bet"`
+	Max2dd_bet               int     `json:"max2dd_bet"`
+	Max2dt_bet               int     `json:"max2dt_bet"`
+	Max4d_fullbb_bet         int     `json:"max4d_fullbb_bet"`
+	Max3d_fullbb_bet         int     `json:"max3d_fullbb_bet"`
+	Max3dd_fullbb_bet        int     `json:"max3dd_fullbb_bet"`
+	Max2d_fullbb_bet         int     `json:"max2d_fullbb_bet"`
+	Max2dd_fullbb_bet        int     `json:"max2dd_fullbb_bet"`
+	Max2dt_fullbb_bet        int     `json:"max2dt_fullbb_bet"`
+	Max4d_buy                int     `json:"max4d_buy"`
+	Max3d_buy                int     `json:"max3d_buy"`
+	Max3dd_buy               int     `json:"max3dd_buy"`
+	Max2d_buy                int     `json:"max2d_buy"`
+	Max2dd_buy               int     `json:"max2dd_buy"`
+	Max2dt_buy               int     `json:"max2dt_buy"`
+	Disc4d_bet               float32 `json:"disc4d_bet"`
+	Disc3d_bet               float32 `json:"disc3d_bet"`
+	Disc3dd_bet              float32 `json:"disc3dd_bet"`
+	Disc2d_bet               float32 `json:"disc2d_bet"`
+	Disc2dd_bet              float32 `json:"disc2dd_bet"`
+	Disc2dt_bet              float32 `json:"disc2dt_bet"`
+	Win4d_bet                int     `json:"win4d_bet"`
+	Win3d_bet                int     `json:"win3d_bet"`
+	Win3dd_bet               int     `json:"win3dd_bet"`
+	Win2d_bet                int     `json:"win2d_bet"`
+	Win2dd_bet               int     `json:"win2dd_bet"`
+	Win2dt_bet               int     `json:"win2dt_bet"`
+	Win4dnodiskon_bet        int     `json:"win4dnodiskon_bet"`
+	Win3dnodiskon_bet        int     `json:"win3dnodiskon_bet"`
+	Win3ddnodiskon_bet       int     `json:"win3ddnodiskon_bet"`
+	Win2dnodiskon_bet        int     `json:"win2dnodiskon_bet"`
+	Win2ddnodiskon_bet       int     `json:"win2ddnodiskon_bet"`
+	Win2dtnodiskon_bet       int     `json:"win2dtnodiskon_bet"`
+	Win4dbb_kena_bet         int     `json:"win4dbb_kena_bet"`
+	Win3dbb_kena_bet         int     `json:"win3dbb_kena_bet"`
+	Win3ddbb_kena_bet        int     `json:"win3ddbb_kena_bet"`
+	Win2dbb_kena_bet         int     `json:"win2dbb_kena_bet"`
+	Win2ddbb_kena_bet        int     `json:"win2ddbb_kena_bet"`
+	Win2dtbb_kena_bet        int     `json:"win2dtbb_kena_bet"`
+	Win4dbb_bet              int     `json:"win4dbb_bet"`
+	Win3dbb_bet              int     `json:"win3dbb_bet"`
+	Win3ddbb_bet             int     `json:"win3ddbb_bet"`
+	Win2dbb_bet              int     `json:"win2dbb_bet"`
+	Win2ddbb_bet             int     `json:"win2ddbb_bet"`
+	Win2dtbb_bet             int     `json:"win2dtbb_bet"`
+	Bbfs                     int     `json:"bbfs"`
+	Limitline_4d             int     `json:"limitline_4d"`
+	Limitline_3d             int     `json:"limitline_3d"`
+	Limitline_3dd            int     `json:"limitline_3dd"`
+	Limitline_2d             int     `json:"limitline_2d"`
+	Limitline_2dd            int     `json:"limitline_2dd"`
+	Limitline_2dt            int     `json:"limitline_2dt"`
+	Limittotal4d_bet         int     `json:"limittotal4d_bet"`
+	Limittotal3d_bet         int     `json:"limittotal3d_bet"`
+	Limittotal3dd_bet        int     `json:"limittotal3dd_bet"`
+	Limittotal2d_bet         int     `json:"limittotal2d_bet"`
+	Limittotal2dd_bet        int     `json:"limittotal2dd_bet"`
+	Limittotal2dt_bet        int     `json:"limittotal2dt_bet"`
+	Limittotal4d_fullbb_bet  int     `json:"limittotal4d_fullbb_bet"`
+	Limittotal3d_fullbb_bet  int     `json:"limittotal3d_fullbb_bet"`
+	Limittotal3dd_fullbb_bet int     `json:"limittotal3dd_fullbb_bet"`
+	Limittotal2d_fullbb_bet  int     `json:"limittotal2d_fullbb_bet"`
+	Limittotal2dd_fullbb_bet int     `json:"limittotal2dd_fullbb_bet"`
+	Limittotal2dt_fullbb_bet int     `json:"limittotal2dt_fullbb_bet"`
 }
 type responseredisinit_colok struct {
 	Min_bet_colokbebas        int     `json:"min_bet_colokbebas"`
@@ -98,6 +116,10 @@ type responseredisinit_colok struct {
 	Max_bet_colokmacau        int     `json:"max_bet_colokmacau"`
 	Max_bet_coloknaga         int     `json:"max_bet_coloknaga"`
 	Max_bet_colokjitu         int     `json:"max_bet_colokjitu"`
+	Max_buy_colokbebas        int     `json:"max_buy_colokbebas"`
+	Max_buy_colokmacau        int     `json:"max_buy_colokmacau"`
+	Max_buy_coloknaga         int     `json:"max_buy_coloknaga"`
+	Max_buy_colokjitu         int     `json:"max_buy_colokjitu"`
 	Disc_bet_colokbebas       float32 `json:"disc_bet_colokbebas"`
 	Disc_bet_colokmacau       float32 `json:"disc_bet_colokmacau"`
 	Disc_bet_coloknaga        float32 `json:"disc_bet_coloknaga"`
@@ -124,6 +146,9 @@ type responseredisinit_5050 struct {
 	Max_bet_5050umum                       int     `json:"max_bet_5050umum"`
 	Max_bet_5050special                    int     `json:"max_bet_5050special"`
 	Max_bet_5050kombinasi                  int     `json:"max_bet_5050kombinasi"`
+	Max_buy_5050umum                       int     `json:"max_buy_5050umum"`
+	Max_buy_5050special                    int     `json:"max_buy_5050special"`
+	Max_buy_5050kombinasi                  int     `json:"max_buy_5050kombinasi"`
 	Discbesar_bet_5050umum                 float32 `json:"discbesar_bet_5050umum"`
 	Disckecil_bet_5050umum                 float32 `json:"disckecil_bet_5050umum"`
 	Discganjil_bet_5050umum                float32 `json:"discganjil_bet_5050umum"`
@@ -205,6 +230,7 @@ type responseredisinit_5050 struct {
 type responseredisinit_macaukombinasi struct {
 	Min_bet     int     `json:"min_bet"`
 	Max_bet     int     `json:"max_bet"`
+	Max_buy     int     `json:"max_buy"`
 	Diskon_bet  float32 `json:"diskon_bet"`
 	Win_bet     float32 `json:"win_bet"`
 	Limit_total int     `json:"limit_total"`
@@ -212,6 +238,7 @@ type responseredisinit_macaukombinasi struct {
 type responseredisinit_dasar struct {
 	Min_bet         int     `json:"min_bet"`
 	Max_bet         int     `json:"max_bet"`
+	Max_buy         int     `json:"max_buy"`
 	Disc_besar_bet  float32 `json:"disc_besar_bet"`
 	Disc_kecil_bet  float32 `json:"disc_kecil_bet"`
 	Disc_ganjil_bet float32 `json:"disc_ganjil_bet"`
@@ -225,6 +252,7 @@ type responseredisinit_dasar struct {
 type responseredisinit_shio struct {
 	Min_bet     int     `json:"min_bet"`
 	Max_bet     int     `json:"max_bet"`
+	Max_buy     int     `json:"max_buy"`
 	Diskon_bet  float32 `json:"diskon_bet"`
 	Win_bet     float32 `json:"win_bet"`
 	Limit_total int     `json:"limit_total"`
@@ -692,6 +720,18 @@ func Fetch_InitPasaran(c *fiber.Ctx) error {
 			maxbet2d_RD, _ := jsonparser.GetInt(value, "max2d_bet")
 			maxbet2dd_RD, _ := jsonparser.GetInt(value, "max2dd_bet")
 			maxbet2dt_RD, _ := jsonparser.GetInt(value, "max2dt_bet")
+			max4d_fullbb_bet, _ := jsonparser.GetInt(value, "max4d_fullbb_bet")
+			max3d_fullbb_bet, _ := jsonparser.GetInt(value, "max3d_fullbb_bet")
+			max3dd_fullbb_bet, _ := jsonparser.GetInt(value, "max3dd_fullbb_bet")
+			max2d_fullbb_bet, _ := jsonparser.GetInt(value, "max2d_fullbb_bet")
+			max2dd_fullbb_bet, _ := jsonparser.GetInt(value, "max2dd_fullbb_bet")
+			max2dt_fullbb_bet, _ := jsonparser.GetInt(value, "max2dt_fullbb_bet")
+			max4d_buy, _ := jsonparser.GetInt(value, "max4d_buy")
+			max3d_buy, _ := jsonparser.GetInt(value, "max3d_buy")
+			max3dd_buy, _ := jsonparser.GetInt(value, "max3dd_buy")
+			max2d_buy, _ := jsonparser.GetInt(value, "max2d_buy")
+			max2dd_buy, _ := jsonparser.GetInt(value, "max2dd_buy")
+			max2dt_buy, _ := jsonparser.GetInt(value, "max2dt_buy")
 			disc4d_RD, _ := jsonparser.GetFloat(value, "disc4d_bet")
 			disc3d_RD, _ := jsonparser.GetFloat(value, "disc3d_bet")
 			disc3dd_RD, _ := jsonparser.GetFloat(value, "disc3dd_bet")
@@ -734,6 +774,12 @@ func Fetch_InitPasaran(c *fiber.Ctx) error {
 			limittotal2d_RD, _ := jsonparser.GetInt(value, "limittotal2d_bet")
 			limittotal2dd_RD, _ := jsonparser.GetInt(value, "limittotal2dd_bet")
 			limittotal2dt_RD, _ := jsonparser.GetInt(value, "limittotal2dt_bet")
+			limittotal4d_fullbb_bet, _ := jsonparser.GetInt(value, "limittotal4d_fullbb_bet")
+			limittotal3d_fullbb_bet, _ := jsonparser.GetInt(value, "limittotal3d_fullbb_bet")
+			limittotal3dd_fullbb_bet, _ := jsonparser.GetInt(value, "limittotal3dd_fullbb_bet")
+			limittotal2d_fullbb_bet, _ := jsonparser.GetInt(value, "limittotal2d_fullbb_bet")
+			limittotal2dd_fullbb_bet, _ := jsonparser.GetInt(value, "limittotal2dd_fullbb_bet")
+			limittotal2dt_fullbb_bet, _ := jsonparser.GetInt(value, "limittotal2dt_fullbb_bet")
 			bbfs_RD, _ := jsonparser.GetInt(value, "bbfs")
 
 			obj_432.Min_bet = int(minbet_RD)
@@ -743,6 +789,18 @@ func Fetch_InitPasaran(c *fiber.Ctx) error {
 			obj_432.Max2d_bet = int(maxbet2d_RD)
 			obj_432.Max2dd_bet = int(maxbet2dd_RD)
 			obj_432.Max2dt_bet = int(maxbet2dt_RD)
+			obj_432.Max4d_fullbb_bet = int(max4d_fullbb_bet)
+			obj_432.Max3d_fullbb_bet = int(max3d_fullbb_bet)
+			obj_432.Max3dd_fullbb_bet = int(max3dd_fullbb_bet)
+			obj_432.Max2d_fullbb_bet = int(max2d_fullbb_bet)
+			obj_432.Max2dd_fullbb_bet = int(max2dd_fullbb_bet)
+			obj_432.Max2dt_fullbb_bet = int(max2dt_fullbb_bet)
+			obj_432.Max4d_buy = int(max4d_buy)
+			obj_432.Max3d_buy = int(max3d_buy)
+			obj_432.Max3dd_buy = int(max3dd_buy)
+			obj_432.Max2d_buy = int(max2d_buy)
+			obj_432.Max2dd_buy = int(max2dd_buy)
+			obj_432.Max2dt_buy = int(max2dt_buy)
 			obj_432.Disc4d_bet = float32(disc4d_RD)
 			obj_432.Disc3d_bet = float32(disc3d_RD)
 			obj_432.Disc3dd_bet = float32(disc3dd_RD)
@@ -785,6 +843,12 @@ func Fetch_InitPasaran(c *fiber.Ctx) error {
 			obj_432.Limittotal2d_bet = int(limittotal2d_RD)
 			obj_432.Limittotal2dd_bet = int(limittotal2dd_RD)
 			obj_432.Limittotal2dt_bet = int(limittotal2dt_RD)
+			obj_432.Limittotal4d_fullbb_bet = int(limittotal4d_fullbb_bet)
+			obj_432.Limittotal3d_fullbb_bet = int(limittotal3d_fullbb_bet)
+			obj_432.Limittotal3dd_fullbb_bet = int(limittotal3dd_fullbb_bet)
+			obj_432.Limittotal2d_fullbb_bet = int(limittotal2d_fullbb_bet)
+			obj_432.Limittotal2dd_fullbb_bet = int(limittotal2dd_fullbb_bet)
+			obj_432.Limittotal2dt_fullbb_bet = int(limittotal2dt_fullbb_bet)
 			obj_432.Bbfs = int(bbfs_RD)
 
 			arraobj_432 = append(arraobj_432, obj_432)
@@ -797,6 +861,10 @@ func Fetch_InitPasaran(c *fiber.Ctx) error {
 			Max_bet_colokmacau_RD, _ := jsonparser.GetInt(value, "max_bet_colokmacau")
 			Max_bet_coloknaga_RD, _ := jsonparser.GetInt(value, "max_bet_coloknaga")
 			Max_bet_colokjitu_RD, _ := jsonparser.GetInt(value, "max_bet_colokjitu")
+			Max_buy_colokbebas_RD, _ := jsonparser.GetInt(value, "max_buy_colokbebas")
+			Max_buy_colokmacau_RD, _ := jsonparser.GetInt(value, "max_buy_colokmacau")
+			Max_buy_coloknaga_RD, _ := jsonparser.GetInt(value, "max_buy_coloknaga")
+			Max_buy_colokjitu_RD, _ := jsonparser.GetInt(value, "max_buy_colokjitu")
 			Disc_bet_colokbebas_RD, _ := jsonparser.GetFloat(value, "disc_bet_colokbebas")
 			Disc_bet_colokmacau_RD, _ := jsonparser.GetFloat(value, "disc_bet_colokmacau")
 			Disc_bet_coloknaga_RD, _ := jsonparser.GetFloat(value, "disc_bet_coloknaga")
@@ -824,6 +892,10 @@ func Fetch_InitPasaran(c *fiber.Ctx) error {
 			obj_colok.Max_bet_colokmacau = int(Max_bet_colokmacau_RD)
 			obj_colok.Max_bet_coloknaga = int(Max_bet_coloknaga_RD)
 			obj_colok.Max_bet_colokjitu = int(Max_bet_colokjitu_RD)
+			obj_colok.Max_buy_colokbebas = int(Max_buy_colokbebas_RD)
+			obj_colok.Max_buy_colokmacau = int(Max_buy_colokmacau_RD)
+			obj_colok.Max_buy_coloknaga = int(Max_buy_coloknaga_RD)
+			obj_colok.Max_buy_colokjitu = int(Max_buy_colokjitu_RD)
 			obj_colok.Disc_bet_colokbebas = float32(Disc_bet_colokbebas_RD)
 			obj_colok.Disc_bet_colokmacau = float32(Disc_bet_colokmacau_RD)
 			obj_colok.Disc_bet_coloknaga = float32(Disc_bet_coloknaga_RD)
@@ -851,6 +923,9 @@ func Fetch_InitPasaran(c *fiber.Ctx) error {
 			Max_bet_5050umum_RD, _ := jsonparser.GetInt(value, "max_bet_5050umum")
 			Max_bet_5050special_RD, _ := jsonparser.GetInt(value, "max_bet_5050special")
 			Max_bet_5050kombinasi_RD, _ := jsonparser.GetInt(value, "max_bet_5050kombinasi")
+			Max_buy_5050umum_RD, _ := jsonparser.GetInt(value, "max_buy_5050umum")
+			Max_buy_5050special_RD, _ := jsonparser.GetInt(value, "max_buy_5050special")
+			Max_buy_5050kombinasi_RD, _ := jsonparser.GetInt(value, "max_buy_5050kombinasi")
 			Discbesar_bet_5050umum_RD, _ := jsonparser.GetFloat(value, "discbesar_bet_5050umum")
 			Disckecil_bet_5050umum_RD, _ := jsonparser.GetFloat(value, "disckecil_bet_5050umum")
 			Discganjil_bet_5050umum_RD, _ := jsonparser.GetFloat(value, "discganjil_bet_5050umum")
@@ -934,6 +1009,9 @@ func Fetch_InitPasaran(c *fiber.Ctx) error {
 			obj_5050.Max_bet_5050umum = int(Max_bet_5050umum_RD)
 			obj_5050.Max_bet_5050special = int(Max_bet_5050special_RD)
 			obj_5050.Max_bet_5050kombinasi = int(Max_bet_5050kombinasi_RD)
+			obj_5050.Max_buy_5050umum = int(Max_buy_5050umum_RD)
+			obj_5050.Max_buy_5050special = int(Max_buy_5050special_RD)
+			obj_5050.Max_buy_5050kombinasi = int(Max_buy_5050kombinasi_RD)
 			obj_5050.Discbesar_bet_5050umum = float32(Discbesar_bet_5050umum_RD)
 			obj_5050.Disckecil_bet_5050umum = float32(Disckecil_bet_5050umum_RD)
 			obj_5050.Discganjil_bet_5050umum = float32(Discganjil_bet_5050umum_RD)
@@ -1015,12 +1093,14 @@ func Fetch_InitPasaran(c *fiber.Ctx) error {
 		case "macaukombinasi":
 			Min_bet_RD, _ := jsonparser.GetInt(value, "min_bet")
 			Max_bet_RD, _ := jsonparser.GetInt(value, "max_bet")
+			Max_buy_RD, _ := jsonparser.GetInt(value, "max_buy")
 			Diskon_bet_RD, _ := jsonparser.GetFloat(value, "diskon_bet")
 			Win_bet_RD, _ := jsonparser.GetFloat(value, "win_bet")
 			Limit_total_RD, _ := jsonparser.GetInt(value, "limit_total")
 
 			obj_macaukombinasi.Min_bet = int(Min_bet_RD)
 			obj_macaukombinasi.Max_bet = int(Max_bet_RD)
+			obj_macaukombinasi.Max_buy = int(Max_buy_RD)
 			obj_macaukombinasi.Diskon_bet = float32(Diskon_bet_RD)
 			obj_macaukombinasi.Win_bet = float32(Win_bet_RD)
 			obj_macaukombinasi.Limit_total = int(Limit_total_RD)
@@ -1029,6 +1109,7 @@ func Fetch_InitPasaran(c *fiber.Ctx) error {
 		case "dasar":
 			Min_bet_RD, _ := jsonparser.GetInt(value, "min_bet")
 			Max_bet_RD, _ := jsonparser.GetInt(value, "max_bet")
+			Max_buy_RD, _ := jsonparser.GetInt(value, "max_buy")
 			Disc_besar_bet_RD, _ := jsonparser.GetFloat(value, "disc_besar_bet")
 			Disc_kecil_bet_RD, _ := jsonparser.GetFloat(value, "disc_kecil_bet")
 			Disc_ganjil_bet_RD, _ := jsonparser.GetFloat(value, "disc_ganjil_bet")
@@ -1041,6 +1122,7 @@ func Fetch_InitPasaran(c *fiber.Ctx) error {
 
 			obj_dasar.Min_bet = int(Min_bet_RD)
 			obj_dasar.Max_bet = int(Max_bet_RD)
+			obj_dasar.Max_buy = int(Max_buy_RD)
 			obj_dasar.Disc_besar_bet = float32(Disc_besar_bet_RD)
 			obj_dasar.Disc_kecil_bet = float32(Disc_kecil_bet_RD)
 			obj_dasar.Disc_ganjil_bet = float32(Disc_ganjil_bet_RD)
@@ -1055,12 +1137,14 @@ func Fetch_InitPasaran(c *fiber.Ctx) error {
 		case "shio":
 			Min_bet_RD, _ := jsonparser.GetInt(value, "min_bet")
 			Max_bet_RD, _ := jsonparser.GetInt(value, "max_bet")
+			Max_buy_RD, _ := jsonparser.GetInt(value, "max_buy")
 			Diskon_bet_RD, _ := jsonparser.GetFloat(value, "diskon_bet")
 			Win_bet_RD, _ := jsonparser.GetFloat(value, "win_bet")
 			Limit_total_RD, _ := jsonparser.GetInt(value, "limit_total")
 
 			obj_shio.Min_bet = int(Min_bet_RD)
 			obj_shio.Max_bet = int(Max_bet_RD)
+			obj_shio.Max_buy = int(Max_buy_RD)
 			obj_shio.Diskon_bet = float32(Diskon_bet_RD)
 			obj_shio.Win_bet = float32(Win_bet_RD)
 			obj_shio.Limit_total = int(Limit_total_RD)
