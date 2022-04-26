@@ -44,65 +44,85 @@ type Model_mclientpasaranCheckPasaran struct {
 	PasaranStatus       string `json:"pasaran_status"`
 }
 type Model_mpasarantogel432 struct {
-	Min_bet            float32 `json:"min_bet"`
-	Max4d_bet          float32 `json:"max4d_bet"`
-	Max3d_bet          float32 `json:"max3d_bet"`
-	Max3dd_bet         float32 `json:"max3dd_bet"`
-	Max2d_bet          float32 `json:"max2d_bet"`
-	Max2dd_bet         float32 `json:"max2dd_bet"`
-	Max2dt_bet         float32 `json:"max2dt_bet"`
-	Disc4d_bet         float32 `json:"disc4d_bet"`
-	Disc3d_bet         float32 `json:"disc3d_bet"`
-	Disc3dd_bet        float32 `json:"disc3dd_bet"`
-	Disc2d_bet         float32 `json:"disc2d_bet"`
-	Disc2dd_bet        float32 `json:"disc2dd_bet"`
-	Disc2dt_bet        float32 `json:"disc2dt_bet"`
-	Win4d_bet          float32 `json:"win4d_bet"`
-	Win3d_bet          float32 `json:"win3d_bet"`
-	Win3dd_bet         float32 `json:"win3dd_bet"`
-	Win2d_bet          float32 `json:"win2d_bet"`
-	Win2dd_bet         float32 `json:"win2dd_bet"`
-	Win2dt_bet         float32 `json:"win2dt_bet"`
-	Win4dnodiskon_bet  float32 `json:"win4dnodiskon_bet"`
-	Win3dnodiskon_bet  float32 `json:"win3dnodiskon_bet"`
-	Win3ddnodiskon_bet float32 `json:"win3ddnodiskon_bet"`
-	Win2dnodiskon_bet  float32 `json:"win2dnodiskon_bet"`
-	Win2ddnodiskon_bet float32 `json:"win2ddnodiskon_bet"`
-	Win2dtnodiskon_bet float32 `json:"win2dtnodiskon_bet"`
-	Win4dbb_kena_bet   float32 `json:"win4dbb_kena_bet"`
-	Win3dbb_kena_bet   float32 `json:"win3dbb_kena_bet"`
-	Win3ddbb_kena_bet  float32 `json:"win3ddbb_kena_bet"`
-	Win2dbb_kena_bet   float32 `json:"win2dbb_kena_bet"`
-	Win2ddbb_kena_bet  float32 `json:"win2ddbb_kena_bet"`
-	Win2dtbb_kena_bet  float32 `json:"win2dtbb_kena_bet"`
-	Win4dbb_bet        float32 `json:"win4dbb_bet"`
-	Win3dbb_bet        float32 `json:"win3dbb_bet"`
-	Win3ddbb_bet       float32 `json:"win3ddbb_bet"`
-	Win2dbb_bet        float32 `json:"win2dbb_bet"`
-	Win2ddbb_bet       float32 `json:"win2ddbb_bet"`
-	Win2dtbb_bet       float32 `json:"win2dtbb_bet"`
-	Limittotal4d_bet   float32 `json:"limittotal4d_bet"`
-	Limittotal3d_bet   float32 `json:"limittotal3d_bet"`
-	Limittotal3dd_bet  float32 `json:"limittotal3dd_bet"`
-	Limittotal2d_bet   float32 `json:"limittotal2d_bet"`
-	Limittotal2dd_bet  float32 `json:"limittotal2dd_bet"`
-	Limittotal2dt_bet  float32 `json:"limittotal2dt_bet"`
-	Limitline_4d       uint32  `json:"limitline_4d"`
-	Limitline_3d       uint32  `json:"limitline_3d"`
-	Limitline_3dd      uint32  `json:"limitline_3dd"`
-	Limitline_2d       uint32  `json:"limitline_2d"`
-	Limitline_2dd      uint32  `json:"limitline_2dd"`
-	Limitline_2dt      uint32  `json:"limitline_2dt"`
-	Bbfs               uint8   `json:"bbfs"`
+	Min_bet                  float32 `json:"min_bet"`
+	Max4d_bet                float32 `json:"max4d_bet"`
+	Max3d_bet                float32 `json:"max3d_bet"`
+	Max3dd_bet               float32 `json:"max3dd_bet"`
+	Max2d_bet                float32 `json:"max2d_bet"`
+	Max2dd_bet               float32 `json:"max2dd_bet"`
+	Max2dt_bet               float32 `json:"max2dt_bet"`
+	Max4d_fullbb_bet         float32 `json:"max4d_fullbb_bet"`
+	Max3d_fullbb_bet         float32 `json:"max3d_fullbb_bet"`
+	Max3dd_fullbb_bet        float32 `json:"max3dd_fullbb_bet"`
+	Max2d_fullbb_bet         float32 `json:"max2d_fullbb_bet"`
+	Max2dd_fullbb_bet        float32 `json:"max2dd_fullbb_bet"`
+	Max2dt_fullbb_bet        float32 `json:"max2dt_fullbb_bet"`
+	Max4d_buy                float32 `json:"max4d_buy"`
+	Max3d_buy                float32 `json:"max3d_buy"`
+	Max3dd_buy               float32 `json:"max3dd_buy"`
+	Max2d_buy                float32 `json:"max2d_buy"`
+	Max2dd_buy               float32 `json:"max2dd_buy"`
+	Max2dt_buy               float32 `json:"max2dt_buy"`
+	Disc4d_bet               float32 `json:"disc4d_bet"`
+	Disc3d_bet               float32 `json:"disc3d_bet"`
+	Disc3dd_bet              float32 `json:"disc3dd_bet"`
+	Disc2d_bet               float32 `json:"disc2d_bet"`
+	Disc2dd_bet              float32 `json:"disc2dd_bet"`
+	Disc2dt_bet              float32 `json:"disc2dt_bet"`
+	Win4d_bet                float32 `json:"win4d_bet"`
+	Win3d_bet                float32 `json:"win3d_bet"`
+	Win3dd_bet               float32 `json:"win3dd_bet"`
+	Win2d_bet                float32 `json:"win2d_bet"`
+	Win2dd_bet               float32 `json:"win2dd_bet"`
+	Win2dt_bet               float32 `json:"win2dt_bet"`
+	Win4dnodiskon_bet        float32 `json:"win4dnodiskon_bet"`
+	Win3dnodiskon_bet        float32 `json:"win3dnodiskon_bet"`
+	Win3ddnodiskon_bet       float32 `json:"win3ddnodiskon_bet"`
+	Win2dnodiskon_bet        float32 `json:"win2dnodiskon_bet"`
+	Win2ddnodiskon_bet       float32 `json:"win2ddnodiskon_bet"`
+	Win2dtnodiskon_bet       float32 `json:"win2dtnodiskon_bet"`
+	Win4dbb_kena_bet         float32 `json:"win4dbb_kena_bet"`
+	Win3dbb_kena_bet         float32 `json:"win3dbb_kena_bet"`
+	Win3ddbb_kena_bet        float32 `json:"win3ddbb_kena_bet"`
+	Win2dbb_kena_bet         float32 `json:"win2dbb_kena_bet"`
+	Win2ddbb_kena_bet        float32 `json:"win2ddbb_kena_bet"`
+	Win2dtbb_kena_bet        float32 `json:"win2dtbb_kena_bet"`
+	Win4dbb_bet              float32 `json:"win4dbb_bet"`
+	Win3dbb_bet              float32 `json:"win3dbb_bet"`
+	Win3ddbb_bet             float32 `json:"win3ddbb_bet"`
+	Win2dbb_bet              float32 `json:"win2dbb_bet"`
+	Win2ddbb_bet             float32 `json:"win2ddbb_bet"`
+	Win2dtbb_bet             float32 `json:"win2dtbb_bet"`
+	Limittotal4d_bet         float32 `json:"limittotal4d_bet"`
+	Limittotal3d_bet         float32 `json:"limittotal3d_bet"`
+	Limittotal3dd_bet        float32 `json:"limittotal3dd_bet"`
+	Limittotal2d_bet         float32 `json:"limittotal2d_bet"`
+	Limittotal2dd_bet        float32 `json:"limittotal2dd_bet"`
+	Limittotal2dt_bet        float32 `json:"limittotal2dt_bet"`
+	Limittotal4d_fullbb_bet  float32 `json:"limittotal4d_fullbb_bet"`
+	Limittotal3d_fullbb_bet  float32 `json:"limittotal3d_fullbb_bet"`
+	Limittotal3dd_fullbb_bet float32 `json:"limittotal3dd_fullbb_bet"`
+	Limittotal2d_fullbb_bet  float32 `json:"limittotal2d_fullbb_bet"`
+	Limittotal2dd_fullbb_bet float32 `json:"limittotal2dd_fullbb_bet"`
+	Limittotal2dt_fullbb_bet float32 `json:"limittotal2dt_fullbb_bet"`
+	Limitline_4d             uint32  `json:"limitline_4d"`
+	Limitline_3d             uint32  `json:"limitline_3d"`
+	Limitline_3dd            uint32  `json:"limitline_3dd"`
+	Limitline_2d             uint32  `json:"limitline_2d"`
+	Limitline_2dd            uint32  `json:"limitline_2dd"`
+	Limitline_2dt            uint32  `json:"limitline_2dt"`
+	Bbfs                     uint8   `json:"bbfs"`
 }
 type Model_mpasarantogelColok struct {
 	Min_bet_colokbebas        float32 `json:"min_bet_colokbebas"`
 	Max_bet_colokbebas        float32 `json:"max_bet_colokbebas"`
+	Max_buy_colokbebas        float32 `json:"max_buy_colokbebas"`
 	Disc_bet_colokbebas       float32 `json:"disc_bet_colokbebas"`
 	Win_bet_colokbebas        float32 `json:"win_bet_colokbebas"`
 	Limittotal_bet_colokbebas float32 `json:"limittotal_bet_colokbebas"`
 	Min_bet_colokmacau        float32 `json:"min_bet_colokmacau"`
 	Max_bet_colokmacau        float32 `json:"max_bet_colokmacau"`
+	Max_buy_colokmacau        float32 `json:"max_buy_colokmacau"`
 	Disc_bet_colokmacau       float32 `json:"disc_bet_colokmacau"`
 	Win_bet_colokmacau        float32 `json:"win_bet_colokmacau"`
 	Win3_bet_colokmacau       float32 `json:"win3_bet_colokmacau"`
@@ -110,12 +130,14 @@ type Model_mpasarantogelColok struct {
 	Limittotal_bet_colokmacau float32 `json:"limittotal_bet_colokmacau"`
 	Min_bet_coloknaga         float32 `json:"min_bet_coloknaga"`
 	Max_bet_coloknaga         float32 `json:"max_bet_coloknaga"`
+	Max_buy_coloknaga         float32 `json:"max_buy_coloknaga"`
 	Disc_bet_coloknaga        float32 `json:"disc_bet_coloknaga"`
 	Win_bet_coloknaga         float32 `json:"win_bet_coloknaga"`
 	Win4_bet_coloknaga        float32 `json:"win4_bet_coloknaga"`
 	Limittotal_bet_coloknaga  float32 `json:"limittotal_bet_coloknaga"`
 	Min_bet_colokjitu         float32 `json:"min_bet_colokjitu"`
 	Max_bet_colokjitu         float32 `json:"max_bet_colokjitu"`
+	Max_buy_colokjitu         float32 `json:"max_buy_colokjitu"`
 	Disc_bet_colokjitu        float32 `json:"disc_bet_colokjitu"`
 	Winas_bet_colokjitu       float32 `json:"winas_bet_colokjitu"`
 	Winkop_bet_colokjitu      float32 `json:"winkop_bet_colokjitu"`
@@ -126,6 +148,7 @@ type Model_mpasarantogelColok struct {
 type Model_pasarantogel5050 struct {
 	Min_bet_5050umum                       float32 `json:"min_bet_5050umum"`
 	Max_bet_5050umum                       float32 `json:"max_bet_5050umum"`
+	Max_buy_5050umum                       float32 `json:"max_buy_5050umum"`
 	Keibesar_bet_5050umum                  float32 `json:"keibesar_bet_5050umum"`
 	Keikecil_bet_5050umum                  float32 `json:"keikecil_bet_5050umum"`
 	Keigenap_bet_5050umum                  float32 `json:"keigenap_bet_5050umum"`
@@ -141,6 +164,7 @@ type Model_pasarantogel5050 struct {
 	Limittotal_bet_5050umum                float32 `json:"limittotal_bet_5050umum"`
 	Min_bet_5050special                    float32 `json:"min_bet_5050special"`
 	Max_bet_5050special                    float32 `json:"max_bet_5050special"`
+	Max_buy_5050special                    float32 `json:"max_buy_5050special"`
 	Keiasganjil_bet_5050special            float32 `json:"keiasganjil_bet_5050special"`
 	Keiasgenap_bet_5050special             float32 `json:"keiasgenap_bet_5050special"`
 	Keiasbesar_bet_5050special             float32 `json:"keiasbesar_bet_5050special"`
@@ -176,6 +200,7 @@ type Model_pasarantogel5050 struct {
 	Limittotal_bet_5050special             float32 `json:"limittotal_bet_5050special"`
 	Min_bet_5050kombinasi                  float32 `json:"min_bet_5050kombinasi"`
 	Max_bet_5050kombinasi                  float32 `json:"max_bet_5050kombinasi"`
+	Max_buy_5050kombinasi                  float32 `json:"max_buy_5050kombinasi"`
 	Kei_belakangmono_bet_5050kombinasi     float32 `json:"kei_belakangmono_bet_5050kombinasi"`
 	Kei_belakangstereo_bet_5050kombinasi   float32 `json:"kei_belakangstereo_bet_5050kombinasi"`
 	Kei_belakangkembang_bet_5050kombinasi  float32 `json:"kei_belakangkembang_bet_5050kombinasi"`
@@ -211,6 +236,7 @@ type Model_pasarantogel5050 struct {
 type Model_pasarantogelMacauKombinasi struct {
 	Min_bet     float32 `json:"min_bet"`
 	Max_bet     float32 `json:"max_bet"`
+	Max_buy     float32 `json:"max_buy"`
 	Win_bet     float32 `json:"win_bet"`
 	Diskon_bet  float32 `json:"diskon_bet"`
 	Limit_total float32 `json:"limit_total"`
@@ -218,6 +244,7 @@ type Model_pasarantogelMacauKombinasi struct {
 type Model_mpasarantogelDasar struct {
 	Min_bet         float32 `json:"min_bet"`
 	Max_bet         float32 `json:"max_bet"`
+	Max_buy         float32 `json:"max_buy"`
 	Kei_besar_bet   float32 `json:"kei_besar_bet"`
 	Kei_kecil_bet   float32 `json:"kei_kecil_bet"`
 	Kei_genap_bet   float32 `json:"kei_genap_bet"`
@@ -231,6 +258,7 @@ type Model_mpasarantogelDasar struct {
 type Model_mpasarantogelShio struct {
 	Min_bet     float32 `json:"min_bet"`
 	Max_bet     float32 `json:"max_bet"`
+	Max_buy     float32 `json:"max_buy"`
 	Win_bet     float32 `json:"win_bet"`
 	Diskon_bet  float32 `json:"diskon_bet"`
 	Limit_total float32 `json:"limit_total"`

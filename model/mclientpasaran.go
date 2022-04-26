@@ -483,6 +483,10 @@ func FetchAll_MinitPasaran(client_company, pasaran_code, permainan string) (help
 			1_minbet as min_bet, 
 			1_maxbet4d as max4d_bet, 1_maxbet3d as max3d_bet,  1_maxbet3dd as max3dd_bet,
 			1_maxbet2d as max2d_bet, 1_maxbet2dd as max2dd_bet, 1_maxbet2dt as max2dt_bet, 
+			1_maxbet4d_fullbb as maxbet4d_fullbb_bet, 1_maxbet3d_fullbb as maxbet3d_fullbb_bet, 1_maxbet3dd_fullbb as maxbet3dd_fullbb_bet, 
+			1_maxbet2d_fullbb as maxbet2d_fullbb_bet, 1_maxbet2dd_fullbb as maxbet2dd_fullbb_bet, 1_maxbet2dt_fullbb as maxbet2dt_fullbb_bet, 
+			1_maxbuy4d as maxbuy4d_bet, 1_maxbuy3d as maxbuy3d_bet, 1_maxbuy3dd as maxbuy3dd_bet, 
+			1_maxbuy2d as maxbuy2d_bet, 1_maxbuy2dd as maxbuy2dd_bet, 1_maxbuy2dt as maxbuy2dt_bet, 
 			1_disc4d as disc4d_bet, 1_disc3d as disc3d_bet, 1_disc3dd as disc3dd_bet, 
 			1_disc2d as disc2d_bet, 1_disc2dd as disc2dd_bet, 1_disc2dt as disc2dt_bet, 
 			1_win4d as win4d_bet, 1_win3d as win3d_bet, 1_win3dd as win3dd_bet, 
@@ -496,6 +500,8 @@ func FetchAll_MinitPasaran(client_company, pasaran_code, permainan string) (help
 			1_limittotal4d as limittotal4d_bet, 1_limittotal3d as limittotal3d_bet, 1_limittotal3dd as limittotal3dd_bet, 
 			1_limittotal2d as limittotal2d_bet, 1_limittotal2dd as limittotal2dd_bet, 
 			1_limittotal2dt as limittotal2dt_bet, 
+			1_limittotal4d_fullbb as limittotal4d_fullbb_bet, 1_limittotal3d_fullbb as limittotal3d_fullbb_bet, 1_limittotal3dd_fullbb as limittotal3dd_fullbb_bet, 
+			1_limittotal2d_fullbb as limittotal2d_fullbb_bet, 1_limittotal2dd_fullbb as limittotal2dd_fullbb_bet, 1_limittotal2dt_fullbb as limittotal2dt_fullbb_bet, 
 			limitline_4d, limitline_3d, limitline_3dd, limitline_2d, limitline_2dd, limitline_2dt, bbfs 
 			FROM ` + config.DB_tbl_mst_company_game_pasaran + `  
 			WHERE idcompany = ? 
@@ -507,25 +513,31 @@ func FetchAll_MinitPasaran(client_company, pasaran_code, permainan string) (help
 
 		for rowresult.Next() {
 			var (
-				min_bet, max4d_bet, max3d_bet, max3dd_bet, max2d_bet, max2dd_bet, max2dt_bet                                        float32
-				disc4d_bet, disc3d_bet, disc3dd_bet, disc2d_bet, disc2dd_bet, disc2dt_bet                                           float32
-				win4d_bet, win3d_bet, win3dd_bet, win2d_bet, win2dd_bet, win2dt_bet                                                 float32
-				win4dnodiskon_bet, win3dnodiskon_bet, win3ddnodiskon_bet, win2dnodiskon_bet, win2ddnodiskon_bet, win2dtnodiskon_bet float32
-				win4dbb_kena_bet, win3dbb_kena_bet, win3ddbb_kena_bet, win2dbb_kena_bet, win2ddbb_kena_bet, win2dtbb_kena_bet       float32
-				win4dbb_bet, win3dbb_bet, win3ddbb_bet, win2dbb_bet, win2ddbb_bet, win2dtbb_bet                                     float32
-				limittotal4d_bet, limittotal3d_bet, limittotal3dd_bet, limittotal2d_bet, limittotal2dd_bet, limittotal2dt_bet       float32
-				limitline_4d, limitline_3d, limitline_3dd, limitline_2d, limitline_2dd, limitline_2dt                               uint32
-				bbfs                                                                                                                uint8
+				min_bet, max4d_bet, max3d_bet, max3dd_bet, max2d_bet, max2dd_bet, max2dt_bet                                                                            float32
+				maxbet4d_fullbb_bet, maxbet3d_fullbb_bet, maxbet3dd_fullbb_bet, maxbet2d_fullbb_bet, maxbet2dd_fullbb_bet, maxbet2dt_fullbb_bet                         float32
+				maxbuy4d_bet, maxbuy3d_bet, maxbuy3dd_bet, maxbuy2d_bet, maxbuy2dd_bet, maxbuy2dt_bet                                                                   float32
+				disc4d_bet, disc3d_bet, disc3dd_bet, disc2d_bet, disc2dd_bet, disc2dt_bet                                                                               float32
+				win4d_bet, win3d_bet, win3dd_bet, win2d_bet, win2dd_bet, win2dt_bet                                                                                     float32
+				win4dnodiskon_bet, win3dnodiskon_bet, win3ddnodiskon_bet, win2dnodiskon_bet, win2ddnodiskon_bet, win2dtnodiskon_bet                                     float32
+				win4dbb_kena_bet, win3dbb_kena_bet, win3ddbb_kena_bet, win2dbb_kena_bet, win2ddbb_kena_bet, win2dtbb_kena_bet                                           float32
+				win4dbb_bet, win3dbb_bet, win3ddbb_bet, win2dbb_bet, win2ddbb_bet, win2dtbb_bet                                                                         float32
+				limittotal4d_bet, limittotal3d_bet, limittotal3dd_bet, limittotal2d_bet, limittotal2dd_bet, limittotal2dt_bet                                           float32
+				limittotal4d_fullbb_bet, limittotal3d_fullbb_bet, limittotal3dd_fullbb_bet, limittotal2d_fullbb_bet, limittotal2dd_fullbb_bet, limittotal2dt_fullbb_bet float32
+				limitline_4d, limitline_3d, limitline_3dd, limitline_2d, limitline_2dd, limitline_2dt                                                                   uint32
+				bbfs                                                                                                                                                    uint8
 			)
 
 			err = rowresult.Scan(
 				&min_bet, &max4d_bet, &max3d_bet, &max3dd_bet, &max2d_bet, &max2dd_bet, &max2dt_bet,
+				&maxbet4d_fullbb_bet, &maxbet3d_fullbb_bet, &maxbet3dd_fullbb_bet, &maxbet2d_fullbb_bet, &maxbet2dd_fullbb_bet, &maxbet2dt_fullbb_bet,
+				&maxbuy4d_bet, &maxbuy3d_bet, &maxbuy3dd_bet, &maxbuy2d_bet, &maxbuy2dd_bet, &maxbuy2dt_bet,
 				&disc4d_bet, &disc3d_bet, &disc3dd_bet, &disc2d_bet, &disc2dd_bet, &disc2dt_bet,
 				&win4d_bet, &win3d_bet, &win3dd_bet, &win2d_bet, &win2dd_bet, &win2dt_bet,
 				&win4dnodiskon_bet, &win3dnodiskon_bet, &win3ddnodiskon_bet, &win2dnodiskon_bet, &win2ddnodiskon_bet, &win2dtnodiskon_bet,
 				&win4dbb_kena_bet, &win3dbb_kena_bet, &win3ddbb_kena_bet, &win2dbb_kena_bet, &win2ddbb_kena_bet, &win2dtbb_kena_bet,
 				&win4dbb_bet, &win3dbb_bet, &win3ddbb_bet, &win2dbb_bet, &win2ddbb_bet, &win2dtbb_bet,
 				&limittotal4d_bet, &limittotal3d_bet, &limittotal3dd_bet, &limittotal2d_bet, &limittotal2dd_bet, &limittotal2dt_bet,
+				&limittotal4d_fullbb_bet, &limittotal3d_fullbb_bet, &limittotal3dd_fullbb_bet, &limittotal2d_fullbb_bet, &limittotal2dd_fullbb_bet, &limittotal2dt_fullbb_bet,
 				&limitline_4d, &limitline_3d, &limitline_3dd, &limitline_2d, &limitline_2dd, &limitline_2dt,
 				&bbfs)
 			helpers.ErrorCheck(err)
@@ -536,6 +548,18 @@ func FetchAll_MinitPasaran(client_company, pasaran_code, permainan string) (help
 			obj.Max2d_bet = max2d_bet
 			obj.Max2dd_bet = max2dd_bet
 			obj.Max2dt_bet = max2dt_bet
+			obj.Max4d_fullbb_bet = maxbet4d_fullbb_bet
+			obj.Max3d_fullbb_bet = maxbet3d_fullbb_bet
+			obj.Max3dd_fullbb_bet = maxbet3dd_fullbb_bet
+			obj.Max2d_fullbb_bet = maxbet2d_fullbb_bet
+			obj.Max2dd_fullbb_bet = maxbet2dd_fullbb_bet
+			obj.Max2dt_fullbb_bet = maxbet2dt_fullbb_bet
+			obj.Max4d_buy = maxbuy4d_bet
+			obj.Max3d_buy = maxbuy3d_bet
+			obj.Max3dd_buy = maxbuy3dd_bet
+			obj.Max2d_buy = maxbuy2d_bet
+			obj.Max2dd_buy = maxbuy2dd_bet
+			obj.Max2dt_buy = maxbuy2dt_bet
 			obj.Disc4d_bet = disc4d_bet
 			obj.Disc3d_bet = disc3d_bet
 			obj.Disc3dd_bet = disc3dd_bet
@@ -572,6 +596,12 @@ func FetchAll_MinitPasaran(client_company, pasaran_code, permainan string) (help
 			obj.Limittotal2d_bet = limittotal2d_bet
 			obj.Limittotal2dd_bet = limittotal2dd_bet
 			obj.Limittotal2dt_bet = limittotal2dt_bet
+			obj.Limittotal4d_fullbb_bet = limittotal4d_fullbb_bet
+			obj.Limittotal3d_fullbb_bet = limittotal3d_fullbb_bet
+			obj.Limittotal3dd_fullbb_bet = limittotal3dd_fullbb_bet
+			obj.Limittotal2d_fullbb_bet = limittotal2d_fullbb_bet
+			obj.Limittotal2dd_fullbb_bet = limittotal2dd_fullbb_bet
+			obj.Limittotal2dt_fullbb_bet = limittotal2dt_fullbb_bet
 			obj.Limitline_4d = limitline_4d
 			obj.Limitline_3d = limitline_3d
 			obj.Limitline_3dd = limitline_3dd
@@ -603,21 +633,25 @@ func FetchAll_MinitPasaran(client_company, pasaran_code, permainan string) (help
 		sqlresult := `SELECT
 			2_minbet as min_bet_colokbebas,
 			2_maxbet as max_bet_colokbebas,
+			2_maxbuy as max_buy_colokbebas,
 			2_disc as disc_bet_colokbebas,
 			2_win as win_bet_colokbebas, 2_limitotal as limittotal_bet_colokbebas,
 			3_minbet as min_bet_colokmacau,
 			3_maxbet as max_bet_colokmacau,
+			3_maxbuy as max_buy_colokmacau,
 			3_disc as disc_bet_colokmacau,
 			3_win2digit as win_bet_colokmacau,
 			3_win3digit as win3_bet_colokmacau,
 			3_win4digit as win4_bet_colokmacau, 3_limittotal as limittotal_bet_colokmacau,
 			4_minbet as min_bet_coloknaga,
 			4_maxbet as max_bet_coloknaga,
+			4_maxbuy as max_buy_coloknaga,
 			4_disc as disc_bet_coloknaga,
 			4_win3digit as win_bet_coloknaga,
 			4_win4digit as win4_bet_coloknaga, 4_limittotal as limittotal_bet_coloknaga,
 			5_minbet as min_bet_colokjitu,
 			5_maxbet as max_bet_colokjitu,
+			5_maxbuy as max_buy_colokjitu,
 			5_desic as disc_bet_colokjitu,
 			5_winas as winas_bet_colokjitu,
 			5_winkop as winkop_bet_colokjitu,
@@ -633,26 +667,28 @@ func FetchAll_MinitPasaran(client_company, pasaran_code, permainan string) (help
 		helpers.ErrorCheck(err)
 		for rowresult.Next() {
 			var (
-				min_bet_colokbebas, max_bet_colokbebas, disc_bet_colokbebas, win_bet_colokbebas, limittotal_bet_colokbebas                                                                    float32
-				min_bet_colokmacau, max_bet_colokmacau, disc_bet_colokmacau, win_bet_colokmacau, win3_bet_colokmacau, win4_bet_colokmacau, limittotal_bet_colokmacau                          float32
-				min_bet_coloknaga, max_bet_coloknaga, disc_bet_coloknaga, win_bet_coloknaga, win4_bet_coloknaga, limittotal_bet_coloknaga                                                     float32
-				min_bet_colokjitu, max_bet_colokjitu, disc_bet_colokjitu, winas_bet_colokjitu, winkop_bet_colokjitu, winkepala_bet_colokjitu, winekor_bet_colokjitu, limittotal_bet_colokjitu float32
+				min_bet_colokbebas, max_bet_colokbebas, max_buy_colokbebas, disc_bet_colokbebas, win_bet_colokbebas, limittotal_bet_colokbebas                                                                   float32
+				min_bet_colokmacau, max_bet_colokmacau, max_buy_colokmacau, disc_bet_colokmacau, win_bet_colokmacau, win3_bet_colokmacau, win4_bet_colokmacau, limittotal_bet_colokmacau                         float32
+				min_bet_coloknaga, max_bet_coloknaga, max_buy_coloknaga, disc_bet_coloknaga, win_bet_coloknaga, win4_bet_coloknaga, limittotal_bet_coloknaga                                                     float32
+				min_bet_colokjitu, max_bet_colokjitu, max_buy_colokjitu, disc_bet_colokjitu, winas_bet_colokjitu, winkop_bet_colokjitu, winkepala_bet_colokjitu, winekor_bet_colokjitu, limittotal_bet_colokjitu float32
 			)
 
 			err = rowresult.Scan(
-				&min_bet_colokbebas, &max_bet_colokbebas, &disc_bet_colokbebas, &win_bet_colokbebas, &limittotal_bet_colokbebas,
-				&min_bet_colokmacau, &max_bet_colokmacau, &disc_bet_colokmacau, &win_bet_colokmacau, &win3_bet_colokmacau, &win4_bet_colokmacau, &limittotal_bet_colokmacau,
-				&min_bet_coloknaga, &max_bet_coloknaga, &disc_bet_coloknaga, &win_bet_coloknaga, &win4_bet_coloknaga, &limittotal_bet_coloknaga,
-				&min_bet_colokjitu, &max_bet_colokjitu, &disc_bet_colokjitu, &winas_bet_colokjitu, &winkop_bet_colokjitu,
+				&min_bet_colokbebas, &max_bet_colokbebas, &max_buy_colokbebas, &disc_bet_colokbebas, &win_bet_colokbebas, &limittotal_bet_colokbebas,
+				&min_bet_colokmacau, &max_bet_colokmacau, &max_buy_colokmacau, &disc_bet_colokmacau, &win_bet_colokmacau, &win3_bet_colokmacau, &win4_bet_colokmacau, &limittotal_bet_colokmacau,
+				&min_bet_coloknaga, &max_bet_coloknaga, &max_buy_coloknaga, &disc_bet_coloknaga, &win_bet_coloknaga, &win4_bet_coloknaga, &limittotal_bet_coloknaga,
+				&min_bet_colokjitu, &max_bet_colokjitu, &max_buy_colokjitu, &disc_bet_colokjitu, &winas_bet_colokjitu, &winkop_bet_colokjitu,
 				&winkepala_bet_colokjitu, &winekor_bet_colokjitu, &limittotal_bet_colokjitu)
 			helpers.ErrorCheck(err)
 			obj.Min_bet_colokbebas = min_bet_colokbebas
 			obj.Max_bet_colokbebas = max_bet_colokbebas
+			obj.Max_buy_colokbebas = max_buy_colokbebas
 			obj.Disc_bet_colokbebas = disc_bet_colokbebas
 			obj.Win_bet_colokbebas = win_bet_colokbebas
 			obj.Limittotal_bet_colokbebas = limittotal_bet_colokbebas
 			obj.Min_bet_colokmacau = min_bet_colokmacau
 			obj.Max_bet_colokmacau = max_bet_colokmacau
+			obj.Max_buy_colokmacau = max_buy_colokmacau
 			obj.Disc_bet_colokmacau = disc_bet_colokmacau
 			obj.Win_bet_colokmacau = win_bet_colokmacau
 			obj.Win3_bet_colokmacau = win3_bet_colokmacau
@@ -660,12 +696,14 @@ func FetchAll_MinitPasaran(client_company, pasaran_code, permainan string) (help
 			obj.Limittotal_bet_colokmacau = limittotal_bet_colokmacau
 			obj.Min_bet_coloknaga = min_bet_coloknaga
 			obj.Max_bet_coloknaga = max_bet_coloknaga
+			obj.Max_buy_coloknaga = max_buy_coloknaga
 			obj.Disc_bet_coloknaga = disc_bet_coloknaga
 			obj.Win_bet_coloknaga = win_bet_coloknaga
 			obj.Win4_bet_coloknaga = win4_bet_coloknaga
 			obj.Limittotal_bet_coloknaga = limittotal_bet_coloknaga
 			obj.Min_bet_colokjitu = min_bet_colokjitu
 			obj.Max_bet_colokjitu = max_bet_colokjitu
+			obj.Max_buy_colokjitu = max_buy_colokjitu
 			obj.Disc_bet_colokjitu = disc_bet_colokjitu
 			obj.Winas_bet_colokjitu = winas_bet_colokjitu
 			obj.Winkop_bet_colokjitu = winkop_bet_colokjitu
@@ -695,6 +733,7 @@ func FetchAll_MinitPasaran(client_company, pasaran_code, permainan string) (help
 		sqlresult := `SELECT
 			6_minbet as min_bet_5050umum,
 			6_maxbet as max_bet_5050umum,
+			6_maxbuy as max_buy_5050umum,
 			6_keibesar as keibesar_bet_5050umum,
 			6_keikecil as keikecil_bet_5050umum, 
 			6_keigenap as keigenap_bet_5050umum,
@@ -710,6 +749,7 @@ func FetchAll_MinitPasaran(client_company, pasaran_code, permainan string) (help
 			6_limittotal as limittotal_bet_5050umum,
 			7_minbet as min_bet_5050special,
 			7_maxbet as max_bet_5050special,
+			7_maxbuy as max_buy_5050special,
 			7_keiasganjil as keiasganjil_bet_5050special,
 			7_keiasgenap as keiasgenap_bet_5050special,
 			7_keiasbesar as keiasbesar_bet_5050special,
@@ -745,6 +785,7 @@ func FetchAll_MinitPasaran(client_company, pasaran_code, permainan string) (help
 			7_limittotal as limittotal_bet_5050special,
 			8_minbet as min_bet_5050kombinasi,
 			8_maxbet as max_bet_5050kombinasi,
+			8_maxbuy as max_buy_5050kombinasi,
 			8_belakangkeimono as kei_belakangmono_bet_5050kombinasi,
 			8_belakangkeistereo as kei_belakangstereo_bet_5050kombinasi,
 			8_belakangkeikembang as kei_belakangkembang_bet_5050kombinasi,
@@ -786,10 +827,10 @@ func FetchAll_MinitPasaran(client_company, pasaran_code, permainan string) (help
 		helpers.ErrorCheck(err)
 		for rowresult.Next() {
 			var (
-				min_bet_5050umum, max_bet_5050umum                                                                                                                                                                              float32
+				min_bet_5050umum, max_bet_5050umum, max_buy_5050umum                                                                                                                                                            float32
 				keibesar_bet_5050umum, keikecil_bet_5050umum, keigenap_bet_5050umum, keiganjil_bet_5050umum, keitengah_bet_5050umum, keitepi_bet_5050umum                                                                       float32
 				discbesar_bet_5050umum, disckecil_bet_5050umum, discgenap_bet_5050umum, discganjil_bet_5050umum, disctengah_bet_5050umum, disctepi_bet_5050umum, limittotal_bet_5050umum                                        float32
-				min_bet_5050special, max_bet_5050special                                                                                                                                                                        float32
+				min_bet_5050special, max_bet_5050special, max_buy_5050special                                                                                                                                                   float32
 				keiasganjil_bet_5050special, keiasgenap_bet_5050special, keiasbesar_bet_5050special, keiaskecil_bet_5050special                                                                                                 float32
 				keikopganjil_bet_5050special, keikopgenap_bet_5050special, keikopbesar_bet_5050special, keikopkecil_bet_5050special                                                                                             float32
 				keikepalaganjil_bet_5050special, keikepalagenap_bet_5050special, keikepalabesar_bet_5050special, keikepalakecil_bet_5050special                                                                                 float32
@@ -798,7 +839,7 @@ func FetchAll_MinitPasaran(client_company, pasaran_code, permainan string) (help
 				disckopganjil_bet_5050special, disckopgenap_bet_5050special, disckopbesar_bet_5050special, disckopkecil_bet_5050special                                                                                         float32
 				disckepalaganjil_bet_5050special, disckepalagenap_bet_5050special, disckepalabesar_bet_5050special, disckepalakecil_bet_5050special                                                                             float32
 				discekorganjil_bet_5050special, discekorgenap_bet_5050special, discekorbesar_bet_5050special, discekorkecil_bet_5050special, limittotal_bet_5050special                                                         float32
-				min_bet_5050kombinasi, max_bet_5050kombinasi                                                                                                                                                                    float32
+				min_bet_5050kombinasi, max_bet_5050kombinasi, max_buy_5050kombinasi                                                                                                                                             float32
 				kei_belakangmono_bet_5050kombinasi, kei_belakangstereo_bet_5050kombinasi, kei_belakangkembang_bet_5050kombinasi, kei_belakangkempis_bet_5050kombinasi, kei_belakangkembar_bet_5050kombinasi                     float32
 				kei_tengahmono_bet_5050kombinasi, kei_tengahstereo_bet_5050kombinasi, kei_tengahkembang_bet_5050kombinasi, kei_tengahkempis_bet_5050kombinasi, kei_tengahkembar_bet_5050kombinasi                               float32
 				kei_depanmono_bet_5050kombinasi, kei_depanstereo_bet_5050kombinasi, kei_depankembang_bet_5050kombinasi, kei_depankempis_bet_5050kombinasi, kei_depankembar_bet_5050kombinasi                                    float32
@@ -808,10 +849,10 @@ func FetchAll_MinitPasaran(client_company, pasaran_code, permainan string) (help
 			)
 
 			err = rowresult.Scan(
-				&min_bet_5050umum, &max_bet_5050umum,
+				&min_bet_5050umum, &max_bet_5050umum, &max_buy_5050umum,
 				&keibesar_bet_5050umum, &keikecil_bet_5050umum, &keigenap_bet_5050umum, &keiganjil_bet_5050umum, &keitengah_bet_5050umum, &keitepi_bet_5050umum,
 				&discbesar_bet_5050umum, &disckecil_bet_5050umum, &discgenap_bet_5050umum, &discganjil_bet_5050umum, &disctengah_bet_5050umum, &disctepi_bet_5050umum, &limittotal_bet_5050umum,
-				&min_bet_5050special, &max_bet_5050special,
+				&min_bet_5050special, &max_bet_5050special, &max_buy_5050special,
 				&keiasganjil_bet_5050special, &keiasgenap_bet_5050special, &keiasbesar_bet_5050special, &keiaskecil_bet_5050special,
 				&keikopganjil_bet_5050special, &keikopgenap_bet_5050special, &keikopbesar_bet_5050special, &keikopkecil_bet_5050special,
 				&keikepalaganjil_bet_5050special, &keikepalagenap_bet_5050special, &keikepalabesar_bet_5050special, &keikepalakecil_bet_5050special,
@@ -820,7 +861,7 @@ func FetchAll_MinitPasaran(client_company, pasaran_code, permainan string) (help
 				&disckopganjil_bet_5050special, &disckopgenap_bet_5050special, &disckopbesar_bet_5050special, &disckopkecil_bet_5050special,
 				&disckepalaganjil_bet_5050special, &disckepalagenap_bet_5050special, &disckepalabesar_bet_5050special, &disckepalakecil_bet_5050special,
 				&discekorganjil_bet_5050special, &discekorgenap_bet_5050special, &discekorbesar_bet_5050special, &discekorkecil_bet_5050special, &limittotal_bet_5050special,
-				&min_bet_5050kombinasi, &max_bet_5050kombinasi,
+				&min_bet_5050kombinasi, &max_bet_5050kombinasi, &max_buy_5050kombinasi,
 				&kei_belakangmono_bet_5050kombinasi, &kei_belakangstereo_bet_5050kombinasi, &kei_belakangkembang_bet_5050kombinasi, &kei_belakangkempis_bet_5050kombinasi, &kei_belakangkembar_bet_5050kombinasi,
 				&kei_tengahmono_bet_5050kombinasi, &kei_tengahstereo_bet_5050kombinasi, &kei_tengahkembang_bet_5050kombinasi, &kei_tengahkempis_bet_5050kombinasi, &kei_tengahkembar_bet_5050kombinasi,
 				&kei_depanmono_bet_5050kombinasi, &kei_depanstereo_bet_5050kombinasi, &kei_depankembang_bet_5050kombinasi, &kei_depankempis_bet_5050kombinasi, &kei_depankembar_bet_5050kombinasi,
@@ -831,6 +872,7 @@ func FetchAll_MinitPasaran(client_company, pasaran_code, permainan string) (help
 			helpers.ErrorCheck(err)
 			obj.Min_bet_5050umum = min_bet_5050umum
 			obj.Max_bet_5050umum = max_bet_5050umum
+			obj.Max_buy_5050umum = max_buy_5050umum
 			obj.Keibesar_bet_5050umum = keibesar_bet_5050umum
 			obj.Keikecil_bet_5050umum = keikecil_bet_5050umum
 			obj.Keigenap_bet_5050umum = keigenap_bet_5050umum
@@ -847,6 +889,7 @@ func FetchAll_MinitPasaran(client_company, pasaran_code, permainan string) (help
 
 			obj.Min_bet_5050special = min_bet_5050special
 			obj.Max_bet_5050special = max_bet_5050special
+			obj.Max_buy_5050special = max_buy_5050special
 			obj.Keiasganjil_bet_5050special = keiasganjil_bet_5050special
 			obj.Keiasgenap_bet_5050special = keiasgenap_bet_5050special
 			obj.Keiasbesar_bet_5050special = keiasbesar_bet_5050special
@@ -882,6 +925,7 @@ func FetchAll_MinitPasaran(client_company, pasaran_code, permainan string) (help
 			obj.Limittotal_bet_5050special = limittotal_bet_5050special
 			obj.Min_bet_5050kombinasi = min_bet_5050kombinasi
 			obj.Max_bet_5050kombinasi = max_bet_5050kombinasi
+			obj.Max_buy_5050kombinasi = max_buy_5050kombinasi
 			obj.Kei_belakangmono_bet_5050kombinasi = kei_belakangmono_bet_5050kombinasi
 			obj.Kei_belakangstereo_bet_5050kombinasi = kei_belakangstereo_bet_5050kombinasi
 			obj.Kei_belakangkembang_bet_5050kombinasi = kei_belakangkembang_bet_5050kombinasi
@@ -936,6 +980,7 @@ func FetchAll_MinitPasaran(client_company, pasaran_code, permainan string) (help
 		sqlresult := `SELECT 
 		9_minbet as min_bet, 
 		9_maxbet as max_bet, 
+		9_maxbuy as max_buy, 
 		9_win as win_bet, 
 		9_discount as diskon_bet, 
 		9_limittotal as limit_total 
@@ -949,13 +994,14 @@ func FetchAll_MinitPasaran(client_company, pasaran_code, permainan string) (help
 		helpers.ErrorCheck(err)
 		for rowresult.Next() {
 			var (
-				min_bet, max_bet, win_bet, diskon_bet, limit_total float32
+				min_bet, max_bet, max_buy, win_bet, diskon_bet, limit_total float32
 			)
 
-			err = rowresult.Scan(&min_bet, &max_bet, &win_bet, &diskon_bet, &limit_total)
+			err = rowresult.Scan(&min_bet, &max_bet, &max_buy, &win_bet, &diskon_bet, &limit_total)
 			helpers.ErrorCheck(err)
 			obj.Min_bet = min_bet
 			obj.Max_bet = max_bet
+			obj.Max_buy = max_buy
 			obj.Win_bet = win_bet
 			obj.Diskon_bet = diskon_bet
 			obj.Limit_total = limit_total
@@ -982,6 +1028,7 @@ func FetchAll_MinitPasaran(client_company, pasaran_code, permainan string) (help
 		sqlresult := `SELECT 
 		10_minbet as min_bet, 
 		10_maxbet as max_bet, 
+		10_maxbuy as max_buy, 
 		10_keibesar as kei_besar_bet, 
 		10_keikecil as kei_kecil_bet, 
 		10_keigenap as kei_genap_bet, 
@@ -1001,17 +1048,18 @@ func FetchAll_MinitPasaran(client_company, pasaran_code, permainan string) (help
 		helpers.ErrorCheck(err)
 		for rowresult.Next() {
 			var (
-				min_bet, max_bet, kei_besar_bet, kei_kecil_bet, kei_genap_bet, kei_ganjil_bet float32
-				disc_besar_bet, disc_kecil_bet, disc_genap_bet, disc_ganjil_bet, limit_total  float32
+				min_bet, max_bet, max_buy, kei_besar_bet, kei_kecil_bet, kei_genap_bet, kei_ganjil_bet float32
+				disc_besar_bet, disc_kecil_bet, disc_genap_bet, disc_ganjil_bet, limit_total           float32
 			)
 
 			err = rowresult.Scan(
-				&min_bet, &max_bet, &kei_besar_bet, &kei_kecil_bet, &kei_genap_bet,
+				&min_bet, &max_bet, &max_buy, &kei_besar_bet, &kei_kecil_bet, &kei_genap_bet,
 				&kei_ganjil_bet, &disc_besar_bet, &disc_kecil_bet, &disc_genap_bet, &disc_ganjil_bet,
 				&limit_total)
 			helpers.ErrorCheck(err)
 			obj.Min_bet = min_bet
 			obj.Max_bet = max_bet
+			obj.Max_buy = max_buy
 			obj.Kei_besar_bet = kei_besar_bet
 			obj.Kei_kecil_bet = kei_kecil_bet
 			obj.Kei_genap_bet = kei_genap_bet
@@ -1044,6 +1092,7 @@ func FetchAll_MinitPasaran(client_company, pasaran_code, permainan string) (help
 		sqlresult := `SELECT 
 			11_minbet as min_bet, 
 			11_maxbet as max_bet, 
+			11_maxbuy as max_buy, 
 			11_win as win_bet, 
 			11_disc as diskon_bet, 
 			11_limittotal as limit_total 
@@ -1057,13 +1106,14 @@ func FetchAll_MinitPasaran(client_company, pasaran_code, permainan string) (help
 		helpers.ErrorCheck(err)
 		for rowresult.Next() {
 			var (
-				min_bet, max_bet, win_bet, diskon_bet, limit_total float32
+				min_bet, max_bet, max_buy, win_bet, diskon_bet, limit_total float32
 			)
 
-			err = rowresult.Scan(&min_bet, &max_bet, &win_bet, &diskon_bet, &limit_total)
+			err = rowresult.Scan(&min_bet, &max_bet, &max_buy, &win_bet, &diskon_bet, &limit_total)
 			helpers.ErrorCheck(err)
 			obj.Min_bet = min_bet
 			obj.Max_bet = max_bet
+			obj.Max_buy = max_buy
 			obj.Win_bet = win_bet
 			obj.Diskon_bet = diskon_bet
 			obj.Limit_total = limit_total

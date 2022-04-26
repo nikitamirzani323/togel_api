@@ -20,6 +20,7 @@ func Init() *fiber.App {
 	app := fiber.New(fiber.Config{
 		IdleTimeout: idleTimeout,
 	})
+
 	app.Use(logger.New(logger.Config{
 		Next: func(c *fiber.Ctx) bool {
 			return c.Path() == "/"
