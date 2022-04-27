@@ -1151,10 +1151,17 @@ func Fetch_LimitTransaksiPasaran432(client_username, client_company, tipe_game s
 	total2dd := 0
 	total2dt := 0
 
+	total4d_sum := 0
+	total3d_sum := 0
+	total3dd_sum := 0
+	total2d_sum := 0
+	total2dd_sum := 0
+	total2dt_sum := 0
+
 	_, _, view_client := Get_mappingdatabase(client_company)
 
 	sql := `SELECT 
-		typegame  
+		typegame, bet, diskon, kei  
 		FROM ` + view_client + `  
 		WHERE idcompany = ? 
 		AND username = ?
@@ -1162,32 +1169,43 @@ func Fetch_LimitTransaksiPasaran432(client_username, client_company, tipe_game s
 	`
 	row, err := con.QueryContext(ctx, sql, client_company, client_username, invoice)
 	defer row.Close()
-
 	helpers.ErrorCheck(err)
 	for row.Next() {
 		var (
-			typegame string
+			typegame          string
+			bet_db            int
+			diskon_db, kei_db float64
 		)
-		err = row.Scan(&typegame)
+		err = row.Scan(&typegame, &bet_db, &diskon_db, &kei_db)
 		helpers.ErrorCheck(err)
+
 		if tipe_game == "4-3-2" {
+			diskonvalue := math.Ceil(float64(bet_db) * diskon_db)
+			keivalue := math.Ceil(float64(bet_db) * kei_db)
+			bayar := bet_db - int(diskonvalue) - int(keivalue)
 			if typegame == "4D" {
 				total4d = total4d + 1
+				total4d_sum = total4d_sum + int(bayar)
 			}
 			if typegame == "3D" {
 				total3d = total3d + 1
+				total3d_sum = total3d_sum + int(bayar)
 			}
 			if typegame == "3DD" {
 				total3dd = total3dd + 1
+				total3dd_sum = total3dd_sum + int(bayar)
 			}
 			if typegame == "2D" {
 				total2d = total2d + 1
+				total2d_sum = total2d_sum + int(bayar)
 			}
 			if typegame == "2DD" {
 				total2dd = total2dd + 1
+				total2dd_sum = total2dd_sum + int(bayar)
 			}
 			if typegame == "2DT" {
 				total2dt = total2dt + 1
+				total2dt_sum = total2dt_sum + int(bayar)
 			}
 		}
 	}
@@ -1197,6 +1215,12 @@ func Fetch_LimitTransaksiPasaran432(client_username, client_company, tipe_game s
 	obj.Total_2d = total2d
 	obj.Total_2dd = total2dd
 	obj.Total_2dt = total2dt
+	obj.Total_4d_sum = total4d_sum
+	obj.Total_3d_sum = total3d_sum
+	obj.Total_3dd_sum = total3dd_sum
+	obj.Total_2d_sum = total2d_sum
+	obj.Total_2dd_sum = total2dd_sum
+	obj.Total_2dt_sum = total2dt_sum
 	res.Status = fiber.StatusOK
 	res.Message = "success"
 	res.Record = obj

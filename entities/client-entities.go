@@ -264,12 +264,18 @@ type Model_mpasarantogelShio struct {
 	Limit_total float32 `json:"limit_total"`
 }
 type Model_mpasaranLimit struct {
-	Total_4d  int `json:"total_4d"`
-	Total_3d  int `json:"total_3d"`
-	Total_3dd int `json:"total_3dd"`
-	Total_2d  int `json:"total_2d"`
-	Total_2dd int `json:"total_2dd"`
-	Total_2dt int `json:"total_2dt"`
+	Total_4d      int `json:"total_4d"`
+	Total_3d      int `json:"total_3d"`
+	Total_3dd     int `json:"total_3dd"`
+	Total_2d      int `json:"total_2d"`
+	Total_2dd     int `json:"total_2dd"`
+	Total_2dt     int `json:"total_2dt"`
+	Total_4d_sum  int `json:"total_4d_sum"`
+	Total_3d_sum  int `json:"total_3d_sum"`
+	Total_3dd_sum int `json:"total_3dd_sum"`
+	Total_2d_sum  int `json:"total_2d_sum"`
+	Total_2dd_sum int `json:"total_2dd_sum"`
+	Total_2dt_sum int `json:"total_2dt_sum"`
 }
 type Model_mlistinvoicebet struct {
 	Tanggal   string  `json:"tanggal"`
