@@ -2282,7 +2282,7 @@ func Savetransaksi(client_username, client_company, idtrxkeluaran, idcomppasaran
 			totalbet_all = limit_sum + bet2
 			if limit_global_togel < totalbet_all {
 				flag_save = true
-				msg_nomor += "Nomor ini : " + string(nomor_DD) + ", sudah melebihi LIMIT GLOBAL\n"
+				msg_nomor += "Nomor ini : " + string(nomor_DD) + ", sudah melebihi LIMIT GLOBAL<br>"
 			}
 
 			sqllimittotalsum := `SELECT
@@ -2307,7 +2307,7 @@ func Savetransaksi(client_username, client_company, idtrxkeluaran, idcomppasaran
 			totalbet_all_limit = int(limittotal_sum) + bet2
 			if limit_total_togel < totalbet_all_limit {
 				flag_save = true
-				msg_nomor += "Nomor ini : " + string(nomor_DD) + ", sudah melebihi LIMIT TOTAL\n"
+				msg_nomor += "Nomor ini : " + string(nomor_DD) + ", sudah melebihi LIMIT TOTAL<br>"
 			}
 
 			log.Printf("Limit GLOBAL : %d", limit_sum)
