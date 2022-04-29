@@ -2055,6 +2055,21 @@ func Savetransaksi(client_username, client_company, idtrxkeluaran, idcomppasaran
 	limit_togel2d := 0
 	limit_togel2dd := 0
 	limit_togel2dt := 0
+
+	limittotal_togel4d_fullbb := 0
+	limittotal_togel3d_fullbb := 0
+	limittotal_togel3dd_fullbb := 0
+	limittotal_togel2d_fullbb := 0
+	limittotal_togel2dd_fullbb := 0
+	limittotal_togel2dt_fullbb := 0
+
+	limit_togel4d_fullbb := 0
+	limit_togel3d_fullbb := 0
+	limit_togel3dd_fullbb := 0
+	limit_togel2d_fullbb := 0
+	limit_togel2dd_fullbb := 0
+	limit_togel2dt_fullbb := 0
+
 	limit_togelcolokbebas := 0
 	limit_togelcolokmacau := 0
 	limit_togelcoloknaga := 0
@@ -2076,6 +2091,8 @@ func Savetransaksi(client_username, client_company, idtrxkeluaran, idcomppasaran
 		idpasarantogel, 
 		limittotal_togel_4d, limittotal_togel_3d, limittotal_togel_3dd, limittotal_togel_2d, limittotal_togel_2dd, limittotal_togel_2dt, 
 		limit_togel_4d, limit_togel_3d, limit_togel_3dd, limit_togel_2d, limit_togel_2dd, limit_togel_2dt, 
+		limit_togel_4d_fullbb, limit_togel_3d_fullbb, limit_togel_3dd_fullbb, limit_togel_2d_fullbb, limit_togel_2dd_fullbb, limit_togel_2dt_fullbb, 
+		limittotal_togel_4d_fullbb, limittotal_togel_3d_fullbb, limittotal_togel_3dd_fullbb, limittotal_togel_2d_fullbb, limittotal_togel_2dd_fullbb, limittotal_togel_2dt_fullbb, 
 		limittotal_togel_colokbebas, limit_togel_colokbebas, 
 		limittotal_togel_colokmacau, limit_togel_colokmacau, 
 		limittotal_togel_coloknaga, limit_togel_coloknaga, 
@@ -2097,20 +2114,24 @@ func Savetransaksi(client_username, client_company, idtrxkeluaran, idcomppasaran
 	for row.Next() {
 		nolimit = nolimit + 1
 		var (
-			idpasarantogel_db                                                                                                                                 string
-			limittotal_togel_4d_db, limittotal_togel_3d_db, limittotal_togel_3dd_db, limittotal_togel_2d_db, limit_togeltotal_2dd_db, limittotal_togel_2dt_db float32
-			limit_togel_4d_db, limit_togel_3d_db, limit_togel_3dd_db, limit_togel_2d_db, limit_togel_2dd_db, limit_togel_2dt_db                               float32
-			limittotal_togel_colokbebas_db, limittotal_togel_colokmacau_db, limittotal_togel_coloknaga_db, limittotal_togel_colokjitu_db                      float32
-			limit_togel_colokbebas_db, limit_togel_colokmacau_db, limit_togel_coloknaga_db, limit_togel_colokjitu_db                                          float32
-			limittotal_togel_5050umum_db, limittotal_togel_5050special_db, limittotal_togel_5050kombinasi_db, limittotal_togel_kombinasi_db                   float32
-			limit_togel_5050umum_db, limit_togel_5050special_db, limit_togel_5050kombinasi_db, limit_togel_kombinasi_db                                       float32
-			limittotal_togel_dasar_db, limittotal_togel_shio_db                                                                                               float32
-			limit_togel_dasar_db, limit_togel_shio_db                                                                                                         float32
+			idpasarantogel_db                                                                                                                                                         string
+			limittotal_togel_4d_db, limittotal_togel_3d_db, limittotal_togel_3dd_db, limittotal_togel_2d_db, limit_togeltotal_2dd_db, limittotal_togel_2dt_db                         float32
+			limit_togel_4d_db, limit_togel_3d_db, limit_togel_3dd_db, limit_togel_2d_db, limit_togel_2dd_db, limit_togel_2dt_db                                                       float32
+			limit_togel_4d_fullbb, limit_togel_3d_fullbb, limit_togel_3dd_fullbb, limit_togel_2d_fullbb, limit_togel_2dd_fullbb, limit_togel_2dt_fullbb                               float32
+			limittotal_togel_4d_fullbb, limittotal_togel_3d_fullbb, limittotal_togel_3dd_fullbb, limittotal_togel_2d_fullbb, limittotal_togel_2dd_fullbb, limittotal_togel_2dt_fullbb float32
+			limittotal_togel_colokbebas_db, limittotal_togel_colokmacau_db, limittotal_togel_coloknaga_db, limittotal_togel_colokjitu_db                                              float32
+			limit_togel_colokbebas_db, limit_togel_colokmacau_db, limit_togel_coloknaga_db, limit_togel_colokjitu_db                                                                  float32
+			limittotal_togel_5050umum_db, limittotal_togel_5050special_db, limittotal_togel_5050kombinasi_db, limittotal_togel_kombinasi_db                                           float32
+			limit_togel_5050umum_db, limit_togel_5050special_db, limit_togel_5050kombinasi_db, limit_togel_kombinasi_db                                                               float32
+			limittotal_togel_dasar_db, limittotal_togel_shio_db                                                                                                                       float32
+			limit_togel_dasar_db, limit_togel_shio_db                                                                                                                                 float32
 		)
 		err = row.Scan(
 			&idpasarantogel_db,
 			&limittotal_togel_4d_db, &limittotal_togel_3d_db, &limittotal_togel_3dd_db, &limittotal_togel_2d_db, &limit_togeltotal_2dd_db, &limittotal_togel_2dt_db,
 			&limit_togel_4d_db, &limit_togel_3d_db, &limit_togel_3dd_db, &limit_togel_2d_db, &limit_togel_2dd_db, &limit_togel_2dt_db,
+			&limit_togel_4d_fullbb, &limit_togel_3d_fullbb, &limit_togel_3dd_fullbb, &limit_togel_2d_fullbb, &limit_togel_2dd_fullbb, &limit_togel_2dt_fullbb,
+			&limittotal_togel_4d_fullbb, &limittotal_togel_3d_fullbb, &limittotal_togel_3dd_fullbb, &limittotal_togel_2d_fullbb, &limittotal_togel_2dd_fullbb, &limittotal_togel_2dt_fullbb,
 			&limittotal_togel_colokbebas_db, &limit_togel_colokbebas_db,
 			&limittotal_togel_colokmacau_db, &limit_togel_colokmacau_db,
 			&limittotal_togel_coloknaga_db, &limit_togel_coloknaga_db,
@@ -2135,6 +2156,20 @@ func Savetransaksi(client_username, client_company, idtrxkeluaran, idcomppasaran
 		limit_togel2d = int(limit_togel_2d_db)
 		limit_togel2dd = int(limit_togel_2dd_db)
 		limit_togel2dt = int(limit_togel_2dt_db)
+
+		limittotal_togel4d_fullbb = int(limittotal_togel_4d_fullbb)
+		limittotal_togel3d_fullbb = int(limittotal_togel_3d_fullbb)
+		limittotal_togel3dd_fullbb = int(limittotal_togel_3dd_fullbb)
+		limittotal_togel2d_fullbb = int(limittotal_togel_2d_fullbb)
+		limittotal_togel2dd_fullbb = int(limittotal_togel_2dd_fullbb)
+		limittotal_togel2dt_fullbb = int(limittotal_togel_2dt_fullbb)
+
+		limit_togel4d_fullbb = int(limit_togel_4d_fullbb)
+		limit_togel3d_fullbb = int(limit_togel_3d_fullbb)
+		limit_togel3dd_fullbb = int(limit_togel_3dd_fullbb)
+		limit_togel2d_fullbb = int(limit_togel_2d_fullbb)
+		limit_togel2dd_fullbb = int(limit_togel_2dd_fullbb)
+		limit_togel2dt_fullbb = int(limit_togel_2dt_fullbb)
 
 		limittotal_togelcolokbebas = int(limittotal_togel_colokbebas_db)
 		limittotal_togelcolokmacau = int(limittotal_togel_colokmacau_db)
@@ -2190,28 +2225,58 @@ func Savetransaksi(client_username, client_company, idtrxkeluaran, idcomppasaran
 			switch string(permainan_DD) {
 			case "4D":
 				permainan = "4D/3D/2D"
-				limit_total_togel = limittotal_togel4d
-				limit_global_togel = limit_togel4d
+				if string(tipetoto_DD) == "DISC" {
+					limit_total_togel = limittotal_togel4d
+					limit_global_togel = limit_togel4d
+				} else {
+					limit_total_togel = limittotal_togel4d_fullbb
+					limit_global_togel = limit_togel4d_fullbb
+				}
 			case "3D":
 				permainan = "4D/3D/2D"
-				limit_total_togel = limittotal_togel3d
-				limit_global_togel = limit_togel3d
+				if string(tipetoto_DD) == "DISC" {
+					limit_total_togel = limittotal_togel3d
+					limit_global_togel = limit_togel3d
+				} else {
+					limit_total_togel = limittotal_togel3d_fullbb
+					limit_global_togel = limit_togel3d_fullbb
+				}
 			case "3DD":
 				permainan = "4D/3D/2D"
-				limit_total_togel = limittotal_togel3dd
-				limit_global_togel = limit_togel3dd
+				if string(tipetoto_DD) == "DISC" {
+					limit_total_togel = limittotal_togel3dd
+					limit_global_togel = limit_togel3dd
+				} else {
+					limit_total_togel = limittotal_togel3dd_fullbb
+					limit_global_togel = limit_togel3dd_fullbb
+				}
 			case "2D":
 				permainan = "4D/3D/2D"
-				limit_total_togel = limittotal_togel2d
-				limit_global_togel = limit_togel2d
+				if string(tipetoto_DD) == "DISC" {
+					limit_total_togel = limittotal_togel2d
+					limit_global_togel = limit_togel2d
+				} else {
+					limit_total_togel = limittotal_togel2d_fullbb
+					limit_global_togel = limit_togel2d_fullbb
+				}
 			case "2DD":
 				permainan = "4D/3D/2D"
-				limit_total_togel = limittotal_togel2dd
-				limit_global_togel = limit_togel2dd
+				if string(tipetoto_DD) == "DISC" {
+					limit_total_togel = limittotal_togel2dd
+					limit_global_togel = limit_togel2dd
+				} else {
+					limit_total_togel = limittotal_togel2dd_fullbb
+					limit_global_togel = limit_togel2dd_fullbb
+				}
 			case "2DT":
 				permainan = "4D/3D/2D"
-				limit_total_togel = limittotal_togel2dt
-				limit_global_togel = limit_togel2dt
+				if string(tipetoto_DD) == "DISC" {
+					limit_total_togel = limittotal_togel2dt
+					limit_global_togel = limit_togel2dt
+				} else {
+					limit_total_togel = limittotal_togel2dt_fullbb
+					limit_global_togel = limit_togel2dt_fullbb
+				}
 			case "COLOK_BEBAS":
 				permainan = "COLOK BEBAS"
 				limit_total_togel = limittotal_togelcolokbebas
@@ -2266,10 +2331,11 @@ func Savetransaksi(client_username, client_company, idtrxkeluaran, idcomppasaran
 					FROM ` + view_client_invoice + ` 
 					WHERE idtrxkeluaran = ?
 					AND typegame = ?
-					AND nomortogel = ?
+					AND nomortogel = ? 
+					AND posisitogel = ? 
 				`
 
-			row := con.QueryRowContext(ctx, sqllimitsum, idtrxkeluaran, string(permainan_DD), string(nomor_DD))
+			row := con.QueryRowContext(ctx, sqllimitsum, idtrxkeluaran, string(permainan_DD), string(nomor_DD), string(tipetoto_DD))
 			switch e := row.Scan(&limit_sum); e {
 			case sql.ErrNoRows:
 				log.Println("No rows were returned!")
@@ -2291,10 +2357,11 @@ func Savetransaksi(client_username, client_company, idtrxkeluaran, idcomppasaran
 					WHERE idtrxkeluaran = ?
 					AND typegame = ?
 					AND nomortogel = ? 
-					AND username = ? 
+					AND username = ?  
+					AND posisitogel = ? 
 				`
 
-			row_limit := con.QueryRowContext(ctx, sqllimittotalsum, idtrxkeluaran, string(permainan_DD), string(nomor_DD), client_username)
+			row_limit := con.QueryRowContext(ctx, sqllimittotalsum, idtrxkeluaran, string(permainan_DD), string(nomor_DD), client_username, string(tipetoto_DD))
 			switch e := row_limit.Scan(&limittotal_sum); e {
 			case sql.ErrNoRows:
 				log.Println("No rows were returned!")
@@ -2312,11 +2379,12 @@ func Savetransaksi(client_username, client_company, idtrxkeluaran, idcomppasaran
 
 			log.Printf("Limit GLOBAL : %d", limit_sum)
 			log.Printf("Limit Total : %d", limit_total_togel)
-			log.Printf("Limit Total check number by username : %d", limittotal_sum)
-			log.Printf("Limit Total sum : %d", totalbet_all_limit)
+			log.Printf("Limit Total  check number by username : %d", limittotal_sum)
+			log.Printf("Limit Total  sum : %d", totalbet_all_limit)
 			log.Printf("bet : %d", bet2)
 			log.Printf("FLAG SAVE : %t", flag_save)
 			log.Printf("PERMAINAN : %s", permainan)
+			log.Printf("TIPE : %s", tipetoto_DD)
 
 			if !flag_save { //VALID
 
