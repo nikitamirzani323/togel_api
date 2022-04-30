@@ -1191,90 +1191,62 @@ func Fetch_LimitTransaksiPasaran432(client_username, client_company, tipe_game s
 		)
 		err = row.Scan(&typegame, &bet_db, &diskon_db, &kei_db)
 		helpers.ErrorCheck(err)
-
-		if tipe_game == "4-3-2" {
-			diskonvalue := math.Ceil(float64(bet_db) * diskon_db)
-			keivalue := math.Ceil(float64(bet_db) * kei_db)
-			bayar := bet_db - int(diskonvalue) - int(keivalue)
-			if typegame == "4D" {
-				total4d = total4d + 1
-				total4d_sum = total4d_sum + int(bayar)
-			}
-			if typegame == "3D" {
-				total3d = total3d + 1
-				total3d_sum = total3d_sum + int(bayar)
-			}
-			if typegame == "3DD" {
-				total3dd = total3dd + 1
-				total3dd_sum = total3dd_sum + int(bayar)
-			}
-			if typegame == "2D" {
-				total2d = total2d + 1
-				total2d_sum = total2d_sum + int(bayar)
-			}
-			if typegame == "2DD" {
-				total2dd = total2dd + 1
-				total2dd_sum = total2dd_sum + int(bayar)
-			}
-			if typegame == "2DT" {
-				total2dt = total2dt + 1
-				total2dt_sum = total2dt_sum + int(bayar)
-			}
+		diskonvalue := math.Ceil(float64(bet_db) * diskon_db)
+		keivalue := math.Ceil(float64(bet_db) * kei_db)
+		bayar := bet_db - int(diskonvalue) - int(keivalue)
+		if typegame == "4D" {
+			total4d = total4d + 1
+			total4d_sum = total4d_sum + int(bayar)
 		}
-		if tipe_game == "colok" {
-			diskonvalue := math.Ceil(float64(bet_db) * diskon_db)
-			keivalue := math.Ceil(float64(bet_db) * kei_db)
-			bayar := bet_db - int(diskonvalue) - int(keivalue)
-			if typegame == "COLOK_BEBAS" {
-				total_colokbebas_sum = total_colokbebas_sum + int(bayar)
-			}
-			if typegame == "COLOK_MACAU" {
-				total_colokmacau_sum = total_colokmacau_sum + int(bayar)
-			}
-			if typegame == "COLOK_NAGA" {
-				total_coloknaga_sum = total_coloknaga_sum + int(bayar)
-			}
-			if typegame == "COLOK_JITU" {
-				total_colokjitu_sum = total_colokjitu_sum + int(bayar)
-			}
+		if typegame == "3D" {
+			total3d = total3d + 1
+			total3d_sum = total3d_sum + int(bayar)
 		}
-		if tipe_game == "5050" {
-			diskonvalue := math.Ceil(float64(bet_db) * diskon_db)
-			keivalue := math.Ceil(float64(bet_db) * kei_db)
-			bayar := bet_db - int(diskonvalue) - int(keivalue)
-			if typegame == "50_50_UMUM" {
-				total_5050umum_sum = total_5050umum_sum + int(bayar)
-			}
-			if typegame == "50_50_SPECIAL" {
-				total_5050special_sum = total_5050special_sum + int(bayar)
-			}
-			if typegame == "50_50_KOMBINASI" {
-				total_5050kombinasi_sum = total_5050kombinasi_sum + int(bayar)
-			}
+		if typegame == "3DD" {
+			total3dd = total3dd + 1
+			total3dd_sum = total3dd_sum + int(bayar)
 		}
-		if tipe_game == "macaukombinasi" {
-			diskonvalue := math.Ceil(float64(bet_db) * diskon_db)
-			keivalue := math.Ceil(float64(bet_db) * kei_db)
-			bayar := bet_db - int(diskonvalue) - int(keivalue)
-			if typegame == "MACAU_KOMBINASI" {
-				total_macaukombinasi_sum = total_macaukombinasi_sum + int(bayar)
-			}
+		if typegame == "2D" {
+			total2d = total2d + 1
+			total2d_sum = total2d_sum + int(bayar)
 		}
-		if tipe_game == "dasar" {
-			diskonvalue := math.Ceil(float64(bet_db) * diskon_db)
-			keivalue := math.Ceil(float64(bet_db) * kei_db)
-			bayar := bet_db - int(diskonvalue) - int(keivalue)
-			if typegame == "DASAR" {
-				total_dasar_sum = total_dasar_sum + int(bayar)
-			}
+		if typegame == "2DD" {
+			total2dd = total2dd + 1
+			total2dd_sum = total2dd_sum + int(bayar)
 		}
-		if tipe_game == "shio" {
-			diskonvalue := math.Ceil(float64(bet_db) * diskon_db)
-			keivalue := math.Ceil(float64(bet_db) * kei_db)
-			bayar := bet_db - int(diskonvalue) - int(keivalue)
-			if typegame == "SHIO" {
-				total_shio_sum = total_shio_sum + int(bayar)
-			}
+		if typegame == "2DT" {
+			total2dt = total2dt + 1
+			total2dt_sum = total2dt_sum + int(bayar)
+		}
+		if typegame == "COLOK_BEBAS" {
+			total_colokbebas_sum = total_colokbebas_sum + int(bayar)
+		}
+		if typegame == "COLOK_MACAU" {
+			total_colokmacau_sum = total_colokmacau_sum + int(bayar)
+		}
+		if typegame == "COLOK_NAGA" {
+			total_coloknaga_sum = total_coloknaga_sum + int(bayar)
+		}
+		if typegame == "COLOK_JITU" {
+			total_colokjitu_sum = total_colokjitu_sum + int(bayar)
+		}
+		if typegame == "50_50_UMUM" {
+			total_5050umum_sum = total_5050umum_sum + int(bayar)
+		}
+		if typegame == "50_50_SPECIAL" {
+			total_5050special_sum = total_5050special_sum + int(bayar)
+		}
+		if typegame == "50_50_KOMBINASI" {
+			total_5050kombinasi_sum = total_5050kombinasi_sum + int(bayar)
+		}
+		if typegame == "MACAU_KOMBINASI" {
+			total_macaukombinasi_sum = total_macaukombinasi_sum + int(bayar)
+		}
+		if typegame == "DASAR" {
+			total_dasar_sum = total_dasar_sum + int(bayar)
+		}
+		if typegame == "SHIO" {
+			total_shio_sum = total_shio_sum + int(bayar)
 		}
 	}
 	obj.Total_4d = total4d

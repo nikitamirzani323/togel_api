@@ -1244,8 +1244,7 @@ func Fetch_LimitPasaran432(c *fiber.Ctx) error {
 		fieldlimit_redis + strings.ToLower(client.Client_Company) + "_" +
 			strings.ToLower(client.Client_Username) + "_" +
 			strings.ToLower(client.Pasaran_Code) + "_" +
-			strings.ToLower(client.Pasaran_Periode) + "_" +
-			strings.ToLower(client.Permainan))
+			strings.ToLower(client.Pasaran_Periode))
 	jsonredis := []byte(resultredis)
 	record_RD, _, _, _ := jsonparser.Get(jsonredis, "record")
 
@@ -1309,8 +1308,7 @@ func Fetch_LimitPasaran432(c *fiber.Ctx) error {
 			fieldlimit_redis+strings.ToLower(client.Client_Company)+"_"+
 				strings.ToLower(client.Client_Username)+"_"+
 				strings.ToLower(client.Pasaran_Code)+"_"+
-				strings.ToLower(client.Pasaran_Periode)+"_"+
-				strings.ToLower(client.Permainan), result, 30*time.Minute)
+				strings.ToLower(client.Pasaran_Periode), result, 30*time.Minute)
 		log.Println("LIMIT MYSQL")
 		return c.JSON(result)
 	} else {
@@ -1655,7 +1653,7 @@ func _deleteredisclient(company, idtrxkeluaran, username, pasarancode, pasaranpe
 		fieldlimit_redis + strings.ToLower(company) + "_" +
 			strings.ToLower(username) + "_" +
 			strings.ToLower(pasarancode) + "_" +
-			strings.ToLower(pasaranperiode) + "_4-3-2")
+			strings.ToLower(pasaranperiode))
 	log.Printf("DELETE REDIS LIMIT %d\n", val_limit)
 
 	//AGEN
