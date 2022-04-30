@@ -1158,6 +1158,19 @@ func Fetch_LimitTransaksiPasaran432(client_username, client_company, tipe_game s
 	total2dd_sum := 0
 	total2dt_sum := 0
 
+	total_colokbebas_sum := 0
+	total_coloknaga_sum := 0
+	total_colokmacau_sum := 0
+	total_colokjitu_sum := 0
+
+	total_5050umum_sum := 0
+	total_5050special_sum := 0
+	total_5050kombinasi_sum := 0
+
+	total_macaukombinasi_sum := 0
+	total_dasar_sum := 0
+	total_shio_sum := 0
+
 	_, _, view_client := Get_mappingdatabase(client_company)
 
 	sql := `SELECT 
@@ -1208,6 +1221,61 @@ func Fetch_LimitTransaksiPasaran432(client_username, client_company, tipe_game s
 				total2dt_sum = total2dt_sum + int(bayar)
 			}
 		}
+		if tipe_game == "colok" {
+			diskonvalue := math.Ceil(float64(bet_db) * diskon_db)
+			keivalue := math.Ceil(float64(bet_db) * kei_db)
+			bayar := bet_db - int(diskonvalue) - int(keivalue)
+			if typegame == "COLOK_BEBAS" {
+				total_colokbebas_sum = total_colokbebas_sum + int(bayar)
+			}
+			if typegame == "COLOK_MACAU" {
+				total_colokmacau_sum = total_colokmacau_sum + int(bayar)
+			}
+			if typegame == "COLOK_NAGA" {
+				total_coloknaga_sum = total_coloknaga_sum + int(bayar)
+			}
+			if typegame == "COLOK_JITU" {
+				total_colokjitu_sum = total_colokjitu_sum + int(bayar)
+			}
+		}
+		if tipe_game == "5050" {
+			diskonvalue := math.Ceil(float64(bet_db) * diskon_db)
+			keivalue := math.Ceil(float64(bet_db) * kei_db)
+			bayar := bet_db - int(diskonvalue) - int(keivalue)
+			if typegame == "50_50_UMUM" {
+				total_5050umum_sum = total_5050umum_sum + int(bayar)
+			}
+			if typegame == "50_50_SPECIAL" {
+				total_5050special_sum = total_5050special_sum + int(bayar)
+			}
+			if typegame == "50_50_KOMBINASI" {
+				total_5050kombinasi_sum = total_5050kombinasi_sum + int(bayar)
+			}
+		}
+		if tipe_game == "macaukombinasi" {
+			diskonvalue := math.Ceil(float64(bet_db) * diskon_db)
+			keivalue := math.Ceil(float64(bet_db) * kei_db)
+			bayar := bet_db - int(diskonvalue) - int(keivalue)
+			if typegame == "MACAU_KOMBINASI" {
+				total_macaukombinasi_sum = total_macaukombinasi_sum + int(bayar)
+			}
+		}
+		if tipe_game == "dasar" {
+			diskonvalue := math.Ceil(float64(bet_db) * diskon_db)
+			keivalue := math.Ceil(float64(bet_db) * kei_db)
+			bayar := bet_db - int(diskonvalue) - int(keivalue)
+			if typegame == "DASAR" {
+				total_dasar_sum = total_dasar_sum + int(bayar)
+			}
+		}
+		if tipe_game == "shio" {
+			diskonvalue := math.Ceil(float64(bet_db) * diskon_db)
+			keivalue := math.Ceil(float64(bet_db) * kei_db)
+			bayar := bet_db - int(diskonvalue) - int(keivalue)
+			if typegame == "SHIO" {
+				total_shio_sum = total_shio_sum + int(bayar)
+			}
+		}
 	}
 	obj.Total_4d = total4d
 	obj.Total_3d = total3d
@@ -1221,6 +1289,16 @@ func Fetch_LimitTransaksiPasaran432(client_username, client_company, tipe_game s
 	obj.Total_2d_sum = total2d_sum
 	obj.Total_2dd_sum = total2dd_sum
 	obj.Total_2dt_sum = total2dt_sum
+	obj.Total_colokbebas_sum = total_colokbebas_sum
+	obj.Total_colokmacau_sum = total_colokmacau_sum
+	obj.Total_coloknaga_sum = total_coloknaga_sum
+	obj.Total_colokjitu_sum = total_colokjitu_sum
+	obj.Total_5050umum_sum = total_5050umum_sum
+	obj.Total_5050special_sum = total_5050special_sum
+	obj.Total_5050kombinasi_sum = total_5050kombinasi_sum
+	obj.Total_macaukombinasi_sum = total_macaukombinasi_sum
+	obj.Total_dasar_sum = total_dasar_sum
+	obj.Total_shio_sum = total_shio_sum
 	res.Status = fiber.StatusOK
 	res.Message = "success"
 	res.Record = obj

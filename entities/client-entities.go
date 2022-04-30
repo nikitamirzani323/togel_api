@@ -264,18 +264,28 @@ type Model_mpasarantogelShio struct {
 	Limit_total float32 `json:"limit_total"`
 }
 type Model_mpasaranLimit struct {
-	Total_4d      int `json:"total_4d"`
-	Total_3d      int `json:"total_3d"`
-	Total_3dd     int `json:"total_3dd"`
-	Total_2d      int `json:"total_2d"`
-	Total_2dd     int `json:"total_2dd"`
-	Total_2dt     int `json:"total_2dt"`
-	Total_4d_sum  int `json:"total_4d_sum"`
-	Total_3d_sum  int `json:"total_3d_sum"`
-	Total_3dd_sum int `json:"total_3dd_sum"`
-	Total_2d_sum  int `json:"total_2d_sum"`
-	Total_2dd_sum int `json:"total_2dd_sum"`
-	Total_2dt_sum int `json:"total_2dt_sum"`
+	Total_4d                 int `json:"total_4d"`
+	Total_3d                 int `json:"total_3d"`
+	Total_3dd                int `json:"total_3dd"`
+	Total_2d                 int `json:"total_2d"`
+	Total_2dd                int `json:"total_2dd"`
+	Total_2dt                int `json:"total_2dt"`
+	Total_4d_sum             int `json:"total_4d_sum"`
+	Total_3d_sum             int `json:"total_3d_sum"`
+	Total_3dd_sum            int `json:"total_3dd_sum"`
+	Total_2d_sum             int `json:"total_2d_sum"`
+	Total_2dd_sum            int `json:"total_2dd_sum"`
+	Total_2dt_sum            int `json:"total_2dt_sum"`
+	Total_colokbebas_sum     int `json:"total_colokbebas_sum"`
+	Total_colokmacau_sum     int `json:"total_colokmacau_sum"`
+	Total_coloknaga_sum      int `json:"total_coloknaga_sum"`
+	Total_colokjitu_sum      int `json:"total_colokjitu_sum"`
+	Total_5050umum_sum       int `json:"total_5050umum_sum"`
+	Total_5050special_sum    int `json:"total_5050special_sum"`
+	Total_5050kombinasi_sum  int `json:"total_5050kombinasi_sum"`
+	Total_macaukombinasi_sum int `json:"total_macaukombinasi_sum"`
+	Total_dasar_sum          int `json:"total_dasar_sum"`
+	Total_shio_sum           int `json:"total_shio_sum"`
 }
 type Model_mlistinvoicebet struct {
 	Tanggal   string  `json:"tanggal"`
