@@ -1150,6 +1150,16 @@ func Fetch_LimitTransaksiPasaran432(client_username, client_company, tipe_game s
 	total2d := 0
 	total2dd := 0
 	total2dt := 0
+	total_colokbebas := 0
+	total_coloknaga := 0
+	total_colokmacau := 0
+	total_colokjitu := 0
+	total_5050umum := 0
+	total_5050special := 0
+	total_5050kombinasi := 0
+	total_macaukombinasi := 0
+	total_dasar := 0
+	total_shio := 0
 
 	total4d_sum := 0
 	total3d_sum := 0
@@ -1219,33 +1229,43 @@ func Fetch_LimitTransaksiPasaran432(client_username, client_company, tipe_game s
 			total2dt_sum = total2dt_sum + int(bayar)
 		}
 		if typegame == "COLOK_BEBAS" {
+			total_colokbebas = total_colokbebas + 1
 			total_colokbebas_sum = total_colokbebas_sum + int(bayar)
 		}
 		if typegame == "COLOK_MACAU" {
+			total_colokmacau = total_colokmacau + 1
 			total_colokmacau_sum = total_colokmacau_sum + int(bayar)
 		}
 		if typegame == "COLOK_NAGA" {
+			total_coloknaga = total_coloknaga + 1
 			total_coloknaga_sum = total_coloknaga_sum + int(bayar)
 		}
 		if typegame == "COLOK_JITU" {
+			total_colokjitu = total_colokjitu + 1
 			total_colokjitu_sum = total_colokjitu_sum + int(bayar)
 		}
 		if typegame == "50_50_UMUM" {
+			total_5050umum = total_5050umum + 1
 			total_5050umum_sum = total_5050umum_sum + int(bayar)
 		}
 		if typegame == "50_50_SPECIAL" {
+			total_5050special = total_5050special + 1
 			total_5050special_sum = total_5050special_sum + int(bayar)
 		}
 		if typegame == "50_50_KOMBINASI" {
+			total_5050kombinasi = total_5050kombinasi + 1
 			total_5050kombinasi_sum = total_5050kombinasi_sum + int(bayar)
 		}
 		if typegame == "MACAU_KOMBINASI" {
+			total_macaukombinasi = total_macaukombinasi + 1
 			total_macaukombinasi_sum = total_macaukombinasi_sum + int(bayar)
 		}
 		if typegame == "DASAR" {
+			total_dasar = total_dasar + 1
 			total_dasar_sum = total_dasar_sum + int(bayar)
 		}
 		if typegame == "SHIO" {
+			total_shio = total_shio + 1
 			total_shio_sum = total_shio_sum + int(bayar)
 		}
 	}
@@ -1255,6 +1275,16 @@ func Fetch_LimitTransaksiPasaran432(client_username, client_company, tipe_game s
 	obj.Total_2d = total2d
 	obj.Total_2dd = total2dd
 	obj.Total_2dt = total2dt
+	obj.Total_colokbebas = total_colokbebas
+	obj.Total_colokmacau = total_colokmacau
+	obj.Total_coloknaga = total_coloknaga
+	obj.Total_colokjitu = total_colokjitu
+	obj.Total_5050umum = total_5050umum
+	obj.Total_5050special = total_5050special
+	obj.Total_5050kombinasi = total_5050kombinasi
+	obj.Total_macaukombinasi = total_macaukombinasi
+	obj.Total_dasar = total_dasar
+	obj.Total_shio = total_shio
 	obj.Total_4d_sum = total4d_sum
 	obj.Total_3d_sum = total3d_sum
 	obj.Total_3dd_sum = total3dd_sum

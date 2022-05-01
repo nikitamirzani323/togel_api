@@ -270,6 +270,16 @@ type Model_mpasaranLimit struct {
 	Total_2d                 int `json:"total_2d"`
 	Total_2dd                int `json:"total_2dd"`
 	Total_2dt                int `json:"total_2dt"`
+	Total_colokbebas         int `json:"total_colokbebas"`
+	Total_colokmacau         int `json:"total_colokmacau"`
+	Total_coloknaga          int `json:"total_coloknaga"`
+	Total_colokjitu          int `json:"total_colokjitu"`
+	Total_5050umum           int `json:"total_5050umum"`
+	Total_5050special        int `json:"total_5050special"`
+	Total_5050kombinasi      int `json:"total_5050kombinasi"`
+	Total_macaukombinasi     int `json:"total_macaukombinasi"`
+	Total_dasar              int `json:"total_dasar"`
+	Total_shio               int `json:"total_shio"`
 	Total_4d_sum             int `json:"total_4d_sum"`
 	Total_3d_sum             int `json:"total_3d_sum"`
 	Total_3dd_sum            int `json:"total_3dd_sum"`
