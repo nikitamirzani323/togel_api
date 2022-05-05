@@ -69,7 +69,6 @@ func Init() *fiber.App {
 	app.Post("/api/serviceslip", controller.Fetch_slipperiode)
 	app.Post("/api/serviceslipall", controller.Fetch_slipperiodeall)
 	app.Post("/api/serviceslipdetail", controller.Fetch_slipperiodedetail)
-	app.Post("/api/savetransaksi", controller.SaveTogel)
 
 	app.Post("/api/bukumimpi", controller.FetchAll_bukumimpi)
 	return app

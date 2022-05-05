@@ -1609,35 +1609,7 @@ func Fetch_slipperiodedetail(c *fiber.Ctx) error {
 	}
 	return c.JSON(result)
 }
-func SaveTogel(c *fiber.Ctx) error {
-	client := new(entities.Controller_clientSaveTogel)
-	if err := c.BodyParser(client); err != nil {
-		panic(err.Error())
-	}
-	flag_domain := _domainsecurity(client.Hostname)
-	if !flag_domain {
-		c.Status(fiber.StatusBadRequest)
-		return c.JSON(fiber.Map{
-			"status":  fiber.StatusBadRequest,
-			"message": "NOT REGISTER",
-			"record":  nil,
-		})
-	}
-	result, err := model.Savetransaksi(
-		client.Client_Username,
-		client.Client_Company, client.Idtrxkeluaran, client.Idcomppasaran, client.Devicemember, client.Formipaddress, client.Timezone, client.Totalbayarbet, client.List4d)
-	if err != nil {
-		// panic(err.Error())
-		c.Status(fiber.StatusBadRequest)
-		return c.JSON(fiber.Map{
-			"status":  fiber.StatusAccepted,
-			"message": err.Error(),
-			"record":  nil,
-		})
-	}
-	_deleteredisclient(client.Client_Company, client.Idtrxkeluaran, client.Client_Username, client.Pasarancode, client.Pasaranperiode)
-	return c.JSON(result)
-}
+
 func _domainsecurity(nmdomain string) bool {
 	log.Printf("Domain Client : %s", nmdomain)
 	resultredis, flag_domain := helpers.GetRedis(fielddomain_redis)
