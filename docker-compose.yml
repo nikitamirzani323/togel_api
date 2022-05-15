@@ -2,7 +2,7 @@ version: '3.3'
 
 services:
   apiclient:
-    image: toto_api_client:0.0.3
+    image: toto_api_client:0.0.4
     build: "."
     ports:
       - "7171"
