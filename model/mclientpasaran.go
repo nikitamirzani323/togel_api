@@ -1193,14 +1193,14 @@ func Fetch_LimitTransaksiPasaran432(client_username, client_company, tipe_game s
 	for row.Next() {
 		var (
 			typegame          string
-			bet_db            int
+			bet_db            float32
 			diskon_db, kei_db float64
 		)
 		err = row.Scan(&typegame, &bet_db, &diskon_db, &kei_db)
 		helpers.ErrorCheck(err)
 		diskonvalue := math.Ceil(float64(bet_db) * diskon_db)
 		keivalue := math.Ceil(float64(bet_db) * kei_db)
-		bayar := bet_db - int(diskonvalue) - int(keivalue)
+		bayar := int(bet_db) - int(diskonvalue) - int(keivalue)
 		if typegame == "4D" {
 			total4d = total4d + 1
 			total4d_sum = total4d_sum + int(bayar)
