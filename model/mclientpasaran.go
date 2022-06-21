@@ -1266,6 +1266,9 @@ func Fetch_LimitTransaksiPasaran432(client_username, client_company, tipe_game s
 			total_shio_sum = total_shio_sum + int(bayar)
 		}
 	}
+	log.Printf("Colok Bebas : %d\n", total_colokbebas)
+	log.Printf("Colok Macau : %d\n", total_colokmacau)
+	log.Printf("Colok Naga : %d\n", total_coloknaga)
 	obj.Total_4d = total4d
 	obj.Total_3d = total3d
 	obj.Total_3dd = total3dd
