@@ -34,8 +34,8 @@ func Init() *fiber.App {
 		Next: func(c *fiber.Ctx) bool {
 			return c.IP() == "127.0.0.1"
 		},
-		Max:        20,
-		Expiration: 20 * time.Second,
+		Max:        200,
+		Expiration: 200 * time.Second,
 	}))
 	app.Use(etag.New())
 	app.Use(cache.New(cache.Config{
