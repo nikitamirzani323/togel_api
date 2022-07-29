@@ -1198,8 +1198,8 @@ func Fetch_LimitTransaksiPasaran432(client_username, client_company, tipe_game s
 		)
 		err = row.Scan(&typegame, &bet_db, &diskon_db, &kei_db)
 		helpers.ErrorCheck(err)
-		diskonvalue := math.Ceil(float64(bet_db) * diskon_db)
-		keivalue := math.Ceil(float64(bet_db) * kei_db)
+		diskonvalue := math.Round(float64(bet_db) * diskon_db)
+		keivalue := math.Round(float64(bet_db) * kei_db)
 		bayar := int(bet_db) - int(diskonvalue) - int(keivalue)
 		if typegame == "4D" {
 			total4d = total4d + 1
@@ -1339,7 +1339,8 @@ func Fetch_invoicebet(client_username, client_company string, invoice int) (help
 		nobet = nobet + 1
 		var (
 			datetimedetail, username, posisitogel, typegame, nomortogel, idpasarantogel string
-			bet, diskon, win, kei                                                       float32
+			diskon, kei                                                                 float64
+			bet, win                                                                    float32
 			statuskeluarandetail, keluaranperiode                                       string
 		)
 		err = row.Scan(
@@ -1348,10 +1349,10 @@ func Fetch_invoicebet(client_username, client_company string, invoice int) (help
 			&keluaranperiode)
 
 		helpers.ErrorCheck(err)
-		var diskon2 float32 = diskon * 100
-		var diskonbet int = int(bet * diskon)
-		var kei2 float32 = kei * 100
-		var keibet int = int(bet * kei)
+		diskon2 := diskon * 100
+		diskonbet := math.Round(float64(bet) * diskon)
+		kei2 := kei * 100
+		keibet := math.Round(float64(bet) * kei)
 		var menang int = int(bet) * int(win)
 		var bayar int = int(bet) - int(diskonbet) - int(keibet)
 		totalbayar = int(totalbayar) + int(bayar)
@@ -1362,8 +1363,8 @@ func Fetch_invoicebet(client_username, client_company string, invoice int) (help
 		obj.Periode = idpasarantogel + "-" + keluaranperiode
 		obj.Nomor = nomortogel
 		obj.Bet = int(bet)
-		obj.Diskon = diskon2
-		obj.Kei = kei2
+		obj.Diskon = float32(diskon2)
+		obj.Kei = float32(kei2)
 		obj.Win = int(win)
 		obj.Bayar = bayar
 		obj.Menang = menang
@@ -1437,8 +1438,8 @@ func Fetch_invoicebetbyid(idtrxkeluaran int, client_username, client_company, ty
 	for row.Next() {
 		var (
 			posisitogel_db, nomortogel_db, typegame_db, statuskeluarandetail_db string
-			bet_db, diskon_db, kei_db                                           float32
-			winhasil_db                                                         int
+			diskon_db, kei_db                                                   float64
+			bet_db, winhasil_db                                                 float32
 		)
 		err = row.Scan(
 			&posisitogel_db, &nomortogel_db, &typegame_db, &bet_db, &diskon_db,
@@ -1447,11 +1448,17 @@ func Fetch_invoicebetbyid(idtrxkeluaran int, client_username, client_company, ty
 
 		if typegame == typegame_db {
 			nobet = nobet + 1
-			var diskon2 float32 = diskon_db * 100
-			var diskonbet int = int(bet_db * diskon_db)
-			var kei2 float32 = kei_db * 100
-			var keibet int = int(bet_db * kei_db)
-			var bayar int = int(bet_db) - int(diskonbet) - int(keibet)
+			diskon2 := diskon_db * 100
+			diskonbet := math.Round(float64(bet_db) * diskon_db)
+			kei2 := kei_db * 100
+			keibet := math.Round(float64(bet_db) * kei_db)
+			bayar := int(bet_db) - int(diskonbet) - int(keibet)
+
+			// var diskon2 float32 = diskon_db * 100
+			// var diskonbet int = int(bet_db * diskon_db)
+			// var kei2 float32 = kei_db * 100
+			// var keibet int = int(bet_db * kei_db)
+			// var bayar int = int(bet_db) - int(diskonbet) - int(keibet)
 
 			obj.No = nobet
 			obj.Status = statuskeluarandetail_db
@@ -1459,8 +1466,8 @@ func Fetch_invoicebetbyid(idtrxkeluaran int, client_username, client_company, ty
 			obj.Permainan = typegame_db
 			obj.Nomor = nomortogel_db
 			obj.Bet = int(bet_db)
-			obj.Diskon = diskon2
-			obj.Kei = kei2
+			obj.Diskon = float32(diskon2)
+			obj.Kei = float32(kei2)
 			obj.Bayar = bayar
 			obj.Win = int(winhasil_db)
 			arraobj = append(arraobj, obj)
@@ -1476,11 +1483,12 @@ func Fetch_invoicebetbyid(idtrxkeluaran int, client_username, client_company, ty
 		if flag_3dd {
 			if typegame_db == "3DD" {
 				nobet = nobet + 1
-				var diskon2 float32 = diskon_db * 100
-				var diskonbet int = int(bet_db * diskon_db)
-				var kei2 float32 = kei_db * 100
-				var keibet int = int(bet_db * kei_db)
-				var bayar int = int(bet_db) - int(diskonbet) - int(keibet)
+
+				diskon2 := diskon_db * 100
+				diskonbet := math.Round(float64(bet_db) * diskon_db)
+				kei2 := kei_db * 100
+				keibet := math.Round(float64(bet_db) * kei_db)
+				bayar := int(bet_db) - int(diskonbet) - int(keibet)
 
 				obj.No = nobet
 				obj.Status = statuskeluarandetail_db
@@ -1488,8 +1496,8 @@ func Fetch_invoicebetbyid(idtrxkeluaran int, client_username, client_company, ty
 				obj.Permainan = typegame_db
 				obj.Nomor = nomortogel_db
 				obj.Bet = int(bet_db)
-				obj.Diskon = diskon2
-				obj.Kei = kei2
+				obj.Diskon = float32(diskon2)
+				obj.Kei = float32(kei2)
 				obj.Bayar = bayar
 				obj.Win = int(winhasil_db)
 				arraobj = append(arraobj, obj)
@@ -1499,11 +1507,11 @@ func Fetch_invoicebetbyid(idtrxkeluaran int, client_username, client_company, ty
 		if flag_2dd {
 			if typegame_db == "2DD" {
 				nobet = nobet + 1
-				var diskon2 float32 = diskon_db * 100
-				var diskonbet int = int(bet_db * diskon_db)
-				var kei2 float32 = kei_db * 100
-				var keibet int = int(bet_db * kei_db)
-				var bayar int = int(bet_db) - int(diskonbet) - int(keibet)
+				diskon2 := diskon_db * 100
+				diskonbet := math.Round(float64(bet_db) * diskon_db)
+				kei2 := kei_db * 100
+				keibet := math.Round(float64(bet_db) * kei_db)
+				bayar := int(bet_db) - int(diskonbet) - int(keibet)
 
 				obj.No = nobet
 				obj.Status = statuskeluarandetail_db
@@ -1511,8 +1519,8 @@ func Fetch_invoicebetbyid(idtrxkeluaran int, client_username, client_company, ty
 				obj.Permainan = typegame_db
 				obj.Nomor = nomortogel_db
 				obj.Bet = int(bet_db)
-				obj.Diskon = diskon2
-				obj.Kei = kei2
+				obj.Diskon = float32(diskon2)
+				obj.Kei = float32(kei2)
 				obj.Bayar = bayar
 				obj.Win = int(winhasil_db)
 				arraobj = append(arraobj, obj)
@@ -1522,11 +1530,11 @@ func Fetch_invoicebetbyid(idtrxkeluaran int, client_username, client_company, ty
 		if flag_2dt {
 			if typegame_db == "2DT" {
 				nobet = nobet + 1
-				var diskon2 float32 = diskon_db * 100
-				var diskonbet int = int(bet_db * diskon_db)
-				var kei2 float32 = kei_db * 100
-				var keibet int = int(bet_db * kei_db)
-				var bayar int = int(bet_db) - int(diskonbet) - int(keibet)
+				diskon2 := diskon_db * 100
+				diskonbet := math.Round(float64(bet_db) * diskon_db)
+				kei2 := kei_db * 100
+				keibet := math.Round(float64(bet_db) * kei_db)
+				bayar := int(bet_db) - int(diskonbet) - int(keibet)
 
 				obj.No = nobet
 				obj.Status = statuskeluarandetail_db
@@ -1534,8 +1542,8 @@ func Fetch_invoicebetbyid(idtrxkeluaran int, client_username, client_company, ty
 				obj.Permainan = typegame_db
 				obj.Nomor = nomortogel_db
 				obj.Bet = int(bet_db)
-				obj.Diskon = diskon2
-				obj.Kei = kei2
+				obj.Diskon = float32(diskon2)
+				obj.Kei = float32(kei2)
 				obj.Bayar = bayar
 				obj.Win = int(winhasil_db)
 				arraobj = append(arraobj, obj)
