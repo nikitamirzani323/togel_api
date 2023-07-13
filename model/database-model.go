@@ -34,6 +34,7 @@ func Get_counter(field_column string) int {
 		idrecord_counter = int(counter) + 1
 		stmt, e := con.PrepareContext(ctx, "UPDATE "+config.DB_tbl_counter+" SET counter=? WHERE nmcounter=? ")
 		helpers.ErrorCheck(e)
+		defer stmt.Close()
 		res, e := stmt.ExecContext(ctx, idrecord_counter, field_column)
 		helpers.ErrorCheck(e)
 		a, e := res.RowsAffected()
@@ -48,6 +49,7 @@ func Get_counter(field_column string) int {
 		helpers.ErrorCheck(e)
 		res, e := stmt.ExecContext(ctx, field_column, 1)
 		helpers.ErrorCheck(e)
+		defer stmt.Close()
 		id, e := res.RowsAffected()
 		helpers.ErrorCheck(e)
 		if id > 0 {
